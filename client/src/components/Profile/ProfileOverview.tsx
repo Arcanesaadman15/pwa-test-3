@@ -1,11 +1,15 @@
 import { SettingsPanel } from "./SettingsPanel";
 import { User } from "@/types";
+import { usePWA } from "@/hooks/usePWA";
+import { Button } from "@/components/ui/button";
 
 interface ProfileOverviewProps {
   user: User;
 }
 
 export function ProfileOverview({ user }: ProfileOverviewProps) {
+  const { isInstallable, promptInstall, isIOS, isStandalone } = usePWA();
+
   return (
     <div className="p-4 max-w-md mx-auto space-y-6">
       {/* Profile Header */}
@@ -116,6 +120,46 @@ export function ProfileOverview({ user }: ProfileOverviewProps) {
           </div>
         </div>
       </div>
+
+      {/* PWA Install Section */}
+      {!isStandalone && (
+        <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white">
+          <div className="flex items-center space-x-4 mb-4">
+            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+              <i className="fas fa-download text-xl"></i>
+            </div>
+            <div>
+              <h3 className="font-semibold text-lg">📱 Install PeakForge App</h3>
+              <p className="text-sm text-white/90">
+                {isIOS 
+                  ? "Add to your home screen for the full app experience" 
+                  : "Install for offline access and push notifications"
+                }
+              </p>
+            </div>
+          </div>
+          
+          <Button
+            onClick={promptInstall}
+            className="w-full bg-white text-purple-600 hover:bg-white/90 font-semibold"
+          >
+            {isIOS ? "Show Install Instructions" : "Install Now"}
+          </Button>
+          
+          {isIOS && (
+            <div className="mt-4 p-3 bg-white/10 rounded-lg">
+              <div className="text-sm">
+                <p className="font-medium mb-2">Quick Install Steps:</p>
+                <ol className="list-decimal list-inside space-y-1 text-xs">
+                  <li>Tap the Share button <i className="fas fa-share"></i> in Safari</li>
+                  <li>Scroll down and tap "Add to Home Screen"</li>
+                  <li>Tap "Add" to install PeakForge</li>
+                </ol>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Settings */}
       <SettingsPanel />

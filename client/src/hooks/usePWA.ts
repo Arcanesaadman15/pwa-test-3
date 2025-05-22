@@ -21,44 +21,90 @@ export function usePWA() {
                       (window.navigator as any).standalone === true;
     setIsStandalone(standalone);
 
+    // Track user engagement for Chrome PWA requirements
+    let engagementStartTime = Date.now();
+    let hasInteracted = false;
+
+    const trackInteraction = () => {
+      if (!hasInteracted) {
+        hasInteracted = true;
+        localStorage.setItem('pwa-user-interacted', 'true');
+      }
+    };
+
+    const trackEngagementTime = () => {
+      const timeSpent = Date.now() - engagementStartTime;
+      if (timeSpent >= 30000) { // 30 seconds
+        localStorage.setItem('pwa-engagement-time', 'true');
+      }
+    };
+
+    // Add event listeners for user interaction
+    document.addEventListener('click', trackInteraction);
+    document.addEventListener('touchstart', trackInteraction);
+    
+    // Check engagement time every 5 seconds
+    const engagementTimer = setInterval(trackEngagementTime, 5000);
+
     const handleBeforeInstallPrompt = (e: Event) => {
+      console.log('beforeinstallprompt event fired');
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       
-      // Only show install prompt if not previously dismissed and not already installed
+      // Check if user meets engagement requirements
+      const hasInteracted = localStorage.getItem('pwa-user-interacted');
+      const hasEngagementTime = localStorage.getItem('pwa-engagement-time');
       const installDismissed = localStorage.getItem('pwa-install-dismissed');
-      if (!installDismissed && !standalone) {
+      
+      if (!installDismissed && !standalone && (hasInteracted || hasEngagementTime)) {
         setIsInstallable(true);
       }
     };
 
     const handleAppInstalled = () => {
+      console.log('App installed');
       setIsInstallable(false);
       setDeferredPrompt(null);
       setIsStandalone(true);
       localStorage.setItem('pwa-installed', 'true');
     };
 
-    // For iOS, show install prompt immediately if not already installed
+    // For iOS, show install prompt after interaction
     if (iOS && !standalone) {
-      const installDismissed = localStorage.getItem('pwa-install-dismissed');
-      if (!installDismissed) {
-        setIsInstallable(true);
-      }
-    }
-
-    // For Android/other browsers, show install prompt even without beforeinstallprompt
-    if (!iOS && !standalone) {
       const installDismissed = localStorage.getItem('pwa-install-dismissed');
       if (!installDismissed) {
         setTimeout(() => {
           setIsInstallable(true);
-        }, 1000);
+        }, 2000);
+      }
+    }
+
+    // For Android/other browsers, wait for proper engagement
+    if (!iOS && !standalone) {
+      const installDismissed = localStorage.getItem('pwa-install-dismissed');
+      if (!installDismissed) {
+        // Show install prompt after user meets engagement requirements
+        setTimeout(() => {
+          const hasInteracted = localStorage.getItem('pwa-user-interacted');
+          const hasEngagementTime = localStorage.getItem('pwa-engagement-time');
+          if (hasInteracted || hasEngagementTime) {
+            setIsInstallable(true);
+          }
+        }, 31000); // Wait 31 seconds to ensure engagement time requirement
       }
     }
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      document.removeEventListener('click', trackInteraction);
+      document.removeEventListener('touchstart', trackInteraction);
+      clearInterval(engagementTimer);
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
 
     // Register service worker
     if ('serviceWorker' in navigator) {
