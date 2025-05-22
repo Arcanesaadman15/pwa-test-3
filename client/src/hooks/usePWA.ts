@@ -97,15 +97,6 @@ export function usePWA() {
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
-    return () => {
-      document.removeEventListener('click', trackInteraction);
-      document.removeEventListener('touchstart', trackInteraction);
-      clearInterval(engagementTimer);
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      window.removeEventListener('appinstalled', handleAppInstalled);
-    };
-  }, []);
-
     // Register service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
@@ -118,6 +109,9 @@ export function usePWA() {
     }
 
     return () => {
+      document.removeEventListener('click', trackInteraction);
+      document.removeEventListener('touchstart', trackInteraction);
+      clearInterval(engagementTimer);
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
@@ -132,12 +126,14 @@ export function usePWA() {
       
       if (outcome === 'accepted') {
         console.log('User accepted the install prompt');
+      } else {
+        console.log('User dismissed the install prompt');
       }
       
       setDeferredPrompt(null);
       setIsInstallable(false);
     } catch (error) {
-      console.error('Error prompting for install:', error);
+      console.error('Error during install prompt:', error);
     }
   };
 
