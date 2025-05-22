@@ -43,6 +43,7 @@ export function useTaskEngine() {
   };
 
   return {
+    taskEngine,
     currentDayTasks,
     completeTask,
     skipTask,

@@ -80,14 +80,7 @@ export default function Home() {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'tasks':
-        return (
-          <TaskList
-            tasks={currentDayTasks}
-            onTaskComplete={handleTaskComplete}
-            onTaskSkip={handleTaskSkip}
-            dayProgress={getDayProgress()}
-          />
-        );
+        return <TaskList />;
       case 'stats':
         return <StatsOverview user={user} />;
       case 'skills':
