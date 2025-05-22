@@ -25,6 +25,36 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // AGGRESSIVE ANDROID NAVIGATION BAR COLOR FIX
+      function forceAndroidNavBarColor() {
+        // Remove any existing theme-color meta tags
+        const existingMetas = document.querySelectorAll('meta[name="theme-color"]');
+        existingMetas.forEach(meta => meta.remove());
+        
+        // Add new dark theme-color meta tag
+        const meta = document.createElement('meta');
+        meta.name = 'theme-color';
+        meta.content = '#111827';
+        document.head.appendChild(meta);
+        
+        // Force body background to override any CSS
+        document.body.style.backgroundColor = '#111827';
+        document.documentElement.style.backgroundColor = '#111827';
+        
+        // Set CSS color-scheme to dark
+        document.documentElement.style.colorScheme = 'dark';
+        
+        console.log('🎨 Forced Android navigation bar to dark color');
+      }
+      
+      // Execute immediately and on DOM ready
+      forceAndroidNavBarColor();
+      document.addEventListener('DOMContentLoaded', forceAndroidNavBarColor);
+      
+      // Also force it after a delay to override any CSS that loads later
+      setTimeout(forceAndroidNavBarColor, 1000);
+    </script>
     <script type="module" src="/src/main.tsx"></script>
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
     <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>

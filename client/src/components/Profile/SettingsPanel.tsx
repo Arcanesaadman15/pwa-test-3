@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { RefreshCw, AlertTriangle, ArrowLeft, Trash2, RotateCcw } from "lucide-react";
+import { RefreshCw, AlertTriangle, ArrowLeft, Trash2, RotateCcw, Download } from "lucide-react";
 import { storage } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
+import { usePWA } from "@/hooks/usePWA";
 
 interface SettingsPanelProps {
   onBack: () => void;
@@ -10,6 +11,7 @@ interface SettingsPanelProps {
 
 export function SettingsPanel({ onBack, onDataReset }: SettingsPanelProps) {
   const { toast } = useToast();
+  const { isInstallable, promptInstall, isIOS, isStandalone } = usePWA();
 
   const handleResetData = async () => {
     try {
@@ -31,8 +33,15 @@ export function SettingsPanel({ onBack, onDataReset }: SettingsPanelProps) {
 
   const settingsSections = [
     {
-      title: "Account",
+      title: "App",
       items: [
+        ...(!isStandalone && (isInstallable || isIOS) ? [{
+          icon: Download,
+          title: "Install App",
+          description: isIOS ? "Add to Home Screen for full experience" : "Install PeakForge for offline access",
+          action: promptInstall,
+          disabled: false
+        }] : []),
         {
           icon: RefreshCw,
           title: "Sync Data",

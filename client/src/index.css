@@ -32,6 +32,27 @@
   --mindfulness: 271 81% 56%; /* Indigo */
 }
 
+/* AGGRESSIVE ANDROID NAVIGATION BAR FIX */
+html {
+  color-scheme: dark;
+}
+
+body {
+  background-color: #111827 !important;
+}
+
+/* Force Android browser chrome colors */
+:root {
+  --browser-chrome-bg: #111827;
+}
+
+/* Additional Android-specific CSS hacks */
+@supports (-webkit-appearance: none) {
+  html {
+    --webkit-color-scheme: dark;
+  }
+}
+
 .dark {
   --background: 20 14.3% 4.1%;
   --foreground: 60 9.1% 97.8%;
