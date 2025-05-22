@@ -1,0 +1,322 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 250 250 250; /* #FAFAFA */
+  --foreground: 20 14.3% 4.1%;
+  --muted: 60 4.8% 95.9%;
+  --muted-foreground: 25 5.3% 44.7%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 20 14.3% 4.1%;
+  --card: 0 0% 100%;
+  --card-foreground: 20 14.3% 4.1%;
+  --border: 20 5.9% 90%;
+  --input: 20 5.9% 90%;
+  --primary: 142 76% 36%; /* #22C55E */
+  --primary-foreground: 355.7 100% 97.3%;
+  --secondary: 217 91% 60%; /* #3B82F6 */
+  --secondary-foreground: 24 9.8% 10%;
+  --accent: 38 92% 50%; /* #F59E0B */
+  --accent-foreground: 24 9.8% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --ring: 142 76% 36%;
+  --radius: 0.75rem;
+  
+  /* Custom wellness colors */
+  --sleep: 258 90% 66%; /* Purple */
+  --movement: 142 76% 36%; /* Green */
+  --nutrition: 217 91% 60%; /* Blue */
+  --recovery: 38 92% 50%; /* Orange */
+  --mindfulness: 271 81% 56%; /* Indigo */
+}
+
+.dark {
+  --background: 20 14.3% 4.1%;
+  --foreground: 60 9.1% 97.8%;
+  --muted: 12 6.5% 15.1%;
+  --muted-foreground: 24 5.4% 63.9%;
+  --popover: 20 14.3% 4.1%;
+  --popover-foreground: 60 9.1% 97.8%;
+  --card: 20 14.3% 4.1%;
+  --card-foreground: 60 9.1% 97.8%;
+  --border: 12 6.5% 15.1%;
+  --input: 12 6.5% 15.1%;
+  --primary: 142 76% 36%;
+  --primary-foreground: 355.7 100% 97.3%;
+  --secondary: 12 6.5% 15.1%;
+  --secondary-foreground: 60 9.1% 97.8%;
+  --accent: 12 6.5% 15.1%;
+  --accent-foreground: 60 9.1% 97.8%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --ring: 142 76% 36%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .task-card {
+    @apply transition-all duration-200 ease-out;
+  }
+  
+  .task-card:active {
+    @apply scale-[0.98];
+  }
+  
+  .skill-node {
+    @apply transition-all duration-300 ease-out;
+  }
+  
+  .skill-node:hover {
+    @apply scale-110;
+  }
+  
+  .glass-effect {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+  }
+  
+  .progress-ring {
+    transform: rotate(-90deg);
+  }
+  
+  .progress-ring-circle {
+    transition: stroke-dashoffset 0.6s ease-in-out;
+  }
+}
+
+@layer utilities {
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  .animate-pulse-soft {
+    animation: pulseSoft 2s infinite;
+  }
+  
+  .animate-bounce-gentle {
+    animation: bounceGentle 1s infinite;
+  }
+  
+  .animate-celebration {
+    animation: celebration 0.6s ease-out;
+  }
+  
+  .animate-skill-unlock {
+    animation: skillUnlock 0.8s ease-out;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulseSoft {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+@keyframes bounceGentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes celebration {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.1) rotate(5deg);
+  }
+  50% {
+    transform: scale(1.15) rotate(-5deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(3deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes skillUnlock {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Touch feedback */
+.touch-feedback:active {
+  @apply scale-95;
+}
+
+/* Haptic feedback class for buttons */
+.haptic-feedback {
+  @apply touch-feedback;
+}
+
+/* Ensure smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary));
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.8);
+}
+
+/* Focus styles for accessibility */
+.focus-visible:focus-visible {
+  @apply outline-none ring-2 ring-primary ring-offset-2;
+}
+
+/* Loading states */
+.loading-skeleton {
+  @apply animate-pulse bg-muted rounded;
+}
+
+/* Category colors */
+.category-sleep {
+  @apply bg-purple-100 text-purple-700 border-purple-200;
+}
+
+.category-movement {
+  @apply bg-green-100 text-green-700 border-green-200;
+}
+
+.category-nutrition {
+  @apply bg-blue-100 text-blue-700 border-blue-200;
+}
+
+.category-recovery {
+  @apply bg-orange-100 text-orange-700 border-orange-200;
+}
+
+.category-mindfulness {
+  @apply bg-indigo-100 text-indigo-700 border-indigo-200;
+}
+
+/* Streak flame animation */
+.streak-flame {
+  animation: flicker 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes flicker {
+  0% {
+    transform: scale(1) rotate(0deg);
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    transform: scale(1.05) rotate(1deg);
+    filter: hue-rotate(10deg);
+  }
+  100% {
+    transform: scale(1.1) rotate(-1deg);
+    filter: hue-rotate(-10deg);
+  }
+}
+
+/* Progress animations */
+.progress-fill {
+  transition: width 1s ease-out;
+}
+
+/* PWA specific styles */
+@media (display-mode: standalone) {
+  body {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  
+  /* Hide address bar on mobile PWA */
+  .pwa-header {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .pwa-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Responsive design helpers */
+@media (max-width: 375px) {
+  .container-mobile {
+    @apply px-3;
+  }
+}
+
+@media (min-width: 768px) {
+  .container-tablet {
+    @apply max-w-md mx-auto;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .card {
+    @apply border-2;
+  }
+  
+  .button-primary {
+    @apply border-2 border-foreground;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

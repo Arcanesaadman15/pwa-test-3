@@ -1,0 +1,35 @@
+{
+  "name": "PeakForge - Wellness Journey",
+  "short_name": "PeakForge",
+  "description": "Transform yourself, one day at a time",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAFAFA",
+  "theme_color": "#22C55E",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%2322C55E'/%3E%3Cpath d='M96 48L144 144H48L96 48Z' fill='white'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%2322C55E'/%3E%3Cpath d='M256 128L384 384H128L256 128Z' fill='white'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["health", "lifestyle", "productivity"],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 430 932'%3E%3Crect width='430' height='932' fill='%23FAFAFA'/%3E%3Ctext x='215' y='466' text-anchor='middle' fill='%2322C55E' font-size='24'%3EPeakForge App%3C/text%3E%3C/svg%3E",
+      "sizes": "430x932",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    }
+  ]
+}
