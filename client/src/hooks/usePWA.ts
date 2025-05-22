@@ -47,16 +47,13 @@ export function usePWA() {
     const engagementTimer = setInterval(trackEngagementTime, 5000);
 
     const handleBeforeInstallPrompt = (e: Event) => {
-      console.log('beforeinstallprompt event fired');
+      console.log('🎉 beforeinstallprompt event fired - App can be installed!');
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       
-      // Check if user meets engagement requirements
-      const hasInteracted = localStorage.getItem('pwa-user-interacted');
-      const hasEngagementTime = localStorage.getItem('pwa-engagement-time');
       const installDismissed = localStorage.getItem('pwa-install-dismissed');
-      
-      if (!installDismissed && !standalone && (hasInteracted || hasEngagementTime)) {
+      if (!installDismissed && !standalone) {
+        console.log('Setting installable to true');
         setIsInstallable(true);
       }
     };
@@ -104,20 +101,20 @@ export function usePWA() {
   }, []);
 
   const promptInstall = async () => {
-    // For iOS, show instructions instead of trying to prompt
-    if (isIOS) {
-      alert('To install PeakForge:\n\n1. Tap the Share button (⬆️) at the bottom of Safari\n2. Scroll down and tap "Add to Home Screen"\n3. Tap "Add" to install the app');
-      return;
-    }
-
-    // For Android/Desktop with deferred prompt
+    console.log('Install button clicked. iOS:', isIOS, 'DeferredPrompt:', !!deferredPrompt);
+    
+    // For Android/Desktop with deferred prompt - this triggers the actual install
     if (deferredPrompt) {
       try {
+        console.log('Triggering install prompt...');
         await deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         
+        console.log('Install prompt result:', outcome);
+        
         if (outcome === 'accepted') {
           console.log('User accepted the install prompt');
+          setIsStandalone(true);
         } else {
           console.log('User dismissed the install prompt');
         }
@@ -126,10 +123,16 @@ export function usePWA() {
         setIsInstallable(false);
       } catch (error) {
         console.error('Error during install prompt:', error);
+        // Fallback to instructions if native prompt fails
+        alert('To install PeakForge:\n\n1. Open the browser menu (⋮)\n2. Look for "Install app" or "Add to Home screen"\n3. Follow the prompts to install');
       }
     } else {
-      // Fallback for browsers without beforeinstallprompt
-      alert('To install PeakForge:\n\n1. Open the browser menu (⋮)\n2. Look for "Install app" or "Add to Home screen"\n3. Follow the prompts to install');
+      // For iOS or browsers without native install prompt support
+      if (isIOS) {
+        alert('To install PeakForge:\n\n1. Tap the Share button (⬆️) at the bottom of Safari\n2. Scroll down and tap "Add to Home Screen"\n3. Tap "Add" to install the app');
+      } else {
+        alert('To install PeakForge:\n\n1. Open the browser menu (⋮)\n2. Look for "Install app" or "Add to Home screen"\n3. Follow the prompts to install');
+      }
     }
   };
 
