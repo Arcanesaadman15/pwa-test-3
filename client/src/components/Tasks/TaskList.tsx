@@ -81,15 +81,24 @@ function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReaso
           </div>
 
           {/* Status Info */}
-          {status === 'completed' && completedAt && (
+          {status === 'completed' && (
             <div className="text-xs text-green-400 mb-3">
-              ✅ Completed at {completedAt.toLocaleTimeString()}
+              ✅ Task completed
             </div>
           )}
 
-          {status === 'skipped' && skippedAt && (
-            <div className="text-xs text-gray-400 mb-3">
-              ⏭️ Skipped at {skippedAt.toLocaleTimeString()}
+          {status === 'skipped' && (
+            <div className="mb-3">
+              <div className="text-xs text-gray-400 mb-2">
+                ⏭️ Task skipped
+              </div>
+              <Button
+                onClick={onComplete}
+                className="bg-green-600 hover:bg-green-700 text-white text-xs py-1 px-3 rounded-lg"
+              >
+                <CheckCircle className="w-3 h-3 mr-1" />
+                Mark as Done
+              </Button>
             </div>
           )}
 
@@ -145,7 +154,7 @@ function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReaso
 }
 
 export function TaskList() {
-  const { taskEngine } = useTaskEngine();
+  const { taskEngine, unSkipTask } = useTaskEngine();
   const { toast } = useToast();
   const [tasks, setTasks] = useState<{
     active: Task[];
@@ -230,6 +239,26 @@ export function TaskList() {
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to skip task",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleUnSkip = async (taskId: string) => {
+    if (!unSkipTask) return;
+    
+    try {
+      await unSkipTask(taskId);
+      await loadTasks();
+      toast({
+        title: "🎉 Task Completed!",
+        description: "Great job completing this task!",
+      });
+    } catch (error) {
+      console.error('Failed to complete skipped task:', error);
+      toast({
+        title: "Error",
+        description: "Failed to mark task as done",
         variant: "destructive"
       });
     }
@@ -377,7 +406,7 @@ export function TaskList() {
               completedAt={activeTab === 'done' ? (task as any).completedAt : undefined}
               skippedAt={activeTab === 'skipped' ? (task as any).skippedAt : undefined}
               skipReason={activeTab === 'skipped' ? (task as any).skipReason : undefined}
-              onComplete={() => handleComplete(task.id)}
+              onComplete={() => activeTab === 'skipped' ? handleUnSkip(task.id) : handleComplete(task.id)}
               onSkip={() => handleSkip(task.id)}
             />
           ))

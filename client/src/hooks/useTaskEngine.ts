@@ -42,11 +42,17 @@ export function useTaskEngine() {
     refreshTasks();
   };
 
+  const unSkipTask = async (taskId: string) => {
+    await taskEngine.unSkipTask(taskId);
+    refreshTasks();
+  };
+
   return {
     taskEngine,
     currentDayTasks,
     completeTask,
     skipTask,
+    unSkipTask,
     getDayProgress,
     switchProgram,
     refreshTasks

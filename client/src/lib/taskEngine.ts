@@ -178,24 +178,57 @@ export class TaskEngine {
     return true;
   }
 
+  // New method to allow changing skipped tasks to completed
+  async unSkipTask(taskId: string): Promise<boolean> {
+    await this.initialize();
+    
+    // Allow changing skipped tasks from any day (not just current)
+    const targetDay = this.viewingDay;
+    
+    // Remove existing skip entry
+    this.taskCompletions = this.taskCompletions.filter(c => 
+      !(c.taskId === taskId && c.day === targetDay)
+    );
+
+    // Add completion
+    const completion: TaskCompletion = {
+      taskId,
+      day: targetDay,
+      completedAt: new Date(),
+      skipped: false
+    };
+
+    this.taskCompletions.push(completion);
+    await storage.saveTaskCompletion(completion);
+    
+    // Check for day advancement only if we're on current active day
+    if (targetDay === this.getCurrentActiveDay()) {
+      await this.checkDayAdvancement();
+    }
+    
+    return true;
+  }
+
   // Check if current day is complete and advance if necessary
   private async checkDayAdvancement(): Promise<void> {
     const currentActiveDay = this.getCurrentActiveDay();
     
     // If current day is completed and there's a next day, advance automatically
     if (this.isDayCompleted(currentActiveDay) && currentActiveDay < 63) {
-      // Only auto-advance if we're viewing the current active day
-      if (this.viewingDay === currentActiveDay) {
-        this.viewingDay = currentActiveDay + 1;
-        this.manualNavigation = false; // Reset manual navigation since we auto-advanced
-      }
+      // Auto-advance to next day and navigate user there
+      this.viewingDay = currentActiveDay + 1;
+      this.manualNavigation = false; // Reset manual navigation since we auto-advanced
       
       // Update user's current day
       if (this.user) {
         this.user.currentDay = currentActiveDay + 1;
         await storage.saveUser(this.user);
       }
+      
+      return true; // Signal that advancement happened
     }
+    
+    return false;
   }
 
   // Get tasks for viewing day with proper three-panel organization
