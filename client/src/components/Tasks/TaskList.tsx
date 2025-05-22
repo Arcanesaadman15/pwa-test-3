@@ -15,6 +15,20 @@ interface TaskListProps {
 }
 
 export function TaskList({ tasks, onTaskComplete, onTaskSkip, dayProgress }: TaskListProps) {
+  // Handle case when tasks might not be loaded yet
+  if (!tasks) {
+    return (
+      <div className="p-4 max-w-md mx-auto">
+        <div className="flex justify-center mb-6">
+          <div className="animate-pulse bg-gray-200 rounded-full w-32 h-32"></div>
+        </div>
+        <div className="text-center">
+          <div className="animate-pulse bg-gray-200 h-4 w-32 mx-auto rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
   const totalTasks = tasks.active.length + tasks.completed.length + tasks.skipped.length;
   const progressPercentage = totalTasks > 0 ? Math.round((tasks.completed.length / totalTasks) * 100) : 0;
 

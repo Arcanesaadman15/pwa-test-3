@@ -101,10 +101,20 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header user={user} />
+      <Header user={user!} />
       
       <main className="pb-20">
-        {renderTabContent()}
+        {user ? renderTabContent() : (
+          <div className="p-4 max-w-md mx-auto">
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-pulse text-center">
+                <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4"></div>
+                <div className="h-4 bg-gray-200 rounded w-32 mx-auto mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-24 mx-auto"></div>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
       
       <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />

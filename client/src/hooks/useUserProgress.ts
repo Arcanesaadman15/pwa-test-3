@@ -27,27 +27,50 @@ export function useUserProgress() {
       await storage.setOnboardingComplete();
       setIsOnboardingComplete(true);
       
-      // Initialize user if not exists
-      if (!user) {
-        const newUser: User = {
-          id: 'user1',
-          name: 'Wellness Warrior',
-          program: 'beginner',
-          currentDay: 1,
-          currentStreak: 0,
-          longestStreak: 0,
-          completedDays: 0,
-          startDate: new Date(),
-          achievements: 0,
-          level: 1
-        };
-        
-        await storage.saveUser(newUser);
-        setUser(newUser);
-      }
+      // Always create/update user after onboarding
+      const onboardingData = await storage.getOnboardingData();
+      const programType = determineProgramType(onboardingData);
+      
+      const newUser: User = {
+        id: 'user1',
+        name: 'Wellness Warrior',
+        program: programType,
+        currentDay: 1,
+        currentStreak: 0,
+        longestStreak: 0,
+        completedDays: 0,
+        startDate: new Date(),
+        achievements: 0,
+        level: 1,
+        onboardingComplete: true,
+        preferences: onboardingData ? {
+          morningPerson: onboardingData.preferences.morningPerson,
+          outdoorActivities: onboardingData.preferences.outdoorActivities,
+          socialActivities: onboardingData.preferences.socialActivities,
+          highIntensity: onboardingData.preferences.highIntensity,
+          timeCommitment: onboardingData.timeCommitment,
+          stressLevel: onboardingData.stressLevel,
+          sleepQuality: onboardingData.sleepQuality,
+          activityLevel: onboardingData.activityLevel
+        } : undefined
+      };
+      
+      await storage.saveUser(newUser);
+      setUser(newUser);
     } catch (error) {
       console.error('Failed to complete onboarding:', error);
     }
+  };
+
+  const determineProgramType = (data: any): 'beginner' | 'intermediate' | 'advanced' => {
+    if (!data) return 'beginner';
+    
+    if (data.activityLevel === 'sedentary' || data.timeCommitment <= 30) {
+      return 'beginner';
+    } else if (data.activityLevel === 'very' && data.preferences?.highIntensity) {
+      return 'advanced';
+    }
+    return 'intermediate';
   };
 
   const updateUserProgress = async (updates: Partial<User>) => {
