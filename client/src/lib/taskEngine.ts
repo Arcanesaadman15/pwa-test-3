@@ -184,9 +184,11 @@ export class TaskEngine {
     
     // If current day is completed and there's a next day, advance automatically
     if (this.isDayCompleted(currentActiveDay) && currentActiveDay < 63) {
-      // Auto-advance to next day
-      this.viewingDay = currentActiveDay + 1;
-      this.manualNavigation = false; // Reset manual navigation since we auto-advanced
+      // Only auto-advance if we're viewing the current active day
+      if (this.viewingDay === currentActiveDay) {
+        this.viewingDay = currentActiveDay + 1;
+        this.manualNavigation = false; // Reset manual navigation since we auto-advanced
+      }
       
       // Update user's current day
       if (this.user) {
