@@ -35,10 +35,26 @@
 /* AGGRESSIVE ANDROID NAVIGATION BAR FIX */
 html {
   color-scheme: dark;
+  background-color: #111827 !important;
+  overflow-x: hidden;
 }
 
 body {
   background-color: #111827 !important;
+  overscroll-behavior: none;
+  overflow-x: hidden;
+}
+
+/* Eliminate yellow/green overscroll areas */
+html, body, #root {
+  background: #111827 !important;
+  min-height: 100vh;
+}
+
+/* Prevent overscroll bounce and color bleeding */
+body {
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Force Android browser chrome colors */
@@ -50,6 +66,18 @@ body {
 @supports (-webkit-appearance: none) {
   html {
     --webkit-color-scheme: dark;
+  }
+}
+
+/* Eliminate viewport color bleeding */
+@media screen and (max-width: 768px) {
+  html {
+    background-color: #111827 !important;
+  }
+  
+  body {
+    background-color: #111827 !important;
+    background: #111827 !important;
   }
 }
 

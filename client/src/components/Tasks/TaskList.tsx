@@ -349,17 +349,11 @@ export function TaskList() {
   const currentTabTasks = getCurrentTabTasks();
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white pb-20">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-red-900 via-red-800 to-orange-800 px-6 pt-12 pb-8">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-white mb-2">
-            PeakForge Program
-          </h1>
-        </div>
-        
+    <div className="min-h-screen bg-gray-900 text-white pb-24">
+      {/* Compact Header with Day Navigation and Tabs */}
+      <div className="bg-gradient-to-br from-red-900 via-red-800 to-orange-800 px-6 pt-16 pb-6">
         {/* Day Navigation */}
-        <div className="flex items-center justify-center gap-6 mb-8">
+        <div className="flex items-center justify-center gap-6 mb-6">
           <Button
             variant="ghost"
             size="lg"

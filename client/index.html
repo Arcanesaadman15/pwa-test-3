@@ -26,7 +26,7 @@
   <body>
     <div id="root"></div>
     <script>
-      // AGGRESSIVE ANDROID NAVIGATION BAR COLOR FIX
+      // AGGRESSIVE ANDROID NAVIGATION BAR & OVERSCROLL COLOR FIX
       function forceAndroidNavBarColor() {
         // Remove any existing theme-color meta tags
         const existingMetas = document.querySelectorAll('meta[name="theme-color"]');
@@ -40,12 +40,27 @@
         
         // Force body background to override any CSS
         document.body.style.backgroundColor = '#111827';
+        document.body.style.background = '#111827';
         document.documentElement.style.backgroundColor = '#111827';
+        document.documentElement.style.background = '#111827';
+        
+        // Eliminate overscroll color bleeding
+        document.body.style.overscrollBehavior = 'none';
+        document.body.style.overscrollBehaviorY = 'none';
+        document.documentElement.style.overscrollBehavior = 'none';
+        
+        // Force root element background
+        const root = document.getElementById('root');
+        if (root) {
+          root.style.backgroundColor = '#111827';
+          root.style.background = '#111827';
+          root.style.minHeight = '100vh';
+        }
         
         // Set CSS color-scheme to dark
         document.documentElement.style.colorScheme = 'dark';
         
-        console.log('🎨 Forced Android navigation bar to dark color');
+        console.log('🎨 Forced Android colors: navigation bar & overscroll areas');
       }
       
       // Execute immediately and on DOM ready
