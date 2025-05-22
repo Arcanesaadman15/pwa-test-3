@@ -14,16 +14,16 @@ export function InstallPrompt({ onInstall, onDismiss, isIOS = false }: InstallPr
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 100, opacity: 0 }}
-        className="fixed bottom-24 left-4 right-4 z-50"
+        className="fixed top-4 left-4 right-4 z-50"
       >
-        <div className="bg-white rounded-xl p-4 shadow-2xl border border-gray-200 glass-effect max-w-md mx-auto">
+        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl p-4 shadow-2xl border border-gray-200 max-w-md mx-auto">
           <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
               <i className="fas fa-download text-white text-xl"></i>
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-800">Install PeakForge</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-semibold text-white">📱 Install PeakForge App</h3>
+              <p className="text-sm text-white/90">
                 {isIOS 
                   ? "Tap Share button, then 'Add to Home Screen'" 
                   : "Get the full app experience on your device"
@@ -35,14 +35,14 @@ export function InstallPrompt({ onInstall, onDismiss, isIOS = false }: InstallPr
                 variant="ghost"
                 size="sm"
                 onClick={onDismiss}
-                className="text-gray-600 hover:text-gray-800"
+                className="text-white/80 hover:text-white hover:bg-white/10"
               >
                 Later
               </Button>
               <Button
                 size="sm"
                 onClick={onInstall}
-                className="bg-primary text-white hover:bg-primary/90"
+                className="bg-white text-purple-600 hover:bg-white/90 font-semibold"
               >
                 {isIOS ? "Show Steps" : "Install"}
               </Button>

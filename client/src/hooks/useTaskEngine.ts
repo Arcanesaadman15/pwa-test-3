@@ -14,8 +14,8 @@ export function useTaskEngine() {
     skipped: []
   });
 
-  const refreshTasks = () => {
-    const tasks = taskEngine.getCurrentDayTasks();
+  const refreshTasks = async () => {
+    const tasks = await taskEngine.getCurrentDayTasks();
     setCurrentDayTasks(tasks);
   };
 
@@ -37,8 +37,8 @@ export function useTaskEngine() {
     return taskEngine.getDayProgress();
   };
 
-  const switchProgram = (program: 'beginner' | 'intermediate' | 'advanced') => {
-    taskEngine.switchProgram(program);
+  const switchProgram = async (program: 'beginner' | 'intermediate' | 'advanced') => {
+    await taskEngine.switchProgram(program);
     refreshTasks();
   };
 

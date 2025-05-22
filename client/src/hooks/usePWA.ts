@@ -39,13 +39,21 @@ export function usePWA() {
       localStorage.setItem('pwa-installed', 'true');
     };
 
-    // For iOS, show install prompt after a delay if not already installed
+    // For iOS, show install prompt immediately if not already installed
     if (iOS && !standalone) {
+      const installDismissed = localStorage.getItem('pwa-install-dismissed');
+      if (!installDismissed) {
+        setIsInstallable(true);
+      }
+    }
+
+    // For Android/other browsers, show install prompt even without beforeinstallprompt
+    if (!iOS && !standalone) {
       const installDismissed = localStorage.getItem('pwa-install-dismissed');
       if (!installDismissed) {
         setTimeout(() => {
           setIsInstallable(true);
-        }, 2000);
+        }, 1000);
       }
     }
 
