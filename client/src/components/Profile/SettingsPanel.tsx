@@ -1,5 +1,6 @@
 import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
+import { storage } from "@/lib/storage";
 
 export function SettingsPanel() {
   const [settings, setSettings] = useState({
@@ -12,6 +13,25 @@ export function SettingsPanel() {
   const updateSetting = (key: string, value: boolean) => {
     setSettings(prev => ({ ...prev, [key]: value }));
     // TODO: Persist to storage
+  };
+
+  const handleResetProgress = async () => {
+    if (confirm('Are you sure you want to reset all progress? This will clear your onboarding data, tasks, and start fresh. This cannot be undone.')) {
+      try {
+        await storage.clearAllData();
+        // Clear PWA install dismissal too
+        localStorage.removeItem('pwa-install-dismissed');
+        localStorage.removeItem('pwa-user-interacted');
+        localStorage.removeItem('pwa-engagement-time');
+        localStorage.removeItem('pwa-installed');
+        
+        alert('All data cleared! The page will now reload to start fresh.');
+        window.location.reload();
+      } catch (error) {
+        console.error('Error resetting progress:', error);
+        alert('Error resetting progress. Please try again.');
+      }
+    }
   };
 
   return (
@@ -77,7 +97,10 @@ export function SettingsPanel() {
           <button className="w-full text-left py-3 text-gray-700 hover:text-primary transition-colors border-b border-gray-100">
             Terms of Service
           </button>
-          <button className="w-full text-left py-3 text-red-600 hover:text-red-700 transition-colors">
+          <button 
+            onClick={handleResetProgress}
+            className="w-full text-left py-3 text-red-600 hover:text-red-700 transition-colors"
+          >
             Reset Progress
           </button>
         </div>
