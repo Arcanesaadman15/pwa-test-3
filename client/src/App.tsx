@@ -18,7 +18,7 @@ function Router() {
 }
 
 function App() {
-  const { isInstallable, promptInstall, dismissInstall } = usePWA();
+  const { isInstallable, promptInstall, dismissInstall, isIOS } = usePWA();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -29,6 +29,7 @@ function App() {
             <InstallPrompt 
               onInstall={promptInstall} 
               onDismiss={dismissInstall} 
+              isIOS={isIOS}
             />
           )}
           <Toaster />

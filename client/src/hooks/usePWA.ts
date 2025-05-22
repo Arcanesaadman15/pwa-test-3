@@ -8,15 +8,26 @@ interface BeforeInstallPromptEvent extends Event {
 export function usePWA() {
   const [isInstallable, setIsInstallable] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [isIOS, setIsIOS] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
+    // Detect iOS
+    const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    setIsIOS(iOS);
+
+    // Detect if already installed (standalone mode)
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || 
+                      (window.navigator as any).standalone === true;
+    setIsStandalone(standalone);
+
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       
-      // Only show install prompt if not previously dismissed
+      // Only show install prompt if not previously dismissed and not already installed
       const installDismissed = localStorage.getItem('pwa-install-dismissed');
-      if (!installDismissed) {
+      if (!installDismissed && !standalone) {
         setIsInstallable(true);
       }
     };
@@ -24,8 +35,19 @@ export function usePWA() {
     const handleAppInstalled = () => {
       setIsInstallable(false);
       setDeferredPrompt(null);
+      setIsStandalone(true);
       localStorage.setItem('pwa-installed', 'true');
     };
+
+    // For iOS, show install prompt after a delay if not already installed
+    if (iOS && !standalone) {
+      const installDismissed = localStorage.getItem('pwa-install-dismissed');
+      if (!installDismissed) {
+        setTimeout(() => {
+          setIsInstallable(true);
+        }, 2000);
+      }
+    }
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
@@ -73,6 +95,8 @@ export function usePWA() {
   return {
     isInstallable,
     promptInstall,
-    dismissInstall
+    dismissInstall,
+    isIOS,
+    isStandalone
   };
 }

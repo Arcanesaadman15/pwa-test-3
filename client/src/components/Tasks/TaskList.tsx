@@ -16,7 +16,7 @@ interface TaskListProps {
 
 export function TaskList({ tasks, onTaskComplete, onTaskSkip, dayProgress }: TaskListProps) {
   // Handle case when tasks might not be loaded yet
-  if (!tasks) {
+  if (!tasks || !tasks.active || !tasks.completed || !tasks.skipped) {
     return (
       <div className="p-4 max-w-md mx-auto">
         <div className="flex justify-center mb-6">
