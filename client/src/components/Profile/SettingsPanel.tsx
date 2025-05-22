@@ -1,108 +1,197 @@
-import { Switch } from "@/components/ui/switch";
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { RefreshCw, AlertTriangle, ArrowLeft, Trash2, RotateCcw } from "lucide-react";
 import { storage } from "@/lib/storage";
+import { useToast } from "@/hooks/use-toast";
 
-export function SettingsPanel() {
-  const [settings, setSettings] = useState({
-    pushNotifications: true,
-    hapticFeedback: true,
-    darkMode: false,
-    dailyReminders: true
-  });
+interface SettingsPanelProps {
+  onBack: () => void;
+  onDataReset: () => void;
+}
 
-  const updateSetting = (key: string, value: boolean) => {
-    setSettings(prev => ({ ...prev, [key]: value }));
-    // TODO: Persist to storage
-  };
+export function SettingsPanel({ onBack, onDataReset }: SettingsPanelProps) {
+  const { toast } = useToast();
 
-  const handleResetProgress = async () => {
-    if (confirm('Are you sure you want to reset all progress? This will clear your onboarding data, tasks, and start fresh. This cannot be undone.')) {
-      try {
-        await storage.clearAllData();
-        // Clear PWA install dismissal too
-        localStorage.removeItem('pwa-install-dismissed');
-        localStorage.removeItem('pwa-user-interacted');
-        localStorage.removeItem('pwa-engagement-time');
-        localStorage.removeItem('pwa-installed');
-        
-        alert('All data cleared! The page will now reload to start fresh.');
-        window.location.reload();
-      } catch (error) {
-        console.error('Error resetting progress:', error);
-        alert('Error resetting progress. Please try again.');
-      }
+  const handleResetData = async () => {
+    try {
+      await storage.clearAllData();
+      onDataReset();
+      toast({
+        title: "✨ Fresh Start!",
+        description: "All data cleared. You can restart your journey now.",
+      });
+    } catch (error) {
+      console.error('Failed to reset data:', error);
+      toast({
+        title: "Error",
+        description: "Failed to reset data. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
+  const settingsSections = [
+    {
+      title: "Account",
+      items: [
+        {
+          icon: RefreshCw,
+          title: "Sync Data",
+          description: "Synchronize your progress across devices",
+          action: () => {
+            toast({
+              title: "Coming Soon",
+              description: "Cloud sync feature will be available in a future update.",
+            });
+          },
+          disabled: true
+        }
+      ]
+    },
+    {
+      title: "Progress",
+      items: [
+        {
+          icon: RotateCcw,
+          title: "Reset Progress",
+          description: "Clear all data and start fresh",
+          action: handleResetData,
+          destructive: true
+        }
+      ]
+    },
+    {
+      title: "About",
+      items: [
+        {
+          icon: AlertTriangle,
+          title: "Version",
+          description: "PeakForge v1.0.0",
+          action: () => {},
+          disabled: true
+        }
+      ]
+    }
+  ];
+
   return (
-    <div className="space-y-4">
-      <div className="bg-white rounded-xl p-6 shadow-sm">
-        <h3 className="font-semibold text-gray-800 mb-4">App Settings</h3>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-medium text-gray-700">Push Notifications</div>
-              <div className="text-sm text-gray-500">Daily reminders and achievements</div>
-            </div>
-            <Switch
-              checked={settings.pushNotifications}
-              onCheckedChange={(checked) => updateSetting('pushNotifications', checked)}
-            />
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-medium text-gray-700">Haptic Feedback</div>
-              <div className="text-sm text-gray-500">Vibration on task completion</div>
-            </div>
-            <Switch
-              checked={settings.hapticFeedback}
-              onCheckedChange={(checked) => updateSetting('hapticFeedback', checked)}
-            />
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-medium text-gray-700">Dark Mode</div>
-              <div className="text-sm text-gray-500">Automatic based on system</div>
-            </div>
-            <Switch
-              checked={settings.darkMode}
-              onCheckedChange={(checked) => updateSetting('darkMode', checked)}
-            />
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-medium text-gray-700">Daily Reminders</div>
-              <div className="text-sm text-gray-500">8:00 AM notifications</div>
-            </div>
-            <Switch
-              checked={settings.dailyReminders}
-              onCheckedChange={(checked) => updateSetting('dailyReminders', checked)}
-            />
+    <div className="min-h-screen bg-gray-900 text-white">
+      {/* Header */}
+      <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 px-6 pt-12 pb-8">
+        <div className="flex items-center gap-4 mb-8">
+          <Button
+            onClick={onBack}
+            className="bg-white/10 hover:bg-white/20 text-white border border-white/20 p-2"
+            size="sm"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold text-white">
+              Settings
+            </h1>
+            <p className="text-gray-300">
+              Manage your app preferences
+            </p>
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm">
-        <h3 className="font-semibold text-gray-800 mb-4">Account</h3>
-        <div className="space-y-3">
-          <button className="w-full text-left py-3 text-gray-700 hover:text-primary transition-colors border-b border-gray-100">
-            Export Progress Data
-          </button>
-          <button className="w-full text-left py-3 text-gray-700 hover:text-primary transition-colors border-b border-gray-100">
-            Privacy Policy
-          </button>
-          <button className="w-full text-left py-3 text-gray-700 hover:text-primary transition-colors border-b border-gray-100">
-            Terms of Service
-          </button>
-          <button 
-            onClick={handleResetProgress}
-            className="w-full text-left py-3 text-red-600 hover:text-red-700 transition-colors"
-          >
-            Reset Progress
-          </button>
+      <div className="px-6 py-6 space-y-6">
+        {/* Settings Sections */}
+        {settingsSections.map((section, sectionIndex) => (
+          <div key={sectionIndex} className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
+            <h3 className="text-lg font-bold text-white mb-4">{section.title}</h3>
+            
+            <div className="space-y-3">
+              {section.items.map((item, itemIndex) => (
+                <div 
+                  key={itemIndex}
+                  className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${
+                    item.disabled 
+                      ? 'border-gray-600 bg-gray-700/50 opacity-50 cursor-not-allowed'
+                      : item.destructive
+                        ? 'border-red-500/30 bg-red-900/20 hover:bg-red-900/30 cursor-pointer'
+                        : 'border-gray-600 bg-gray-700/50 hover:bg-gray-700 cursor-pointer'
+                  }`}
+                  onClick={!item.disabled ? item.action : undefined}
+                >
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                    item.destructive ? 'bg-red-600' : 'bg-gray-600'
+                  }`}>
+                    <item.icon className="w-5 h-5 text-white" />
+                  </div>
+                  
+                  <div className="flex-1">
+                    <h4 className={`font-medium ${
+                      item.destructive ? 'text-red-400' : 'text-white'
+                    }`}>
+                      {item.title}
+                    </h4>
+                    <p className="text-xs text-gray-500">{item.description}</p>
+                  </div>
+                  
+                  {item.disabled && (
+                    <div className="text-xs text-gray-500">
+                      Coming Soon
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        {/* Reset Data Warning */}
+        <div className="bg-red-900/20 rounded-2xl p-6 border border-red-500/30">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5" />
+            <div>
+              <h3 className="text-lg font-bold text-red-400 mb-2">Data Reset Warning</h3>
+              <p className="text-red-200 text-sm mb-4">
+                Resetting your data will permanently delete all progress, including:
+              </p>
+              <ul className="text-red-200 text-sm space-y-1 mb-4">
+                <li>• Task completion history</li>
+                <li>• Skill progression and unlocks</li>
+                <li>• Streak records and achievements</li>
+                <li>• All user preferences and settings</li>
+              </ul>
+              <p className="text-red-200 text-xs">
+                This action cannot be undone. Make sure you want to start completely fresh.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* App Info */}
+        <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
+          <h3 className="text-lg font-bold text-white mb-4">App Information</h3>
+          
+          <div className="space-y-3 text-sm">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Version</span>
+              <span className="text-white font-medium">1.0.0</span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Build</span>
+              <span className="text-white font-medium">2024.1</span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Platform</span>
+              <span className="text-white font-medium">Progressive Web App</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Privacy Notice */}
+        <div className="bg-blue-900/20 rounded-2xl p-6 border border-blue-500/30">
+          <h3 className="text-lg font-bold text-blue-400 mb-2">Privacy & Data</h3>
+          <p className="text-blue-200 text-sm">
+            All your data is stored locally on your device. We don't collect or share any personal information. 
+            Your wellness journey stays completely private and under your control.
+          </p>
         </div>
       </div>
     </div>

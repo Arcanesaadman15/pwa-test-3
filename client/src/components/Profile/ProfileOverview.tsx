@@ -1,168 +1,223 @@
-import { SettingsPanel } from "./SettingsPanel";
 import { User } from "@/types";
-import { usePWA } from "@/hooks/usePWA";
+import { User as UserIcon, Settings, Trophy, Target, Calendar, Flame, Star, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ProfileOverviewProps {
   user: User;
+  onOpenSettings: () => void;
 }
 
-export function ProfileOverview({ user }: ProfileOverviewProps) {
-  const { isInstallable, promptInstall, isIOS, isStandalone } = usePWA();
+export function ProfileOverview({ user, onOpenSettings }: ProfileOverviewProps) {
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    }).format(date);
+  };
+
+  const getProgramBadge = (program: string) => {
+    const badges = {
+      beginner: { color: 'bg-green-600', text: 'Beginner Explorer', icon: '🌱' },
+      intermediate: { color: 'bg-blue-600', text: 'Skilled Practitioner', icon: '⚡' },
+      advanced: { color: 'bg-purple-600', text: 'Master Achiever', icon: '🔥' }
+    };
+    return badges[program as keyof typeof badges] || badges.beginner;
+  };
+
+  const badge = getProgramBadge(user.program);
+  const daysSinceStart = Math.floor((new Date().getTime() - new Date(user.startDate).getTime()) / (1000 * 60 * 60 * 24));
+  const progressPercentage = Math.round((user.completedDays / 63) * 100);
+
+  const quickStats = [
+    { label: 'Current Streak', value: user.currentStreak, icon: Flame, color: 'text-red-400' },
+    { label: 'Days Completed', value: user.completedDays, icon: Calendar, color: 'text-green-400' },
+    { label: 'Current Level', value: user.level || 1, icon: Star, color: 'text-yellow-400' },
+    { label: 'Achievements', value: user.achievements || 0, icon: Trophy, color: 'text-purple-400' }
+  ];
+
+  const milestones = [
+    { title: 'First Week', description: 'Complete 7 days', achieved: user.completedDays >= 7, icon: '🎯' },
+    { title: 'Monthly Warrior', description: 'Complete 30 days', achieved: user.completedDays >= 30, icon: '🏆' },
+    { title: 'Halfway Hero', description: 'Reach day 32', achieved: user.currentDay >= 32, icon: '⭐' },
+    { title: 'Program Graduate', description: 'Complete all 63 days', achieved: user.completedDays >= 63, icon: '👑' }
+  ];
 
   return (
-    <div className="p-4 max-w-md mx-auto space-y-6">
-      {/* Profile Header */}
-      <div className="bg-gradient-to-r from-primary to-secondary rounded-xl p-6 text-white">
-        <div className="flex items-center space-x-4 mb-4">
-          <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-            <i className="fas fa-user text-2xl"></i>
+    <div className="min-h-screen bg-gray-900 text-white">
+      {/* Header with Profile Info */}
+      <div className="bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-800 px-6 pt-12 pb-8">
+        <div className="text-center mb-8">
+          {/* Avatar */}
+          <div className="w-24 h-24 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white/20">
+            <UserIcon className="w-12 h-12 text-gray-300" />
           </div>
-          <div>
-            <h2 className="text-xl font-bold">{user.name || 'Wellness Warrior'}</h2>
-            <p className="opacity-90">
-              {user.program || 'Beginner'} Program • Day {user.currentDay || 1}
-            </p>
-            <p className="text-sm opacity-75">
-              Member since {new Date(user.startDate || Date.now()).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-            </p>
+          
+          {/* Name and Program */}
+          <h1 className="text-3xl font-bold text-white mb-2">
+            {user.name}
+          </h1>
+          
+          {/* Program Badge */}
+          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${badge.color} text-white text-sm font-medium`}>
+            <span className="text-lg">{badge.icon}</span>
+            {badge.text}
           </div>
-        </div>
-        
-        <div className="grid grid-cols-3 gap-4 text-center">
-          <div>
-            <div className="text-2xl font-bold">{user.completedDays || 0}</div>
-            <div className="text-xs opacity-80">Days Active</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold">{user.achievements || 0}</div>
-            <div className="text-xs opacity-80">Achievements</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold">{user.level || 1}</div>
-            <div className="text-xs opacity-80">Level</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Program Selection */}
-      <div className="bg-white rounded-xl p-6 shadow-sm">
-        <h3 className="font-semibold text-gray-800 mb-4">Current Program</h3>
-        <div className="border border-primary rounded-lg p-4 bg-primary/5">
-          <div className="flex items-center justify-between mb-2">
-            <h4 className="font-semibold text-primary">{user.program || 'Beginner'} Program</h4>
-            <span className="bg-primary text-white px-2 py-1 rounded-full text-xs">Active</span>
-          </div>
-          <p className="text-sm text-gray-600 mb-3">
-            {user.program === 'Advanced' && "Comprehensive wellness routines with high-intensity activities"}
-            {user.program === 'Intermediate' && "Balanced approach combining consistent habits with moderate challenges"}
-            {(!user.program || user.program === 'Beginner') && "Gentle introduction to wellness habits"}
+          
+          <p className="text-purple-200 mt-2">
+            Journey started {formatDate(new Date(user.startDate))}
           </p>
-          <div className="flex justify-between text-sm text-gray-500">
-            <span>Day {user.currentDay || 1} of 63</span>
-            <span>{Math.round(((user.completedDays || 0) / Math.max(user.currentDay || 1, 1)) * 100)}% completion rate</span>
-          </div>
         </div>
-        
-        <button className="w-full mt-3 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
-          Change Program
-        </button>
-      </div>
 
-      {/* Skill Tree Preview */}
-      <div className="bg-white rounded-xl p-6 shadow-sm">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-semibold text-gray-800">Skill Tree Progress</h3>
-          <button className="text-primary font-medium text-sm hover:text-primary/80 transition-colors">
-            View All
-          </button>
-        </div>
-        
-        <div className="grid grid-cols-5 gap-3">
-          <div className="text-center">
-            <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mb-2 skill-node mx-auto">
-              <i className="fas fa-bed text-white"></i>
-            </div>
-            <div className="text-xs text-gray-600">Sleep</div>
-            <div className="text-xs text-purple-600 font-medium">Lv 2</div>
-          </div>
-          
-          <div className="text-center">
-            <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mb-2 skill-node mx-auto">
-              <i className="fas fa-running text-white"></i>
-            </div>
-            <div className="text-xs text-gray-600">Movement</div>
-            <div className="text-xs text-green-600 font-medium">Lv 1</div>
-          </div>
-          
-          <div className="text-center">
-            <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center mb-2 mx-auto">
-              <i className="fas fa-apple-alt text-gray-500"></i>
-            </div>
-            <div className="text-xs text-gray-400">Nutrition</div>
-            <div className="text-xs text-gray-400">Locked</div>
-          </div>
-          
-          <div className="text-center">
-            <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mb-2 skill-node mx-auto">
-              <i className="fas fa-sun text-white"></i>
-            </div>
-            <div className="text-xs text-gray-600">Recovery</div>
-            <div className="text-xs text-orange-600 font-medium">Lv 1</div>
-          </div>
-          
-          <div className="text-center">
-            <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center mb-2 mx-auto">
-              <i className="fas fa-brain text-gray-500"></i>
-            </div>
-            <div className="text-xs text-gray-400">Mindfulness</div>
-            <div className="text-xs text-gray-400">Locked</div>
-          </div>
-        </div>
-      </div>
-
-      {/* PWA Install Section */}
-      {!isStandalone && (
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white">
-          <div className="flex items-center space-x-4 mb-4">
-            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-              <i className="fas fa-download text-xl"></i>
-            </div>
-            <div>
-              <h3 className="font-semibold text-lg">📱 Install PeakForge App</h3>
-              <p className="text-sm text-white/90">
-                {isIOS 
-                  ? "Add to your home screen for the full app experience" 
-                  : "Install for offline access and push notifications"
-                }
-              </p>
-            </div>
-          </div>
-          
-          <Button
-            onClick={promptInstall}
-            className="w-full bg-white text-purple-600 hover:bg-white/90 font-semibold"
+        {/* Settings Button */}
+        <div className="text-center">
+          <Button 
+            onClick={onOpenSettings}
+            className="bg-white/10 hover:bg-white/20 text-white border border-white/20"
           >
-            {isIOS ? "Show Install Instructions" : "Install Now"}
+            <Settings className="w-4 h-4 mr-2" />
+            Settings
           </Button>
+        </div>
+      </div>
+
+      <div className="px-6 py-6 space-y-6">
+        {/* Progress Overview */}
+        <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
+          <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <Target className="w-5 h-5 text-blue-400" />
+            Journey Progress
+          </h3>
           
-          {isIOS && (
-            <div className="mt-4 p-3 bg-white/10 rounded-lg">
-              <div className="text-sm">
-                <p className="font-medium mb-2">Quick Install Steps:</p>
-                <ol className="list-decimal list-inside space-y-1 text-xs">
-                  <li>Tap the Share button <i className="fas fa-share"></i> in Safari</li>
-                  <li>Scroll down and tap "Add to Home Screen"</li>
-                  <li>Tap "Add" to install PeakForge</li>
-                </ol>
+          <div className="space-y-4">
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-gray-400">Overall Progress</span>
+                <span className="text-white font-bold">{progressPercentage}%</span>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-3">
+                <div 
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-300"
+                  style={{ width: `${progressPercentage}%` }}
+                ></div>
+              </div>
+              <div className="text-xs text-gray-400 mt-1">
+                Day {user.currentDay} of 63
               </div>
             </div>
-          )}
-        </div>
-      )}
 
-      {/* Settings */}
-      <SettingsPanel />
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-400">{daysSinceStart}</div>
+                <div className="text-xs text-gray-400">Days Since Start</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-400">{user.longestStreak}</div>
+                <div className="text-xs text-gray-400">Best Streak</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Stats Grid */}
+        <div className="grid grid-cols-2 gap-4">
+          {quickStats.map((stat, index) => (
+            <div key={index} className="bg-gray-800 rounded-2xl p-5 border border-gray-700">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
+                  <stat.icon className={`w-5 h-5 ${stat.color}`} />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-white">{stat.value}</p>
+                </div>
+              </div>
+              <p className="text-gray-400 text-sm">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Milestones */}
+        <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
+          <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <Shield className="w-5 h-5 text-yellow-400" />
+            Milestones
+          </h3>
+          
+          <div className="space-y-3">
+            {milestones.map((milestone, index) => (
+              <div 
+                key={index}
+                className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${
+                  milestone.achieved 
+                    ? 'border-yellow-500/30 bg-yellow-900/20' 
+                    : 'border-gray-600 bg-gray-700/50'
+                }`}
+              >
+                <div className={`text-2xl ${milestone.achieved ? '' : 'grayscale opacity-50'}`}>
+                  {milestone.icon}
+                </div>
+                <div className="flex-1">
+                  <h4 className={`font-medium ${milestone.achieved ? 'text-yellow-400' : 'text-gray-400'}`}>
+                    {milestone.title}
+                  </h4>
+                  <p className="text-xs text-gray-500">{milestone.description}</p>
+                </div>
+                {milestone.achieved && (
+                  <div className="text-yellow-400 text-xs font-medium">
+                    ✓ Completed
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Activity Summary */}
+        <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
+          <h3 className="text-xl font-bold text-white mb-4">Activity Summary</h3>
+          
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Total Days Active</span>
+              <span className="text-white font-bold">{daysSinceStart} days</span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Completion Rate</span>
+              <span className="text-white font-bold">
+                {daysSinceStart > 0 ? Math.round((user.completedDays / daysSinceStart) * 100) : 0}%
+              </span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Program Type</span>
+              <span className="text-white font-bold capitalize">{user.program}</span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Started</span>
+              <span className="text-white font-bold">{formatDate(new Date(user.startDate))}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Motivational Section */}
+        <div className="bg-gradient-to-r from-purple-800/50 to-pink-800/50 rounded-2xl p-6 border border-purple-500/30">
+          <h3 className="text-xl font-bold text-white mb-2">Keep Going!</h3>
+          <p className="text-purple-200 text-sm mb-4">
+            {user.currentStreak > 0 
+              ? `You're on a ${user.currentStreak} day streak! Don't break the chain.`
+              : "Start your journey today and build momentum with your first task!"
+            }
+          </p>
+          <div className="flex items-center gap-2 text-purple-300 text-sm">
+            <Flame className="w-4 h-4" />
+            <span>
+              {63 - user.completedDays} days remaining to complete your transformation
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
