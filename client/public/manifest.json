@@ -1,4 +1,5 @@
 {
+  "id": "/",
   "name": "PeakForge - Wellness Journey",
   "short_name": "PeakForge",
   "description": "Transform yourself, one day at a time",
@@ -6,8 +7,9 @@
   "display": "standalone",
   "background_color": "#FAFAFA",
   "theme_color": "#22C55E",
-  "orientation": "portrait-primary",
+  "orientation": "portrait",
   "scope": "/",
+  "lang": "en",
   "icons": [
     {
       "src": "/david.png",
