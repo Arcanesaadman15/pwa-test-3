@@ -93,9 +93,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header user={user!} />
-      
+    <div className="min-h-screen" style={{ backgroundColor: '#111827' }}>
       <main className="pb-20">
         {user ? renderTabContent() : (
           <div className="p-4 max-w-md mx-auto">

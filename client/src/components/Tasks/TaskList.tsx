@@ -349,7 +349,7 @@ export function TaskList() {
   const currentTabTasks = getCurrentTabTasks();
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white pb-24">
+    <div className="min-h-screen text-white pb-24" style={{ backgroundColor: '#111827' }}>
       {/* Compact Header with Day Navigation and Tabs */}
       <div className="bg-gradient-to-br from-red-900 via-red-800 to-orange-800 px-6 pt-16 pb-6">
         {/* Day Navigation */}
