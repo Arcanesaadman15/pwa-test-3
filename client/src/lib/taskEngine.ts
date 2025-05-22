@@ -32,28 +32,24 @@ export class TaskEngine {
   private getCurrentActiveDay(): number {
     if (!this.user) return 1;
     
-    // Calendar days since program start
-    const startDate = new Date(this.user.startDate);
-    const today = new Date();
-    const daysSinceStart = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    // Find the furthest day that can be unlocked based on sequential completion
+    let activeDay = 1;
     
-    // Days with completed tasks
-    const daysWithCompletions = new Set(this.taskCompletions.map(c => c.day)).size;
-    
-    // Use greater of calendar days or days with progress, capped at 63
-    const effectiveDay = Math.min(Math.max(daysSinceStart, daysWithCompletions || 1), 63);
-    
-    // Validate sequential completion - find furthest valid day
-    let validDay = 1;
-    for (let day = 1; day <= effectiveDay; day++) {
-      if (day === 1 || this.isDayCompleted(day - 1)) {
-        validDay = day;
+    // Check each day sequentially
+    for (let day = 1; day <= 63; day++) {
+      if (day === 1) {
+        // Day 1 is always unlocked
+        activeDay = day;
+      } else if (this.isDayCompleted(day - 1)) {
+        // If previous day is complete, this day becomes active
+        activeDay = day;
       } else {
+        // Previous day not complete, so this is as far as we can go
         break;
       }
     }
     
-    return validDay;
+    return activeDay;
   }
 
   // Check if all tasks for a day are completed or skipped
@@ -66,23 +62,15 @@ export class TaskEngine {
     );
   }
 
-  // Get the furthest unlocked day
+  // Get the furthest unlocked day (same as current active day)
   private getFurthestUnlockedDay(): number {
-    let furthest = 1;
-    for (let day = 1; day <= 63; day++) {
-      if (day === 1 || this.isDayCompleted(day - 1)) {
-        furthest = day;
-      } else {
-        break;
-      }
-    }
-    return furthest;
+    return this.getCurrentActiveDay();
   }
 
   // Navigation methods
   navigateToDay(day: number): boolean {
-    const furthestUnlocked = this.getFurthestUnlockedDay();
-    if (day < 1 || day > 63 || day > furthestUnlocked) {
+    // Allow browsing any day from 1 to 63
+    if (day < 1 || day > 63) {
       return false;
     }
     
@@ -97,8 +85,7 @@ export class TaskEngine {
   }
 
   navigateNext(): boolean {
-    const furthestUnlocked = this.getFurthestUnlockedDay();
-    if (this.viewingDay >= furthestUnlocked) return false;
+    if (this.viewingDay >= 63) return false;
     return this.navigateToDay(this.viewingDay + 1);
   }
 
@@ -113,8 +100,7 @@ export class TaskEngine {
   }
 
   canNavigateNext(): boolean {
-    const furthestUnlocked = this.getFurthestUnlockedDay();
-    return this.viewingDay < furthestUnlocked;
+    return this.viewingDay < 63;
   }
 
   // Task interaction methods
@@ -193,17 +179,16 @@ export class TaskEngine {
   private async checkDayAdvancement(): Promise<void> {
     const currentActiveDay = this.getCurrentActiveDay();
     
-    // Only auto-advance if user is viewing the current active day
-    if (!this.manualNavigation && this.viewingDay === currentActiveDay) {
-      if (this.isDayCompleted(currentActiveDay) && currentActiveDay < 63) {
-        // Advance to next day
-        this.viewingDay = currentActiveDay + 1;
-        
-        // Update user's current day
-        if (this.user) {
-          this.user.currentDay = currentActiveDay + 1;
-          await storage.saveUser(this.user);
-        }
+    // If current day is completed and there's a next day, advance automatically
+    if (this.isDayCompleted(currentActiveDay) && currentActiveDay < 63) {
+      // Auto-advance to next day
+      this.viewingDay = currentActiveDay + 1;
+      this.manualNavigation = false; // Reset manual navigation since we auto-advanced
+      
+      // Update user's current day
+      if (this.user) {
+        this.user.currentDay = currentActiveDay + 1;
+        await storage.saveUser(this.user);
       }
     }
   }
