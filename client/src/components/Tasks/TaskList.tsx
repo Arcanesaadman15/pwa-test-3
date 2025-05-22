@@ -3,7 +3,7 @@ import { Task } from "@/types";
 import { useTaskEngine } from "@/hooks/useTaskEngine";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, CheckCircle, XCircle, Clock, Lock, Play } from "lucide-react";
+import { ChevronLeft, ChevronRight, CheckCircle, XCircle, Clock, Lock, Play, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface TaskCardProps {
@@ -223,12 +223,8 @@ export function TaskList() {
           title: "🎉 Day Complete!",
           description: `Amazing! You've unlocked Day ${currentDay}. Keep the momentum going!`,
         });
-      } else {
-        toast({
-          title: "🎉 Task Completed!",
-          description: "Great job! Keep building those habits.",
-        });
       }
+      // No toast for individual task completion
     } catch (error) {
       console.error('Failed to complete task:', error);
       toast({
@@ -258,12 +254,8 @@ export function TaskList() {
           title: "🎉 Day Complete!",
           description: `You've finished all tasks for Day ${previousDay}. Welcome to Day ${currentDay}!`,
         });
-      } else {
-        toast({
-          title: "Task Skipped",
-          description: "No worries! Focus on what works for you today.",
-        });
       }
+      // No toast for individual task skip
     } catch (error) {
       console.error('Failed to skip task:', error);
       toast({
@@ -310,6 +302,15 @@ export function TaskList() {
     }
   };
 
+  const handleGoToToday = async () => {
+    if (!taskEngine) return;
+    
+    if (taskEngine.goToToday()) {
+      setActiveTab('todo');
+      await loadTasks();
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -348,7 +349,7 @@ export function TaskList() {
   const currentTabTasks = getCurrentTabTasks();
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gray-900 text-white pb-20">
       {/* Header */}
       <div className="bg-gradient-to-br from-red-900 via-red-800 to-orange-800 px-6 pt-12 pb-8">
         <div className="text-center mb-8">
@@ -385,6 +386,19 @@ export function TaskList() {
             <ChevronRight className="w-6 h-6" />
           </Button>
         </div>
+
+        {/* Today Button - Show only when not on current active day */}
+        {dayInfo.dayNumber !== taskEngine?.getActiveDay() && (
+          <div className="flex justify-center mb-6">
+            <Button
+              onClick={handleGoToToday}
+              className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-6 py-2 rounded-full text-sm font-medium"
+            >
+              <Calendar className="w-4 h-4 mr-2" />
+              Go to Today (Day {taskEngine?.getActiveDay()})
+            </Button>
+          </div>
+        )}
 
         {/* Tab Navigation */}
         <div className="flex bg-black/20 rounded-2xl p-1 max-w-md mx-auto">
