@@ -210,21 +210,29 @@ export class TaskEngine {
   }
 
   // Check if current day is complete and advance if necessary
-  private async checkDayAdvancement(): Promise<void> {
+  private async checkDayAdvancement(): Promise<boolean> {
     const currentActiveDay = this.getCurrentActiveDay();
     
     // If current day is completed and there's a next day, advance automatically
     if (this.isDayCompleted(currentActiveDay) && currentActiveDay < 63) {
+      const newDay = currentActiveDay + 1;
+      
+      // Update user's current day first
+      if (this.user) {
+        this.user.currentDay = newDay;
+        this.user.completedDays = (this.user.completedDays || 0) + 1;
+        await storage.saveUser(this.user);
+        await storage.setCurrentDay(newDay);
+      }
+      
       // Auto-advance to next day and navigate user there
-      this.viewingDay = currentActiveDay + 1;
+      this.viewingDay = newDay;
       this.manualNavigation = false; // Reset manual navigation since we auto-advanced
       
-      // Update user's current day
-      if (this.user) {
-        this.user.currentDay = currentActiveDay + 1;
-        await storage.saveUser(this.user);
-      }
+      return true; // Signal that advancement happened
     }
+    
+    return false; // No advancement
   }
 
   // Get tasks for viewing day with proper three-panel organization

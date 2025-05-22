@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+import { ArrowLeft, ArrowRight, Sun, Trees, Users, Zap } from "lucide-react";
 
 interface PersonalizationTogglesProps {
   onNext: () => void;
@@ -11,110 +10,155 @@ interface PersonalizationTogglesProps {
   totalSteps: number;
 }
 
-export function PersonalizationToggles({ onNext, onPrevious, data, updateData, currentStep, totalSteps }: PersonalizationTogglesProps) {
-  const [preferences, setPreferences] = useState(data.preferences || {
-    morningPerson: true,
-    outdoorActivities: false,
-    socialActivities: true,
-    highIntensity: false
-  });
+export function PersonalizationToggles({ 
+  onNext, 
+  onPrevious, 
+  data, 
+  updateData, 
+  currentStep, 
+  totalSteps 
+}: PersonalizationTogglesProps) {
+  const preferences = [
+    {
+      id: 'morningPerson',
+      icon: Sun,
+      title: 'Morning Person',
+      description: 'I prefer morning workouts and early starts',
+      value: data.preferences?.morningPerson || false
+    },
+    {
+      id: 'outdoorActivities',
+      icon: Trees,
+      title: 'Outdoor Activities',
+      description: 'I enjoy exercising outside when possible',
+      value: data.preferences?.outdoorActivities || false
+    },
+    {
+      id: 'socialActivities',
+      icon: Users,
+      title: 'Social Activities',
+      description: 'I like group activities and accountability',
+      value: data.preferences?.socialActivities || false
+    },
+    {
+      id: 'highIntensity',
+      icon: Zap,
+      title: 'High Intensity',
+      description: 'I enjoy challenging, intense workouts',
+      value: data.preferences?.highIntensity || false
+    }
+  ];
 
-  const updatePreference = (key: string, value: boolean) => {
-    const newPreferences = { ...preferences, [key]: value };
-    setPreferences(newPreferences);
-  };
-
-  const handleContinue = () => {
-    updateData({ preferences });
-    onNext();
+  const togglePreference = (id: string) => {
+    updateData({
+      preferences: {
+        ...data.preferences,
+        [id]: !data.preferences?.[id]
+      }
+    });
   };
 
   return (
-    <div className="p-6 min-h-screen flex flex-col">
-      <div className="mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <button 
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+      {/* Header */}
+      <div className="bg-gradient-to-br from-green-900 via-teal-800 to-blue-800 px-6 pt-16 pb-12">
+        <div className="flex items-center gap-4 mb-6">
+          <Button
             onClick={onPrevious}
-            className="p-2 hover:bg-gray-100 rounded-full"
+            className="bg-white/10 hover:bg-white/20 text-white border border-white/20 p-2"
+            size="sm"
           >
-            <i className="fas fa-arrow-left text-gray-600"></i>
-          </button>
-          <h2 className="text-2xl font-bold text-gray-900">Your Preferences</h2>
-          <span className="text-sm text-gray-500">{currentStep} of {totalSteps}</span>
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
+          <div className="flex-1">
+            <div className="text-sm text-teal-200 mb-1">
+              Step {currentStep} of {totalSteps}
+            </div>
+            <div className="w-full bg-teal-800 rounded-full h-1">
+              <div 
+                className="bg-teal-300 h-1 rounded-full transition-all duration-300"
+                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+              ></div>
+            </div>
+          </div>
         </div>
         
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div 
-            className="bg-primary h-2 rounded-full transition-all duration-300" 
-            style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-          ></div>
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-white mb-4">
+            Your Preferences
+          </h1>
+          <p className="text-xl text-teal-200 leading-relaxed">
+            Tell us what you enjoy to personalize your experience
+          </p>
         </div>
       </div>
-      
-      <div className="flex-1 space-y-6">
-        <div className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm">
-          <div className="flex items-center space-x-3">
-            <i className="fas fa-sun text-orange-500"></i>
-            <div>
-              <div className="font-medium">Morning Person</div>
-              <div className="text-sm text-gray-600">Prefer morning activities</div>
+
+      {/* Content */}
+      <div className="flex-1 px-6 py-8 space-y-6">
+        {/* Preference Cards */}
+        <div className="space-y-4">
+          {preferences.map((preference) => (
+            <div 
+              key={preference.id}
+              onClick={() => togglePreference(preference.id)}
+              className={`p-6 rounded-2xl border-2 transition-all cursor-pointer ${
+                preference.value 
+                  ? 'border-teal-500 bg-teal-900/30' 
+                  : 'border-gray-700 bg-gray-800 hover:border-gray-600'
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                  preference.value ? 'bg-teal-600' : 'bg-gray-700'
+                }`}>
+                  <preference.icon className="w-6 h-6 text-white" />
+                </div>
+                
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-white mb-1">
+                    {preference.title}
+                  </h3>
+                  <p className="text-gray-400 text-sm">
+                    {preference.description}
+                  </p>
+                </div>
+                
+                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                  preference.value 
+                    ? 'border-teal-500 bg-teal-500' 
+                    : 'border-gray-500'
+                }`}>
+                  {preference.value && (
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-          <Switch
-            checked={preferences.morningPerson}
-            onCheckedChange={(checked) => updatePreference('morningPerson', checked)}
-          />
+          ))}
         </div>
-        
-        <div className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm">
-          <div className="flex items-center space-x-3">
-            <i className="fas fa-tree text-green-500"></i>
-            <div>
-              <div className="font-medium">Outdoor Activities</div>
-              <div className="text-sm text-gray-600">Prefer outdoor exercises</div>
-            </div>
-          </div>
-          <Switch
-            checked={preferences.outdoorActivities}
-            onCheckedChange={(checked) => updatePreference('outdoorActivities', checked)}
-          />
-        </div>
-        
-        <div className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm">
-          <div className="flex items-center space-x-3">
-            <i className="fas fa-users text-blue-500"></i>
-            <div>
-              <div className="font-medium">Social Activities</div>
-              <div className="text-sm text-gray-600">Enjoy group activities</div>
-            </div>
-          </div>
-          <Switch
-            checked={preferences.socialActivities}
-            onCheckedChange={(checked) => updatePreference('socialActivities', checked)}
-          />
-        </div>
-        
-        <div className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm">
-          <div className="flex items-center space-x-3">
-            <i className="fas fa-bolt text-yellow-500"></i>
-            <div>
-              <div className="font-medium">High Intensity</div>
-              <div className="text-sm text-gray-600">Prefer challenging workouts</div>
-            </div>
-          </div>
-          <Switch
-            checked={preferences.highIntensity}
-            onCheckedChange={(checked) => updatePreference('highIntensity', checked)}
-          />
+
+        {/* Info Box */}
+        <div className="bg-blue-900/20 rounded-2xl p-6 border border-blue-500/30">
+          <h3 className="text-lg font-bold text-blue-400 mb-2">
+            💡 Personalization Benefits
+          </h3>
+          <p className="text-blue-200 text-sm leading-relaxed">
+            Your preferences help us recommend the best tasks and timing for your lifestyle. 
+            You can always change these later in your profile settings.
+          </p>
         </div>
       </div>
-      
-      <Button 
-        onClick={handleContinue}
-        className="w-full bg-primary text-white py-4 rounded-xl font-semibold text-lg"
-      >
-        Start My Journey
-      </Button>
+
+      {/* Action Button */}
+      <div className="px-6 pb-8">
+        <Button
+          onClick={onNext}
+          className="w-full bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 text-white py-4 rounded-2xl text-lg font-medium"
+        >
+          Continue
+          <ArrowRight className="w-5 h-5 ml-2" />
+        </Button>
+      </div>
     </div>
   );
 }

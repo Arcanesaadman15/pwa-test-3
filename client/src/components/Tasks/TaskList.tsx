@@ -211,6 +211,9 @@ export function TaskList() {
       const previousDay = taskEngine.getViewingDay();
       await taskEngine.completeTask(taskId);
       
+      // Reload tasks first to get updated state
+      await loadTasks();
+      
       // Check if day advanced after completion
       const currentDay = taskEngine.getViewingDay();
       if (currentDay > previousDay) {
@@ -226,8 +229,6 @@ export function TaskList() {
           description: "Great job! Keep building those habits.",
         });
       }
-      
-      await loadTasks();
     } catch (error) {
       console.error('Failed to complete task:', error);
       toast({
@@ -245,6 +246,9 @@ export function TaskList() {
       const previousDay = taskEngine.getViewingDay();
       await taskEngine.skipTask(taskId, "Skipped by user");
       
+      // Reload tasks first to get updated state
+      await loadTasks();
+      
       // Check if day advanced after skipping
       const currentDay = taskEngine.getViewingDay();
       if (currentDay > previousDay) {
@@ -260,8 +264,6 @@ export function TaskList() {
           description: "No worries! Focus on what works for you today.",
         });
       }
-      
-      await loadTasks();
     } catch (error) {
       console.error('Failed to skip task:', error);
       toast({
@@ -476,12 +478,15 @@ export function TaskList() {
           <div className="bg-orange-900 border border-orange-600 rounded-2xl p-4 text-center">
             <Lock className="w-8 h-8 text-orange-400 mx-auto mb-2" />
             <h3 className="font-bold text-orange-300 mb-1">
-              {dayInfo.isCurrentDay ? 'Current Day' : 'Future Day'}
+              {dayInfo.dayNumber < (taskEngine?.getActiveDay() || 1) ? 'Past Day' : 
+               dayInfo.isCurrentDay ? 'Current Day' : 'Future Day'}
             </h3>
             <p className="text-orange-400 text-sm">
-              {dayInfo.isCurrentDay
-                ? 'Complete previous days to unlock tasks'
-                : 'Browse only - complete current day first'}
+              {dayInfo.dayNumber < (taskEngine?.getActiveDay() || 1)
+                ? 'This day is in the past - view only'
+                : dayInfo.isCurrentDay
+                  ? 'Complete previous days to unlock tasks'
+                  : 'Browse only - complete current day first'}
             </p>
           </div>
         </div>
