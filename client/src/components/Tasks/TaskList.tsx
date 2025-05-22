@@ -3,8 +3,7 @@ import { Task } from "@/types";
 import { useTaskEngine } from "@/hooks/useTaskEngine";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { ChevronLeft, ChevronRight, Calendar, CheckCircle, XCircle, Clock, Lock, Home, Play } from "lucide-react";
+import { ChevronLeft, ChevronRight, CheckCircle, XCircle, Clock, Lock, Play } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface TaskCardProps {
@@ -19,19 +18,19 @@ interface TaskCardProps {
 }
 
 function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReason, onComplete, onSkip }: TaskCardProps) {
-  const getCategoryColor = (category: string) => {
-    const colors = {
-      'Sleep': 'bg-purple-100 text-purple-800 border-purple-200',
-      'Movement': 'bg-green-100 text-green-800 border-green-200',
-      'Nutrition': 'bg-orange-100 text-orange-800 border-orange-200',
-      'Recovery': 'bg-blue-100 text-blue-800 border-blue-200',
-      'Mindfulness': 'bg-pink-100 text-pink-800 border-pink-200',
-      'Training': 'bg-red-100 text-red-800 border-red-200',
-      'Explosive Training': 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      'Breath & Tension': 'bg-indigo-100 text-indigo-800 border-indigo-200',
-      'Mind': 'bg-teal-100 text-teal-800 border-teal-200'
+  const getCategoryIcon = (category: string) => {
+    const icons = {
+      'Sleep': '🌙',
+      'Movement': '🏃',
+      'Nutrition': '🥗',
+      'Recovery': '💆',
+      'Mindfulness': '🧘',
+      'Training': '💪',
+      'Explosive Training': '⚡',
+      'Breath & Tension': '🫁',
+      'Mind': '🧠'
     };
-    return colors[category as keyof typeof colors] || 'bg-gray-100 text-gray-800 border-gray-200';
+    return icons[category as keyof typeof icons] || '📋';
   };
 
   const getDifficultyDots = (difficulty: number) => {
@@ -39,123 +38,107 @@ function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReaso
       <div
         key={i}
         className={`w-2 h-2 rounded-full ${
-          i < difficulty ? 'bg-orange-500' : 'bg-gray-300'
+          i < difficulty ? 'bg-red-500' : 'bg-gray-600'
         }`}
       />
     ));
   };
 
   return (
-    <div className={`relative bg-white rounded-xl p-5 shadow-sm border-l-4 transition-all duration-200 ${
-      status === 'completed' ? 'border-l-green-500 bg-green-50/30' :
-      status === 'skipped' ? 'border-l-gray-400 bg-gray-50/30' :
-      canInteract ? 'border-l-blue-500 hover:shadow-md hover:scale-[1.02]' : 'border-l-gray-300 opacity-60'
+    <div className={`bg-gray-800 rounded-2xl p-5 border transition-all duration-200 ${
+      status === 'completed' ? 'border-green-500/30 bg-green-900/20' :
+      status === 'skipped' ? 'border-gray-600 bg-gray-700/50' :
+      canInteract ? 'border-red-500/30 hover:border-red-400/50' : 'border-gray-600 opacity-60'
     }`}>
-      {/* Status Icon */}
-      <div className="absolute top-4 right-4">
-        {status === 'completed' && (
-          <div className="bg-green-500 rounded-full p-1">
-            <CheckCircle className="w-5 h-5 text-white" />
-          </div>
-        )}
-        {status === 'skipped' && (
-          <div className="bg-gray-400 rounded-full p-1">
-            <XCircle className="w-5 h-5 text-white" />
-          </div>
-        )}
-        {!canInteract && status === 'active' && (
-          <div className="bg-gray-300 rounded-full p-1">
-            <Lock className="w-5 h-5 text-white" />
-          </div>
-        )}
-        {canInteract && status === 'active' && (
-          <div className="bg-blue-500 rounded-full p-1">
-            <Play className="w-5 h-5 text-white" />
-          </div>
-        )}
-      </div>
-
-      {/* Task Content */}
-      <div className="pr-12">
-        <h3 className={`font-bold text-lg mb-2 ${
-          status === 'completed' ? 'text-green-800' :
-          status === 'skipped' ? 'text-gray-600' : 'text-gray-900'
+      <div className="flex items-start gap-4">
+        {/* Category Icon */}
+        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl ${
+          status === 'completed' ? 'bg-green-600' :
+          status === 'skipped' ? 'bg-gray-600' :
+          canInteract ? 'bg-red-600' : 'bg-gray-600'
         }`}>
-          {task.title}
-        </h3>
-        <p className={`text-sm mb-4 leading-relaxed ${
-          status === 'completed' ? 'text-green-700' :
-          status === 'skipped' ? 'text-gray-500' : 'text-gray-600'
-        }`}>
-          {task.subtitle}
-        </p>
-
-        {/* Task Metadata */}
-        <div className="flex items-center gap-3 mb-4">
-          <Badge className={`${getCategoryColor(task.category)} border font-medium`}>
-            {task.category}
-          </Badge>
-          <div className="flex items-center gap-1 text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
-            <Clock className="w-3 h-3" />
-            <span className="text-xs font-medium">{task.durationMin}min</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-gray-500 mr-1">Difficulty:</span>
-            {getDifficultyDots(task.difficulty)}
-          </div>
+          {getCategoryIcon(task.category)}
         </div>
 
-        {/* Status Information */}
-        {status === 'completed' && completedAt && (
-          <div className="bg-green-100 border border-green-200 rounded-lg p-3 mb-4">
-            <div className="flex items-center gap-2 text-green-700">
-              <CheckCircle className="w-4 h-4" />
-              <span className="font-medium text-sm">Completed at {completedAt.toLocaleTimeString()}</span>
-            </div>
-          </div>
-        )}
+        {/* Task Content */}
+        <div className="flex-1">
+          <h3 className={`font-bold text-lg mb-1 ${
+            status === 'completed' ? 'text-green-400' :
+            status === 'skipped' ? 'text-gray-400' : 'text-white'
+          }`}>
+            {task.title}
+          </h3>
+          <p className={`text-sm mb-3 ${
+            status === 'completed' ? 'text-green-300' :
+            status === 'skipped' ? 'text-gray-500' : 'text-gray-300'
+          }`}>
+            {task.subtitle}
+          </p>
 
-        {status === 'skipped' && skippedAt && (
-          <div className="bg-gray-100 border border-gray-200 rounded-lg p-3 mb-4">
-            <div className="flex items-center gap-2 text-gray-600">
-              <XCircle className="w-4 h-4" />
-              <span className="font-medium text-sm">Skipped at {skippedAt.toLocaleTimeString()}</span>
-            </div>
-            {skipReason && (
-              <div className="text-xs text-gray-500 mt-1">Reason: {skipReason}</div>
-            )}
+          {/* Difficulty Dots */}
+          <div className="flex items-center gap-1 mb-4">
+            {getDifficultyDots(task.difficulty)}
           </div>
-        )}
 
-        {/* Action Buttons */}
-        {status === 'active' && canInteract && (
-          <div className="flex gap-3">
-            <Button
-              onClick={onComplete}
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl shadow-sm transition-all duration-200 hover:shadow-md"
-            >
-              <CheckCircle className="w-4 h-4 mr-2" />
-              Complete Task
-            </Button>
-            <Button
-              onClick={onSkip}
-              variant="outline"
-              className="flex-1 border-2 border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 rounded-xl transition-all duration-200"
-            >
-              <XCircle className="w-4 h-4 mr-2" />
-              Skip
-            </Button>
-          </div>
-        )}
-
-        {status === 'active' && !canInteract && (
-          <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
-            <Lock className="w-5 h-5 text-orange-600 mx-auto mb-2" />
-            <div className="text-sm text-orange-700 font-medium">
-              Complete all tasks from previous days to unlock
+          {/* Status Info */}
+          {status === 'completed' && completedAt && (
+            <div className="text-xs text-green-400 mb-3">
+              ✅ Completed at {completedAt.toLocaleTimeString()}
             </div>
-          </div>
-        )}
+          )}
+
+          {status === 'skipped' && skippedAt && (
+            <div className="text-xs text-gray-400 mb-3">
+              ⏭️ Skipped at {skippedAt.toLocaleTimeString()}
+            </div>
+          )}
+
+          {/* Action Buttons */}
+          {status === 'active' && canInteract && (
+            <div className="flex gap-2">
+              <Button
+                onClick={onComplete}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 rounded-xl"
+              >
+                <CheckCircle className="w-4 h-4 mr-1" />
+                Done
+              </Button>
+              <Button
+                onClick={onSkip}
+                variant="outline"
+                className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700 py-2 rounded-xl"
+              >
+                <XCircle className="w-4 h-4 mr-1" />
+                Skip
+              </Button>
+            </div>
+          )}
+
+          {status === 'active' && !canInteract && (
+            <div className="bg-gray-700 rounded-lg p-2 text-center">
+              <Lock className="w-4 h-4 text-gray-400 mx-auto mb-1" />
+              <div className="text-xs text-gray-400">
+                Complete previous days first
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Status Icon */}
+        <div className="flex-shrink-0">
+          {status === 'completed' && (
+            <CheckCircle className="w-6 h-6 text-green-500" />
+          )}
+          {status === 'skipped' && (
+            <XCircle className="w-6 h-6 text-gray-500" />
+          )}
+          {status === 'active' && canInteract && (
+            <Play className="w-6 h-6 text-red-500" />
+          )}
+          {status === 'active' && !canInteract && (
+            <Lock className="w-6 h-6 text-gray-500" />
+          )}
+        </div>
       </div>
     </div>
   );
@@ -177,6 +160,7 @@ export function TaskList() {
       phase: number;
     };
   } | null>(null);
+  const [activeTab, setActiveTab] = useState<'todo' | 'done' | 'skipped'>('todo');
   const [loading, setLoading] = useState(true);
 
   const loadTasks = async () => {
@@ -186,6 +170,15 @@ export function TaskList() {
       setLoading(true);
       const taskData = await taskEngine.getCurrentDayTasks();
       setTasks(taskData);
+      
+      // Auto-switch to todo tab if there are active tasks
+      if (taskData.active.length > 0) {
+        setActiveTab('todo');
+      } else if (taskData.completed.length > 0) {
+        setActiveTab('done');
+      } else if (taskData.skipped.length > 0) {
+        setActiveTab('skipped');
+      }
     } catch (error) {
       console.error('Failed to load tasks:', error);
       toast({
@@ -210,7 +203,7 @@ export function TaskList() {
       await loadTasks();
       toast({
         title: "🎉 Task Completed!",
-        description: "Excellent work! You're building great habits.",
+        description: "Great job! Keep building those habits.",
       });
     } catch (error) {
       console.error('Failed to complete task:', error);
@@ -230,7 +223,7 @@ export function TaskList() {
       await loadTasks();
       toast({
         title: "Task Skipped",
-        description: "No problem! Focus on what works for you today.",
+        description: "No worries! Focus on what works for you today.",
       });
     } catch (error) {
       console.error('Failed to skip task:', error);
@@ -258,22 +251,12 @@ export function TaskList() {
     }
   };
 
-  const handleGoToToday = async () => {
-    if (!taskEngine) return;
-    
-    if (taskEngine.goToToday()) {
-      await loadTasks();
-    }
-  };
-
   if (loading) {
     return (
-      <div className="p-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-6"></div>
-            <p className="text-gray-600 font-medium">Loading your wellness journey...</p>
-          </div>
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full mx-auto mb-6"></div>
+          <p className="text-gray-400 font-medium">Loading your program...</p>
         </div>
       </div>
     );
@@ -281,200 +264,171 @@ export function TaskList() {
 
   if (!tasks) {
     return (
-      <div className="p-6 text-center py-12">
-        <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-        <p className="text-gray-600 text-lg">No tasks available</p>
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <p className="text-gray-400 text-lg">No tasks available</p>
       </div>
     );
   }
 
   const { dayInfo } = tasks;
-  const totalTasks = tasks.active.length + tasks.completed.length + tasks.skipped.length;
-  const completedTasksCount = tasks.completed.length + tasks.skipped.length;
-  const progressPercentage = totalTasks > 0 ? Math.round((completedTasksCount / totalTasks) * 100) : 0;
+
+  // Get current tab content
+  const getCurrentTabTasks = () => {
+    switch (activeTab) {
+      case 'todo':
+        return tasks.active;
+      case 'done':
+        return tasks.completed;
+      case 'skipped':
+        return tasks.skipped;
+      default:
+        return [];
+    }
+  };
+
+  const currentTabTasks = getCurrentTabTasks();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header with Navigation */}
-      <div className="bg-white shadow-sm border-b sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto p-6">
-          {/* Day Title and Navigation */}
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                Day {dayInfo.dayNumber}
-                <span className="text-gray-500 font-normal"> / 63</span>
-              </h1>
-              <p className="text-gray-600 mt-1">
-                Beginner Program • Phase {dayInfo.phase}
-              </p>
-            </div>
-            
-            {/* Navigation Controls */}
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={handleNavigatePrevious}
-                disabled={!taskEngine?.canNavigatePrevious()}
-                className="border-2 hover:bg-gray-50"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </Button>
-              
-              {!dayInfo.isCurrentDay && (
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={handleGoToToday}
-                  className="border-2 hover:bg-blue-50 text-blue-600 border-blue-200"
-                >
-                  <Home className="w-4 h-4 mr-2" />
-                  Today
-                </Button>
-              )}
-              
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={handleNavigateNext}
-                disabled={!taskEngine?.canNavigateNext()}
-                className="border-2 hover:bg-gray-50"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </Button>
-            </div>
+    <div className="min-h-screen bg-gray-900 text-white">
+      {/* Header */}
+      <div className="bg-gradient-to-br from-red-900 via-red-800 to-orange-800 px-6 pt-12 pb-8">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-white mb-2">
+            PeakForge Program
+          </h1>
+        </div>
+        
+        {/* Day Navigation */}
+        <div className="flex items-center justify-center gap-6 mb-8">
+          <Button
+            variant="ghost"
+            size="lg"
+            onClick={handleNavigatePrevious}
+            disabled={!taskEngine?.canNavigatePrevious()}
+            className="text-white hover:bg-white/10 disabled:opacity-30"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </Button>
+          
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-white">
+              Day {dayInfo.dayNumber} / 63
+            </h2>
           </div>
+          
+          <Button
+            variant="ghost"
+            size="lg"
+            onClick={handleNavigateNext}
+            disabled={!taskEngine?.canNavigateNext()}
+            className="text-white hover:bg-white/10 disabled:opacity-30"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </Button>
+        </div>
 
-          {/* Progress Section */}
-          <div className="bg-gray-50 rounded-xl p-4 mb-4">
-            <div className="flex justify-between items-center mb-3">
-              <span className="text-gray-700 font-medium">
-                {completedTasksCount} of {totalTasks} tasks completed
-              </span>
-              <span className="text-2xl font-bold text-gray-900">
-                {progressPercentage}%
-              </span>
-            </div>
-            <Progress value={progressPercentage} className="h-3 bg-gray-200" />
-          </div>
-
-          {/* Status Badges */}
-          <div className="flex items-center gap-3">
-            {dayInfo.isCurrentDay && (
-              <Badge className="bg-blue-100 text-blue-800 border-blue-200 px-3 py-1">
-                📅 Current Day
-              </Badge>
-            )}
-            {dayInfo.completionStatus === 'completed' && (
-              <Badge className="bg-green-100 text-green-800 border-green-200 px-3 py-1">
-                ✅ Day Complete
-              </Badge>
-            )}
-            {!dayInfo.canInteract && (
-              <Badge className="bg-orange-100 text-orange-800 border-orange-200 px-3 py-1">
-                🔒 View Only
-              </Badge>
-            )}
-          </div>
+        {/* Tab Navigation */}
+        <div className="flex bg-black/20 rounded-2xl p-1 max-w-md mx-auto">
+          <button
+            onClick={() => setActiveTab('todo')}
+            className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
+              activeTab === 'todo'
+                ? 'bg-red-600 text-white'
+                : 'text-gray-300 hover:text-white'
+            }`}
+          >
+            To-do ({tasks.active.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('done')}
+            className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
+              activeTab === 'done'
+                ? 'bg-red-600 text-white'
+                : 'text-gray-300 hover:text-white'
+            }`}
+          >
+            Done ({tasks.completed.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('skipped')}
+            className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
+              activeTab === 'skipped'
+                ? 'bg-red-600 text-white'
+                : 'text-gray-300 hover:text-white'
+            }`}
+          >
+            Skipped ({tasks.skipped.length})
+          </button>
         </div>
       </div>
 
       {/* Task Content */}
-      <div className="max-w-4xl mx-auto p-6 space-y-8">
-        {/* Active Tasks Section */}
-        {tasks.active.length > 0 && (
-          <section>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-2 h-8 bg-blue-500 rounded-full"></div>
-              <h2 className="text-2xl font-bold text-gray-900">
-                To Do
-              </h2>
-              <Badge className="bg-blue-100 text-blue-800 px-3 py-1">
-                {tasks.active.length} tasks
-              </Badge>
+      <div className="px-6 py-6 space-y-4">
+        {currentTabTasks.length > 0 ? (
+          currentTabTasks.map((task) => (
+            <TaskCard
+              key={task.id}
+              task={task}
+              status={
+                activeTab === 'todo' ? 'active' :
+                activeTab === 'done' ? 'completed' : 'skipped'
+              }
+              canInteract={dayInfo.canInteract && activeTab === 'todo'}
+              completedAt={activeTab === 'done' ? (task as any).completedAt : undefined}
+              skippedAt={activeTab === 'skipped' ? (task as any).skippedAt : undefined}
+              skipReason={activeTab === 'skipped' ? (task as any).skipReason : undefined}
+              onComplete={() => handleComplete(task.id)}
+              onSkip={() => handleSkip(task.id)}
+            />
+          ))
+        ) : (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">
+              {activeTab === 'todo' ? '📋' :
+               activeTab === 'done' ? '✅' : '⏭️'}
             </div>
-            <div className="grid gap-4">
-              {tasks.active.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  status="active"
-                  canInteract={dayInfo.canInteract}
-                  onComplete={() => handleComplete(task.id)}
-                  onSkip={() => handleSkip(task.id)}
-                />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Completed Tasks Section */}
-        {tasks.completed.length > 0 && (
-          <section>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-2 h-8 bg-green-500 rounded-full"></div>
-              <h2 className="text-2xl font-bold text-gray-900">
-                Completed
-              </h2>
-              <Badge className="bg-green-100 text-green-800 px-3 py-1">
-                {tasks.completed.length} tasks
-              </Badge>
-            </div>
-            <div className="grid gap-4">
-              {tasks.completed.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  status="completed"
-                  canInteract={false}
-                  completedAt={task.completedAt}
-                />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Skipped Tasks Section */}
-        {tasks.skipped.length > 0 && (
-          <section>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-2 h-8 bg-gray-400 rounded-full"></div>
-              <h2 className="text-2xl font-bold text-gray-900">
-                Skipped
-              </h2>
-              <Badge className="bg-gray-100 text-gray-700 px-3 py-1">
-                {tasks.skipped.length} tasks
-              </Badge>
-            </div>
-            <div className="grid gap-4">
-              {tasks.skipped.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  status="skipped"
-                  canInteract={false}
-                  skippedAt={task.skippedAt}
-                  skipReason={task.skipReason}
-                />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Empty State */}
-        {totalTasks === 0 && (
-          <div className="text-center py-16">
-            <Calendar className="w-20 h-20 text-gray-400 mx-auto mb-6" />
-            <h3 className="text-2xl font-bold text-gray-600 mb-2">
-              No Tasks Today
+            <h3 className="text-xl font-bold text-gray-300 mb-2">
+              {activeTab === 'todo' ? 'All tasks completed!' :
+               activeTab === 'done' ? 'No completed tasks yet' :
+               'No skipped tasks'}
             </h3>
-            <p className="text-gray-500 text-lg">
-              Enjoy your rest day or check back tomorrow!
+            <p className="text-gray-500">
+              {activeTab === 'todo' ? 'Great job finishing your day!' :
+               activeTab === 'done' ? 'Complete some tasks to see them here' :
+               'Focus on completing your tasks'}
             </p>
           </div>
         )}
       </div>
+
+      {/* Status Indicators */}
+      {dayInfo.canInteract && tasks.active.length === 0 && (
+        <div className="px-6 pb-6">
+          <div className="bg-green-800 border border-green-600 rounded-2xl p-4 text-center">
+            <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
+            <h3 className="font-bold text-green-300 mb-1">Day Complete!</h3>
+            <p className="text-green-400 text-sm">
+              Moving to next day automatically...
+            </p>
+          </div>
+        </div>
+      )}
+
+      {!dayInfo.canInteract && (
+        <div className="px-6 pb-6">
+          <div className="bg-orange-900 border border-orange-600 rounded-2xl p-4 text-center">
+            <Lock className="w-8 h-8 text-orange-400 mx-auto mb-2" />
+            <h3 className="font-bold text-orange-300 mb-1">
+              {dayInfo.isCurrentDay ? 'Current Day' : 'Future Day'}
+            </h3>
+            <p className="text-orange-400 text-sm">
+              {dayInfo.isCurrentDay
+                ? 'Complete previous days to unlock tasks'
+                : 'Browse only - complete current day first'}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
