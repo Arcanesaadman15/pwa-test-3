@@ -21,7 +21,10 @@ export class TaskEngine {
       
       if (this.user) {
         this.currentProgram = this.user.program;
-        this.viewingDay = this.getCurrentActiveDay();
+        // Only set viewing day on first initialization, not every time
+        if (this.viewingDay === 1) {
+          this.viewingDay = this.getCurrentActiveDay();
+        }
       }
     } catch (error) {
       console.error('Failed to initialize task engine:', error);
