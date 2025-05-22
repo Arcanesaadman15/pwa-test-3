@@ -224,11 +224,7 @@ export class TaskEngine {
         this.user.currentDay = currentActiveDay + 1;
         await storage.saveUser(this.user);
       }
-      
-      return true; // Signal that advancement happened
     }
-    
-    return false;
   }
 
   // Get tasks for viewing day with proper three-panel organization

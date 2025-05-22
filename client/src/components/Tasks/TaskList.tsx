@@ -208,12 +208,26 @@ export function TaskList() {
     if (!taskEngine) return;
     
     try {
+      const previousDay = taskEngine.getViewingDay();
       await taskEngine.completeTask(taskId);
+      
+      // Check if day advanced after completion
+      const currentDay = taskEngine.getViewingDay();
+      if (currentDay > previousDay) {
+        // Day advanced! Switch to todo tab of new day
+        setActiveTab('todo');
+        toast({
+          title: "🎉 Day Complete!",
+          description: `Amazing! You've unlocked Day ${currentDay}. Keep the momentum going!`,
+        });
+      } else {
+        toast({
+          title: "🎉 Task Completed!",
+          description: "Great job! Keep building those habits.",
+        });
+      }
+      
       await loadTasks();
-      toast({
-        title: "🎉 Task Completed!",
-        description: "Great job! Keep building those habits.",
-      });
     } catch (error) {
       console.error('Failed to complete task:', error);
       toast({
@@ -228,12 +242,26 @@ export function TaskList() {
     if (!taskEngine) return;
     
     try {
+      const previousDay = taskEngine.getViewingDay();
       await taskEngine.skipTask(taskId, "Skipped by user");
+      
+      // Check if day advanced after skipping
+      const currentDay = taskEngine.getViewingDay();
+      if (currentDay > previousDay) {
+        // Day advanced! Switch to todo tab of new day
+        setActiveTab('todo');
+        toast({
+          title: "🎉 Day Complete!",
+          description: `You've finished all tasks for Day ${previousDay}. Welcome to Day ${currentDay}!`,
+        });
+      } else {
+        toast({
+          title: "Task Skipped",
+          description: "No worries! Focus on what works for you today.",
+        });
+      }
+      
       await loadTasks();
-      toast({
-        title: "Task Skipped",
-        description: "No worries! Focus on what works for you today.",
-      });
     } catch (error) {
       console.error('Failed to skip task:', error);
       toast({

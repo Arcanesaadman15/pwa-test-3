@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { SplashScreen } from "./SplashScreen";
 import { ProblemSpotlight } from "./ProblemSpotlight";
-import { QuickQuiz } from "./QuickQuiz";
-import { LifestyleSliders } from "./LifestyleSliders";
 import { PersonalizationToggles } from "./PersonalizationToggles";
+import { LifestyleSliders } from "./LifestyleSliders";
 import { ProgramPreview } from "./ProgramPreview";
 
 interface OnboardingFlowProps {
@@ -13,63 +11,62 @@ interface OnboardingFlowProps {
 export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [onboardingData, setOnboardingData] = useState({
-    activityLevel: '',
+    activityLevel: 'moderate',
     timeCommitment: 30,
-    stressLevel: 5,
-    sleepQuality: 6,
+    stressLevel: 3,
+    sleepQuality: 3,
     preferences: {
-      morningPerson: true,
+      morningPerson: false,
       outdoorActivities: false,
-      socialActivities: true,
+      socialActivities: false,
       highIntensity: false
     }
   });
 
-  const handleNext = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-    }
+  const updateData = (newData: any) => {
+    setOnboardingData(prev => ({ ...prev, ...newData }));
   };
 
-  const handlePrevious = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
+  const nextStep = () => {
+    setCurrentStep(prev => prev + 1);
   };
 
-  const handleComplete = () => {
-    // Save onboarding data to storage
-    localStorage.setItem('peakforge-onboarding-data', JSON.stringify(onboardingData));
-    onComplete();
+  const previousStep = () => {
+    setCurrentStep(prev => prev - 1);
   };
 
-  const updateOnboardingData = (data: Partial<typeof onboardingData>) => {
-    setOnboardingData(prev => ({ ...prev, ...data }));
-  };
+  const totalSteps = 4;
 
   const steps = [
-    { component: SplashScreen, showControls: false },
-    { component: ProblemSpotlight, showControls: true },
-    { component: QuickQuiz, showControls: true },
-    { component: LifestyleSliders, showControls: true },
-    { component: PersonalizationToggles, showControls: true },
-    { component: ProgramPreview, showControls: false }
+    <ProblemSpotlight key="problem" onNext={nextStep} />,
+    <PersonalizationToggles 
+      key="personalization"
+      onNext={nextStep}
+      onPrevious={previousStep}
+      data={onboardingData}
+      updateData={updateData}
+      currentStep={2}
+      totalSteps={totalSteps}
+    />,
+    <LifestyleSliders 
+      key="lifestyle"
+      onNext={nextStep}
+      onPrevious={previousStep}
+      data={onboardingData}
+      updateData={updateData}
+      currentStep={3}
+      totalSteps={totalSteps}
+    />,
+    <ProgramPreview 
+      key="preview"
+      onComplete={onComplete}
+      data={onboardingData}
+    />
   ];
 
-  const CurrentStepComponent = steps[currentStep].component;
-
   return (
-    <div className="fixed inset-0 z-50 bg-white">
-      <CurrentStepComponent
-        onNext={handleNext}
-        onPrevious={handlePrevious}
-        onComplete={handleComplete}
-        data={onboardingData}
-        updateData={updateOnboardingData}
-        currentStep={currentStep}
-        totalSteps={steps.length}
-        showControls={steps[currentStep].showControls}
-      />
+    <div className="min-h-screen bg-gray-900 text-white">
+      {steps[currentStep]}
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import { CheckSquare, BarChart3, TreePine, User } from "lucide-react";
+
 interface BottomNavigationProps {
   activeTab: 'tasks' | 'stats' | 'skills' | 'profile';
   onTabChange: (tab: 'tasks' | 'stats' | 'skills' | 'profile') => void;
@@ -5,30 +7,80 @@ interface BottomNavigationProps {
 
 export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationProps) {
   const tabs = [
-    { id: 'tasks' as const, icon: 'fas fa-tasks', label: 'Tasks' },
-    { id: 'stats' as const, icon: 'fas fa-chart-line', label: 'Stats' },
-    { id: 'skills' as const, icon: 'fas fa-tree', label: 'Skills' },
-    { id: 'profile' as const, icon: 'fas fa-user-circle', label: 'Profile' }
+    { 
+      id: 'tasks' as const, 
+      label: 'Tasks', 
+      icon: CheckSquare,
+      activeColor: 'text-blue-400',
+      inactiveColor: 'text-gray-500'
+    },
+    { 
+      id: 'stats' as const, 
+      label: 'Stats', 
+      icon: BarChart3,
+      activeColor: 'text-green-400',
+      inactiveColor: 'text-gray-500'
+    },
+    { 
+      id: 'skills' as const, 
+      label: 'Skills', 
+      icon: TreePine,
+      activeColor: 'text-purple-400',
+      inactiveColor: 'text-gray-500'
+    },
+    { 
+      id: 'profile' as const, 
+      label: 'Profile', 
+      icon: User,
+      activeColor: 'text-pink-400',
+      inactiveColor: 'text-gray-500'
+    }
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 z-30 pwa-bottom">
-      <div className="max-w-md mx-auto">
-        <div className="flex justify-around">
-          {tabs.map((tab) => (
+    <div className="fixed bottom-0 left-0 right-0 bg-gray-800/95 backdrop-blur-lg border-t border-gray-700 safe-bottom">
+      <div className="flex justify-around items-center h-16 px-4">
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          const Icon = tab.icon;
+          
+          return (
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex flex-col items-center py-2 px-3 transition-colors touch-feedback ${
-                activeTab === tab.id ? 'text-primary' : 'text-gray-400 hover:text-gray-600'
+              className={`flex flex-col items-center justify-center flex-1 py-2 px-1 rounded-xl transition-all duration-200 ${
+                isActive 
+                  ? 'bg-gray-700/60 scale-105' 
+                  : 'hover:bg-gray-700/30 active:scale-95'
               }`}
             >
-              <i className={`${tab.icon} text-xl mb-1`}></i>
-              <span className="text-xs font-medium">{tab.label}</span>
+              <div className={`transition-all duration-200 ${
+                isActive ? 'transform scale-110' : ''
+              }`}>
+                <Icon 
+                  className={`w-6 h-6 transition-colors duration-200 ${
+                    isActive ? tab.activeColor : tab.inactiveColor
+                  }`}
+                />
+              </div>
+              <span 
+                className={`text-xs font-medium mt-1 transition-colors duration-200 ${
+                  isActive ? tab.activeColor : tab.inactiveColor
+                }`}
+              >
+                {tab.label}
+              </span>
+              
+              {/* Active indicator dot */}
+              {isActive && (
+                <div className={`w-1 h-1 rounded-full mt-1 ${
+                  tab.activeColor.replace('text-', 'bg-')
+                }`} />
+              )}
             </button>
-          ))}
-        </div>
+          );
+        })}
       </div>
-    </nav>
+    </div>
   );
 }
