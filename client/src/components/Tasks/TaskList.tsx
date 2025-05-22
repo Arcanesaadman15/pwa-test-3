@@ -4,7 +4,7 @@ import { useTaskEngine } from "@/hooks/useTaskEngine";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ChevronLeft, ChevronRight, Calendar, CheckCircle, XCircle, Clock, Lock, Home } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, CheckCircle, XCircle, Clock, Lock, Home, Play } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface TaskCardProps {
@@ -21,17 +21,17 @@ interface TaskCardProps {
 function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReason, onComplete, onSkip }: TaskCardProps) {
   const getCategoryColor = (category: string) => {
     const colors = {
-      'Sleep': 'bg-purple-100 text-purple-800',
-      'Movement': 'bg-green-100 text-green-800',
-      'Nutrition': 'bg-orange-100 text-orange-800',
-      'Recovery': 'bg-blue-100 text-blue-800',
-      'Mindfulness': 'bg-pink-100 text-pink-800',
-      'Training': 'bg-red-100 text-red-800',
-      'Explosive Training': 'bg-yellow-100 text-yellow-800',
-      'Breath & Tension': 'bg-indigo-100 text-indigo-800',
-      'Mind': 'bg-teal-100 text-teal-800'
+      'Sleep': 'bg-purple-100 text-purple-800 border-purple-200',
+      'Movement': 'bg-green-100 text-green-800 border-green-200',
+      'Nutrition': 'bg-orange-100 text-orange-800 border-orange-200',
+      'Recovery': 'bg-blue-100 text-blue-800 border-blue-200',
+      'Mindfulness': 'bg-pink-100 text-pink-800 border-pink-200',
+      'Training': 'bg-red-100 text-red-800 border-red-200',
+      'Explosive Training': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+      'Breath & Tension': 'bg-indigo-100 text-indigo-800 border-indigo-200',
+      'Mind': 'bg-teal-100 text-teal-800 border-teal-200'
     };
-    return colors[category as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[category as keyof typeof colors] || 'bg-gray-100 text-gray-800 border-gray-200';
   };
 
   const getDifficultyDots = (difficulty: number) => {
@@ -46,87 +46,117 @@ function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReaso
   };
 
   return (
-    <div className={`bg-white rounded-xl p-4 shadow-sm border-2 transition-all ${
-      status === 'completed' ? 'border-green-200 bg-green-50' :
-      status === 'skipped' ? 'border-gray-200 bg-gray-50' :
-      canInteract ? 'border-blue-200 hover:border-blue-300' : 'border-gray-200 opacity-60'
+    <div className={`relative bg-white rounded-xl p-5 shadow-sm border-l-4 transition-all duration-200 ${
+      status === 'completed' ? 'border-l-green-500 bg-green-50/30' :
+      status === 'skipped' ? 'border-l-gray-400 bg-gray-50/30' :
+      canInteract ? 'border-l-blue-500 hover:shadow-md hover:scale-[1.02]' : 'border-l-gray-300 opacity-60'
     }`}>
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex-1">
-          <h3 className={`font-semibold text-lg mb-1 ${
-            status === 'completed' ? 'text-green-800' :
-            status === 'skipped' ? 'text-gray-600' : 'text-gray-800'
-          }`}>
-            {task.title}
-          </h3>
-          <p className={`text-sm mb-2 ${
-            status === 'completed' ? 'text-green-600' :
-            status === 'skipped' ? 'text-gray-500' : 'text-gray-600'
-          }`}>
-            {task.subtitle}
-          </p>
-        </div>
-        
+      {/* Status Icon */}
+      <div className="absolute top-4 right-4">
         {status === 'completed' && (
-          <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
+          <div className="bg-green-500 rounded-full p-1">
+            <CheckCircle className="w-5 h-5 text-white" />
+          </div>
         )}
         {status === 'skipped' && (
-          <XCircle className="w-6 h-6 text-gray-400 flex-shrink-0" />
+          <div className="bg-gray-400 rounded-full p-1">
+            <XCircle className="w-5 h-5 text-white" />
+          </div>
         )}
         {!canInteract && status === 'active' && (
-          <Lock className="w-6 h-6 text-gray-400 flex-shrink-0" />
+          <div className="bg-gray-300 rounded-full p-1">
+            <Lock className="w-5 h-5 text-white" />
+          </div>
+        )}
+        {canInteract && status === 'active' && (
+          <div className="bg-blue-500 rounded-full p-1">
+            <Play className="w-5 h-5 text-white" />
+          </div>
         )}
       </div>
 
-      <div className="flex items-center gap-2 mb-3">
-        <Badge className={getCategoryColor(task.category)}>
-          {task.category}
-        </Badge>
-        <div className="flex items-center gap-1 text-gray-500">
-          <Clock className="w-4 h-4" />
-          <span className="text-sm">{task.durationMin}min</span>
+      {/* Task Content */}
+      <div className="pr-12">
+        <h3 className={`font-bold text-lg mb-2 ${
+          status === 'completed' ? 'text-green-800' :
+          status === 'skipped' ? 'text-gray-600' : 'text-gray-900'
+        }`}>
+          {task.title}
+        </h3>
+        <p className={`text-sm mb-4 leading-relaxed ${
+          status === 'completed' ? 'text-green-700' :
+          status === 'skipped' ? 'text-gray-500' : 'text-gray-600'
+        }`}>
+          {task.subtitle}
+        </p>
+
+        {/* Task Metadata */}
+        <div className="flex items-center gap-3 mb-4">
+          <Badge className={`${getCategoryColor(task.category)} border font-medium`}>
+            {task.category}
+          </Badge>
+          <div className="flex items-center gap-1 text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
+            <Clock className="w-3 h-3" />
+            <span className="text-xs font-medium">{task.durationMin}min</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-xs text-gray-500 mr-1">Difficulty:</span>
+            {getDifficultyDots(task.difficulty)}
+          </div>
         </div>
-        <div className="flex items-center gap-1">
-          {getDifficultyDots(task.difficulty)}
-        </div>
+
+        {/* Status Information */}
+        {status === 'completed' && completedAt && (
+          <div className="bg-green-100 border border-green-200 rounded-lg p-3 mb-4">
+            <div className="flex items-center gap-2 text-green-700">
+              <CheckCircle className="w-4 h-4" />
+              <span className="font-medium text-sm">Completed at {completedAt.toLocaleTimeString()}</span>
+            </div>
+          </div>
+        )}
+
+        {status === 'skipped' && skippedAt && (
+          <div className="bg-gray-100 border border-gray-200 rounded-lg p-3 mb-4">
+            <div className="flex items-center gap-2 text-gray-600">
+              <XCircle className="w-4 h-4" />
+              <span className="font-medium text-sm">Skipped at {skippedAt.toLocaleTimeString()}</span>
+            </div>
+            {skipReason && (
+              <div className="text-xs text-gray-500 mt-1">Reason: {skipReason}</div>
+            )}
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        {status === 'active' && canInteract && (
+          <div className="flex gap-3">
+            <Button
+              onClick={onComplete}
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl shadow-sm transition-all duration-200 hover:shadow-md"
+            >
+              <CheckCircle className="w-4 h-4 mr-2" />
+              Complete Task
+            </Button>
+            <Button
+              onClick={onSkip}
+              variant="outline"
+              className="flex-1 border-2 border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 rounded-xl transition-all duration-200"
+            >
+              <XCircle className="w-4 h-4 mr-2" />
+              Skip
+            </Button>
+          </div>
+        )}
+
+        {status === 'active' && !canInteract && (
+          <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
+            <Lock className="w-5 h-5 text-orange-600 mx-auto mb-2" />
+            <div className="text-sm text-orange-700 font-medium">
+              Complete all tasks from previous days to unlock
+            </div>
+          </div>
+        )}
       </div>
-
-      {status === 'completed' && completedAt && (
-        <div className="text-sm text-green-600 mb-2">
-          ✅ Completed at {completedAt.toLocaleTimeString()}
-        </div>
-      )}
-
-      {status === 'skipped' && skippedAt && (
-        <div className="text-sm text-gray-500 mb-2">
-          ⏭️ Skipped at {skippedAt.toLocaleTimeString()}
-          {skipReason && <div className="text-xs mt-1">Reason: {skipReason}</div>}
-        </div>
-      )}
-
-      {status === 'active' && canInteract && (
-        <div className="flex gap-2 mt-3">
-          <Button
-            onClick={onComplete}
-            className="flex-1 bg-green-600 hover:bg-green-700 text-white"
-          >
-            Complete
-          </Button>
-          <Button
-            onClick={onSkip}
-            variant="outline"
-            className="flex-1 border-gray-300 text-gray-600 hover:bg-gray-50"
-          >
-            Skip
-          </Button>
-        </div>
-      )}
-
-      {status === 'active' && !canInteract && (
-        <div className="text-sm text-gray-500 mt-2 text-center">
-          🔒 Complete previous days to unlock
-        </div>
-      )}
     </div>
   );
 }
@@ -147,7 +177,6 @@ export function TaskList() {
       phase: number;
     };
   } | null>(null);
-  const [progress, setProgress] = useState({ completed: 0, total: 0, percentage: 0 });
   const [loading, setLoading] = useState(true);
 
   const loadTasks = async () => {
@@ -157,12 +186,6 @@ export function TaskList() {
       setLoading(true);
       const taskData = await taskEngine.getCurrentDayTasks();
       setTasks(taskData);
-      
-      const total = taskData.active.length + taskData.completed.length + taskData.skipped.length;
-      const completed = taskData.completed.length + taskData.skipped.length;
-      const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-      
-      setProgress({ completed, total, percentage });
     } catch (error) {
       console.error('Failed to load tasks:', error);
       toast({
@@ -184,10 +207,10 @@ export function TaskList() {
     
     try {
       await taskEngine.completeTask(taskId);
-      await loadTasks(); // Reload to get updated state
+      await loadTasks();
       toast({
-        title: "Task Completed! 🎉",
-        description: "Great job! Keep up the momentum.",
+        title: "🎉 Task Completed!",
+        description: "Excellent work! You're building great habits.",
       });
     } catch (error) {
       console.error('Failed to complete task:', error);
@@ -204,10 +227,10 @@ export function TaskList() {
     
     try {
       await taskEngine.skipTask(taskId, "Skipped by user");
-      await loadTasks(); // Reload to get updated state
+      await loadTasks();
       toast({
         title: "Task Skipped",
-        description: "No worries! You can focus on other tasks today.",
+        description: "No problem! Focus on what works for you today.",
       });
     } catch (error) {
       console.error('Failed to skip task:', error);
@@ -245,10 +268,12 @@ export function TaskList() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your tasks...</p>
+      <div className="p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-6"></div>
+            <p className="text-gray-600 font-medium">Loading your wellness journey...</p>
+          </div>
         </div>
       </div>
     );
@@ -256,101 +281,119 @@ export function TaskList() {
 
   if (!tasks) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-600">No tasks available</p>
+      <div className="p-6 text-center py-12">
+        <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+        <p className="text-gray-600 text-lg">No tasks available</p>
       </div>
     );
   }
 
   const { dayInfo } = tasks;
+  const totalTasks = tasks.active.length + tasks.completed.length + tasks.skipped.length;
+  const completedTasksCount = tasks.completed.length + tasks.skipped.length;
+  const progressPercentage = totalTasks > 0 ? Math.round((completedTasksCount / totalTasks) * 100) : 0;
 
   return (
-    <div className="space-y-6">
-      {/* Day Navigation Header */}
-      <div className="bg-white rounded-xl p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">
-              Day {dayInfo.dayNumber} / 63
-            </h1>
-            <p className="text-gray-600">
-              Beginner Program • Phase {dayInfo.phase}
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleNavigatePrevious}
-              disabled={!taskEngine?.canNavigatePrevious()}
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </Button>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header with Navigation */}
+      <div className="bg-white shadow-sm border-b sticky top-0 z-10">
+        <div className="max-w-4xl mx-auto p-6">
+          {/* Day Title and Navigation */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Day {dayInfo.dayNumber}
+                <span className="text-gray-500 font-normal"> / 63</span>
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Beginner Program • Phase {dayInfo.phase}
+              </p>
+            </div>
             
-            {!dayInfo.isCurrentDay && (
+            {/* Navigation Controls */}
+            <div className="flex items-center gap-2">
               <Button
                 variant="outline"
-                size="sm"
-                onClick={handleGoToToday}
+                size="lg"
+                onClick={handleNavigatePrevious}
+                disabled={!taskEngine?.canNavigatePrevious()}
+                className="border-2 hover:bg-gray-50"
               >
-                <Home className="w-4 h-4 mr-1" />
-                Today
+                <ChevronLeft className="w-5 h-5" />
               </Button>
+              
+              {!dayInfo.isCurrentDay && (
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={handleGoToToday}
+                  className="border-2 hover:bg-blue-50 text-blue-600 border-blue-200"
+                >
+                  <Home className="w-4 h-4 mr-2" />
+                  Today
+                </Button>
+              )}
+              
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={handleNavigateNext}
+                disabled={!taskEngine?.canNavigateNext()}
+                className="border-2 hover:bg-gray-50"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Progress Section */}
+          <div className="bg-gray-50 rounded-xl p-4 mb-4">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-gray-700 font-medium">
+                {completedTasksCount} of {totalTasks} tasks completed
+              </span>
+              <span className="text-2xl font-bold text-gray-900">
+                {progressPercentage}%
+              </span>
+            </div>
+            <Progress value={progressPercentage} className="h-3 bg-gray-200" />
+          </div>
+
+          {/* Status Badges */}
+          <div className="flex items-center gap-3">
+            {dayInfo.isCurrentDay && (
+              <Badge className="bg-blue-100 text-blue-800 border-blue-200 px-3 py-1">
+                📅 Current Day
+              </Badge>
             )}
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleNavigateNext}
-              disabled={!taskEngine?.canNavigateNext()}
-            >
-              <ChevronRight className="w-4 h-4" />
-            </Button>
+            {dayInfo.completionStatus === 'completed' && (
+              <Badge className="bg-green-100 text-green-800 border-green-200 px-3 py-1">
+                ✅ Day Complete
+              </Badge>
+            )}
+            {!dayInfo.canInteract && (
+              <Badge className="bg-orange-100 text-orange-800 border-orange-200 px-3 py-1">
+                🔒 View Only
+              </Badge>
+            )}
           </div>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-600">
-              {progress.completed} of {progress.total} tasks completed
-            </span>
-            <span className="font-medium text-gray-800">
-              {progress.percentage}%
-            </span>
-          </div>
-          <Progress value={progress.percentage} className="h-2" />
-        </div>
-
-        {/* Day Status Indicators */}
-        <div className="flex items-center gap-4 mt-4">
-          {dayInfo.isCurrentDay && (
-            <Badge className="bg-blue-100 text-blue-800">
-              📅 Current Day
-            </Badge>
-          )}
-          {dayInfo.completionStatus === 'completed' && (
-            <Badge className="bg-green-100 text-green-800">
-              ✅ Completed
-            </Badge>
-          )}
-          {!dayInfo.canInteract && (
-            <Badge className="bg-gray-100 text-gray-600">
-              🔒 View Only
-            </Badge>
-          )}
         </div>
       </div>
 
-      {/* Three-Panel Task Layout */}
-      <div className="space-y-6">
-        {/* Active Tasks Panel */}
+      {/* Task Content */}
+      <div className="max-w-4xl mx-auto p-6 space-y-8">
+        {/* Active Tasks Section */}
         {tasks.active.length > 0 && (
-          <div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              📋 To Do ({tasks.active.length})
-            </h2>
+          <section>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-2 h-8 bg-blue-500 rounded-full"></div>
+              <h2 className="text-2xl font-bold text-gray-900">
+                To Do
+              </h2>
+              <Badge className="bg-blue-100 text-blue-800 px-3 py-1">
+                {tasks.active.length} tasks
+              </Badge>
+            </div>
             <div className="grid gap-4">
               {tasks.active.map((task) => (
                 <TaskCard
@@ -363,15 +406,21 @@ export function TaskList() {
                 />
               ))}
             </div>
-          </div>
+          </section>
         )}
 
-        {/* Completed Tasks Panel */}
+        {/* Completed Tasks Section */}
         {tasks.completed.length > 0 && (
-          <div>
-            <h2 className="text-xl font-semibold text-green-800 mb-4">
-              ✅ Completed ({tasks.completed.length})
-            </h2>
+          <section>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-2 h-8 bg-green-500 rounded-full"></div>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Completed
+              </h2>
+              <Badge className="bg-green-100 text-green-800 px-3 py-1">
+                {tasks.completed.length} tasks
+              </Badge>
+            </div>
             <div className="grid gap-4">
               {tasks.completed.map((task) => (
                 <TaskCard
@@ -383,15 +432,21 @@ export function TaskList() {
                 />
               ))}
             </div>
-          </div>
+          </section>
         )}
 
-        {/* Skipped Tasks Panel */}
+        {/* Skipped Tasks Section */}
         {tasks.skipped.length > 0 && (
-          <div>
-            <h2 className="text-xl font-semibold text-gray-600 mb-4">
-              ⏭️ Skipped ({tasks.skipped.length})
-            </h2>
+          <section>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-2 h-8 bg-gray-400 rounded-full"></div>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Skipped
+              </h2>
+              <Badge className="bg-gray-100 text-gray-700 px-3 py-1">
+                {tasks.skipped.length} tasks
+              </Badge>
+            </div>
             <div className="grid gap-4">
               {tasks.skipped.map((task) => (
                 <TaskCard
@@ -404,22 +459,22 @@ export function TaskList() {
                 />
               ))}
             </div>
+          </section>
+        )}
+
+        {/* Empty State */}
+        {totalTasks === 0 && (
+          <div className="text-center py-16">
+            <Calendar className="w-20 h-20 text-gray-400 mx-auto mb-6" />
+            <h3 className="text-2xl font-bold text-gray-600 mb-2">
+              No Tasks Today
+            </h3>
+            <p className="text-gray-500 text-lg">
+              Enjoy your rest day or check back tomorrow!
+            </p>
           </div>
         )}
       </div>
-
-      {/* Empty State */}
-      {tasks.active.length === 0 && tasks.completed.length === 0 && tasks.skipped.length === 0 && (
-        <div className="text-center py-12">
-          <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-600 mb-2">
-            No Tasks Available
-          </h3>
-          <p className="text-gray-500">
-            There are no tasks assigned for this day.
-          </p>
-        </div>
-      )}
     </div>
   );
 }
