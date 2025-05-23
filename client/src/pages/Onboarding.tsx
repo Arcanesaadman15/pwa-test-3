@@ -64,14 +64,26 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const handleComplete = async () => {
     setIsLoading(true);
     try {
-      const finalData: OnboardingData = {
-        ...onboardingData,
+      // Clean the data to remove any circular references
+      const cleanData = {
+        ageRange: onboardingData.ageRange,
+        sleepQuality: onboardingData.sleepQuality,
+        exerciseFrequency: onboardingData.exerciseFrequency,
+        primaryGoal: onboardingData.primaryGoal,
+        waistCircumference: onboardingData.waistCircumference,
+        stressLevel: onboardingData.stressLevel,
+        dailySteps: onboardingData.dailySteps,
+        circadianRhythm: onboardingData.circadianRhythm,
+        activityLocation: onboardingData.activityLocation,
+        socialPreference: onboardingData.socialPreference,
+        intensityApproach: onboardingData.intensityApproach,
+        recommendedProgram: onboardingData.recommendedProgram,
         completedAt: new Date()
       } as OnboardingData;
       
-      await storage.saveOnboardingData(finalData);
+      await storage.saveOnboardingData(cleanData);
       await storage.setOnboardingComplete();
-      onComplete(finalData);
+      onComplete(cleanData);
     } catch (error) {
       console.error('Error completing onboarding:', error);
     } finally {
