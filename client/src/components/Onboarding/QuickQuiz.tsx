@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { QUICK_QUIZ_QUESTIONS } from '@/data/onboardingData';
 import { Button } from '@/components/ui/button';
 
@@ -12,7 +11,7 @@ interface QuickQuizProps {
   }) => void;
 }
 
-const QuickQuiz: React.FC<QuickQuizProps> = ({ onComplete }) => {
+export function QuickQuiz({ onComplete }: QuickQuizProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [selectedOption, setSelectedOption] = useState<string>('');
@@ -20,7 +19,7 @@ const QuickQuiz: React.FC<QuickQuizProps> = ({ onComplete }) => {
   const handleOptionSelect = (value: string) => {
     setSelectedOption(value);
     
-    // Auto-advance after selection with a small delay for visual feedback
+    // Auto-advance after selection
     setTimeout(() => {
       const questionId = QUICK_QUIZ_QUESTIONS[currentQuestion].id;
       const newAnswers = { ...answers, [questionId]: value };
@@ -54,86 +53,58 @@ const QuickQuiz: React.FC<QuickQuizProps> = ({ onComplete }) => {
         
         {/* Progress bar */}
         <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
-          <motion.div
-            className="h-full bg-gradient-to-r from-blue-500 to-purple-600"
-            initial={{ width: 0 }}
-            animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+          <div
+            className="h-full bg-gradient-to-r from-blue-500 to-purple-600 transition-all duration-500"
+            style={{ width: `${progress}%` }}
           />
         </div>
       </div>
 
       {/* Question content */}
       <div className="flex-1 flex flex-col justify-center px-6 pb-20">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentQuestion}
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="text-center mb-12"
-          >
-            {/* Question */}
-            <h1 className="text-3xl font-bold text-white mb-4 leading-tight">
-              {question.question}
-            </h1>
-            
-            {/* Subtitle */}
-            <p className="text-lg text-gray-400 max-w-md mx-auto">
-              {question.subtitle}
-            </p>
-          </motion.div>
-        </AnimatePresence>
+        <div className="text-center mb-12">
+          {/* Question */}
+          <h1 className="text-3xl font-bold text-white mb-4 leading-tight">
+            {question.question}
+          </h1>
+          
+          {/* Subtitle */}
+          <p className="text-lg text-gray-400 max-w-md mx-auto">
+            {question.subtitle}
+          </p>
+        </div>
 
         {/* Options */}
         <div className="space-y-4 max-w-lg mx-auto w-full">
-          <AnimatePresence mode="wait">
-            {question.options.map((option, index) => (
-              <motion.div
-                key={`${currentQuestion}-${option.value}`}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ 
-                  delay: index * 0.1,
-                  duration: 0.4,
-                  ease: "easeOut"
-                }}
-              >
-                <Button
-                  onClick={() => handleOptionSelect(option.value)}
-                  variant="outline"
-                  className={`w-full p-6 text-left border-2 transition-all duration-200 ${
-                    selectedOption === option.value
-                      ? 'border-blue-500 bg-blue-500/10 text-white scale-105'
-                      : 'border-gray-600 bg-gray-800/50 hover:border-gray-500 hover:bg-gray-700/50 text-gray-200'
-                  }`}
-                >
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-lg mb-1">
-                      {option.label}
-                    </span>
-                    <span className="text-sm text-gray-400">
-                      {option.subtitle}
-                    </span>
-                  </div>
-                </Button>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+          {question.options.map((option, index) => (
+            <Button
+              key={option.value}
+              onClick={() => handleOptionSelect(option.value)}
+              variant="outline"
+              className={`w-full p-6 text-left border-2 transition-all duration-200 ${
+                selectedOption === option.value
+                  ? 'border-blue-500 bg-blue-500/10 text-white scale-105'
+                  : 'border-gray-600 bg-gray-800/50 hover:border-gray-500 hover:bg-gray-700/50 text-gray-200'
+              }`}
+            >
+              <div className="flex flex-col">
+                <span className="font-semibold text-lg mb-1">
+                  {option.label}
+                </span>
+                <span className="text-sm text-gray-400">
+                  {option.subtitle}
+                </span>
+              </div>
+            </Button>
+          ))}
         </div>
 
         {/* Help text */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="text-center mt-12"
-        >
+        <div className="text-center mt-12">
           <p className="text-sm text-gray-500">
             Choose the option that best describes you
           </p>
-        </motion.div>
+        </div>
       </div>
 
       {/* Question indicators */}
@@ -155,6 +126,4 @@ const QuickQuiz: React.FC<QuickQuizProps> = ({ onComplete }) => {
       </div>
     </div>
   );
-};
-
-export { QuickQuiz };
+}
