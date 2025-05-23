@@ -206,7 +206,12 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             {currentStep === 'quiz' && (
               <QuickQuiz 
                 onComplete={(data) => {
-                  updateOnboardingData(data);
+                  console.log('🎯 QUIZ COMPLETED with data:', data);
+                  updateOnboardingData({
+                    ...data,
+                    name: 'User', // Default name
+                    email: 'user@example.com' // Default email
+                  });
                   goToNextStep();
                 }}
               />

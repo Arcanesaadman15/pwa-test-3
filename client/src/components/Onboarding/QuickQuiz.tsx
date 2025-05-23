@@ -52,7 +52,7 @@ export function QuickQuiz({ onComplete }: QuickQuizProps) {
           <div className="text-blue-400 text-sm font-medium mb-2">
             Question {currentQuestion + 1} of {QUICK_QUIZ_QUESTIONS.length}
           </div>
-          <h2 className="text-3xl font-bold mb-4">{question.title}</h2>
+          <h2 className="text-3xl font-bold mb-4">{question.question}</h2>
           {question.subtitle && (
             <p className="text-gray-400 text-lg">{question.subtitle}</p>
           )}
@@ -87,8 +87,8 @@ export function QuickQuiz({ onComplete }: QuickQuizProps) {
                   </div>
                   <div className="flex-1">
                     <div className="font-semibold text-lg mb-1">{option.label}</div>
-                    {option.description && (
-                      <div className="text-gray-400 text-sm">{option.description}</div>
+                    {option.subtitle && (
+                      <div className="text-gray-400 text-sm">{option.subtitle}</div>
                     )}
                   </div>
                 </div>
