@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QUICK_QUIZ_QUESTIONS } from '@/data/onboardingData';
 import { Button } from '@/components/ui/button';
