@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import Onboarding from "@/pages/Onboarding";
-import { Header } from "@/components/Layout/Header";
 import { BottomNavigation } from "@/components/Layout/BottomNavigation";
 import TaskList from "@/components/Tasks/TaskList";
 import { StatsOverview } from "@/components/Stats/StatsOverview";

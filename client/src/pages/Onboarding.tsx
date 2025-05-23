@@ -66,20 +66,22 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     try {
       // Clean the data to remove any circular references
       const cleanData = {
-        ageRange: onboardingData.ageRange,
-        sleepQuality: onboardingData.sleepQuality,
-        exerciseFrequency: onboardingData.exerciseFrequency,
-        primaryGoal: onboardingData.primaryGoal,
-        waistCircumference: onboardingData.waistCircumference,
-        stressLevel: onboardingData.stressLevel,
-        dailySteps: onboardingData.dailySteps,
-        circadianRhythm: onboardingData.circadianRhythm,
-        activityLocation: onboardingData.activityLocation,
-        socialPreference: onboardingData.socialPreference,
-        intensityApproach: onboardingData.intensityApproach,
-        recommendedProgram: onboardingData.recommendedProgram,
+        name: onboardingData.name || '',
+        email: onboardingData.email || '',
+        ageRange: onboardingData.ageRange || '',
+        sleepQuality: onboardingData.sleepQuality || '',
+        exerciseFrequency: onboardingData.exerciseFrequency || '',
+        primaryGoal: onboardingData.primaryGoal || '',
+        waistCircumference: onboardingData.waistCircumference || 0,
+        stressLevel: onboardingData.stressLevel || 0,
+        dailySteps: onboardingData.dailySteps || 0,
+        circadianRhythm: onboardingData.circadianRhythm || 'morning',
+        activityLocation: onboardingData.activityLocation || 'indoor',
+        socialPreference: onboardingData.socialPreference || 'solo',
+        intensityApproach: onboardingData.intensityApproach || 'gentle',
+        recommendedProgram: onboardingData.recommendedProgram || 'beginner',
         completedAt: new Date()
-      } as OnboardingData;
+      };
       
       await storage.saveOnboardingData(cleanData);
       await storage.setOnboardingComplete();
