@@ -69,8 +69,7 @@ export default function Home() {
       
       await loadUserData(); // Refresh user data to get updated streak
       
-      setCompletedTaskId(taskId);
-      setShowCompletionModal(true);
+      // Removed unwanted task completion modal
       
       // Check for actual streak milestones after user data refresh
       setTimeout(async () => {
