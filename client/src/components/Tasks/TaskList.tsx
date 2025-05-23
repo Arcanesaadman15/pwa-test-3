@@ -153,7 +153,12 @@ function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReaso
   );
 }
 
-export function TaskList() {
+export interface TaskListProps {
+  onTaskComplete?: (taskId: string) => void;
+  onTaskSkip?: (taskId: string) => void;
+}
+
+function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
   const { taskEngine, unSkipTask } = useTaskEngine();
   const { toast } = useToast();
   const [tasks, setTasks] = useState<{
@@ -207,6 +212,14 @@ export function TaskList() {
   const handleComplete = async (taskId: string) => {
     if (!taskEngine) return;
     
+    // Use passed handler if available, otherwise use default logic
+    if (onTaskComplete) {
+      onTaskComplete(taskId);
+      // Still reload tasks to update UI
+      await loadTasks();
+      return;
+    }
+    
     try {
       const previousDay = taskEngine.getViewingDay();
       await taskEngine.completeTask(taskId);
@@ -237,6 +250,14 @@ export function TaskList() {
 
   const handleSkip = async (taskId: string) => {
     if (!taskEngine) return;
+    
+    // Use passed handler if available, otherwise use default logic
+    if (onTaskSkip) {
+      onTaskSkip(taskId);
+      // Still reload tasks to update UI
+      await loadTasks();
+      return;
+    }
     
     try {
       const previousDay = taskEngine.getViewingDay();
@@ -502,3 +523,5 @@ export function TaskList() {
     </div>
   );
 }
+
+export default TaskList;

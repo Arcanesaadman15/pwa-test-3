@@ -132,7 +132,7 @@ export default function Home() {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'tasks':
-        return <TaskList />;
+        return <TaskList onTaskComplete={handleTaskComplete} onTaskSkip={handleTaskSkip} />;
       case 'stats':
         return <StatsOverview user={user} />;
       case 'skills':
