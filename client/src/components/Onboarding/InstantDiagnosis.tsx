@@ -14,24 +14,29 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
   const calculateTestosteroneScore = () => {
     let score = 50; // Base score
     
-    // Age factor
-    if (data.ageRange === "18-25") score += 15;
-    else if (data.ageRange === "26-35") score += 10;
-    else if (data.ageRange === "36-45") score += 5;
-    else if (data.ageRange === "46-55") score -= 5;
-    else score -= 10;
+    // Age factor - matching actual quiz values
+    if (data.ageRange === "18-24") score += 15;
+    else if (data.ageRange === "25-34") score += 10;
+    else if (data.ageRange === "35-44") score += 5;
+    else if (data.ageRange === "45-54") score -= 5;
+    else if (data.ageRange === "55+") score -= 10;
     
-    // Sleep quality
-    if (data.sleepQuality === "excellent") score += 15;
-    else if (data.sleepQuality === "good") score += 10;
-    else if (data.sleepQuality === "fair") score += 5;
-    else score -= 10;
+    // Sleep quality - matching actual quiz values (0-1 = best, 6-7 = worst)
+    if (data.sleepQuality === "0-1") score += 15;
+    else if (data.sleepQuality === "2-3") score += 10;
+    else if (data.sleepQuality === "4-5") score += 5;
+    else if (data.sleepQuality === "6-7") score -= 10;
     
-    // Exercise frequency
+    // Exercise frequency - matching actual quiz values
     if (data.exerciseFrequency === "daily") score += 20;
     else if (data.exerciseFrequency === "weekly") score += 15;
     else if (data.exerciseFrequency === "monthly") score += 5;
-    else score -= 15;
+    else if (data.exerciseFrequency === "rarely") score -= 15;
+    
+    // Primary goal boost
+    if (data.primaryGoal === "muscle") score += 10;
+    else if (data.primaryGoal === "energy") score += 5;
+    else if (data.primaryGoal === "confidence") score += 8;
     
     // Stress level (inverted)
     const stressLevel = data.stressLevel || 5;
@@ -43,7 +48,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
     else if (waist > 40) score -= 15;
     else if (waist > 36) score -= 10;
     
-    return Math.max(20, Math.min(100, score));
+    return Math.max(25, Math.min(95, score));
   };
 
   const testosteroneScore = calculateTestosteroneScore();

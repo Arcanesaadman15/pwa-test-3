@@ -19,8 +19,9 @@ export function Paywall({ onComplete }: PaywallProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white">
-      <div className="container mx-auto px-4 py-8 max-w-md">
+    <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white overflow-y-auto">
+      <div className="min-h-screen px-4 py-8">
+        <div className="container mx-auto max-w-md">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -130,6 +131,7 @@ export function Paywall({ onComplete }: PaywallProps) {
             ⚡ Only 247 spots left at this price
           </p>
         </motion.div>
+        </div>
       </div>
     </div>
   );
