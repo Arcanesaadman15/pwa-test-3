@@ -155,15 +155,17 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
             
             {/* Slider thumb with larger touch area */}
             <motion.div
-              className="absolute top-1/2 transform -translate-y-1/2 w-12 h-12 flex items-center justify-center cursor-pointer"
+              className="absolute w-12 h-12 flex items-center justify-center cursor-pointer"
               style={{ 
                 left: `${((currentValue - slider.min) / (slider.max - slider.min)) * 100}%`,
-                marginLeft: '-24px'
+                marginLeft: '-24px',
+                top: '50%',
+                transform: 'translateY(-50%)'
               }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
-              <div className="w-7 h-7 bg-white rounded-full shadow-xl border-3 border-gray-800"></div>
+              <div className="w-7 h-7 bg-white rounded-full shadow-xl border-2 border-gray-800"></div>
             </motion.div>
             
             {/* Hidden input for accessibility */}
