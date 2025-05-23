@@ -53,19 +53,22 @@ export function SkillConnectionVisualization({ onSkillClick }: SkillConnectionVi
 
   const createSkillNodes = (unlocked: UnlockedSkill[]): SkillNode[] => {
     const unlockedIds = new Set(unlocked.map(s => s.id));
-    const containerWidth = 400;
-    const containerHeight = 400;
+    const containerWidth = 500;
+    const containerHeight = 500;
     
     return SKILL_DEFINITIONS.map((skill, index) => {
       // Position nodes in a circular layout by category, then by level
       const categoryIndex = Object.keys(SKILL_CATEGORIES).indexOf(skill.category);
       const categoryAngle = (categoryIndex / Object.keys(SKILL_CATEGORIES).length) * 2 * Math.PI;
       
-      // Position by level within category (inner to outer)
-      const levelRadius = 60 + (skill.level - 1) * 40;
+      // Position by level within category (inner to outer) - increased spacing
+      const levelRadius = 80 + (skill.level - 1) * 60;
       const skillsInCategory = SKILL_DEFINITIONS.filter(s => s.category === skill.category);
       const skillIndexInCategory = skillsInCategory.findIndex(s => s.id === skill.id);
-      const angleOffset = (skillIndexInCategory / skillsInCategory.length) * 0.8 - 0.4;
+      
+      // Spread skills more within each category
+      const angleSpread = 1.2; // Increased from 0.8 for more spacing
+      const angleOffset = (skillIndexInCategory / Math.max(skillsInCategory.length - 1, 1)) * angleSpread - (angleSpread / 2);
       
       const x = containerWidth / 2 + Math.cos(categoryAngle + angleOffset) * levelRadius;
       const y = containerHeight / 2 + Math.sin(categoryAngle + angleOffset) * levelRadius;
@@ -73,8 +76,8 @@ export function SkillConnectionVisualization({ onSkillClick }: SkillConnectionVi
       return {
         id: skill.id,
         skill,
-        x: Math.max(30, Math.min(containerWidth - 30, x)),
-        y: Math.max(30, Math.min(containerHeight - 30, y)),
+        x: Math.max(40, Math.min(containerWidth - 40, x)),
+        y: Math.max(40, Math.min(containerHeight - 40, y)),
         isUnlocked: unlockedIds.has(skill.id),
         connections: []
       };
@@ -176,8 +179,17 @@ export function SkillConnectionVisualization({ onSkillClick }: SkillConnectionVi
 
   return (
     <div className="space-y-6 p-4">
-      {/* Header */}
+      {/* Header with Back Button */}
       <div className="text-center">
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={() => window.history.back()}
+            className="px-3 py-1 bg-gray-700 text-gray-300 rounded-lg text-sm hover:bg-gray-600"
+          >
+            ← Back to Tree
+          </button>
+          <div className="flex-1"></div>
+        </div>
         <h2 className="text-2xl font-bold text-white mb-2">Skill Connections</h2>
         <p className="text-gray-400 text-sm">Discover how skills interlink and build upon each other</p>
       </div>
@@ -232,9 +244,9 @@ export function SkillConnectionVisualization({ onSkillClick }: SkillConnectionVi
         <svg
           ref={svgRef}
           width="100%"
-          height="400"
-          viewBox="0 0 400 400"
-          className="w-full h-96"
+          height="500"
+          viewBox="0 0 500 500"
+          className="w-full h-[500px]"
         >
           {/* Connection Lines */}
           {visibleConnections.map((connection, index) => {

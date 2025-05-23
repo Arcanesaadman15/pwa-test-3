@@ -8,6 +8,31 @@ interface SkillUnlockModalProps {
   skill: any;
 }
 
+// Helper function to convert task IDs to readable names
+function getTaskDisplayName(taskId: string): string {
+  const taskNames: Record<string, string> = {
+    'sleep_7h': 'Sleep ≥ 7 hours',
+    'walk_10k_steps': 'Walk 10,000 steps', 
+    'walk_30min': '30 min Brisk Walk',
+    'protein_target': 'Hit Protein Target',
+    'morning_sun_15min': '15 min Morning Sunlight',
+    'mindfulness_10min': '10 min Mindfulness',
+    'yoga_stretch_15min': '15 min Yoga Stretch',
+    'cold_shower_30s': '30s Cold Shower',
+    'chair_squats': 'Chair Squats',
+    'breath_posture_5min': '5 min Breath & Posture',
+    'mobility_20min': '20 min Mobility',
+    'bodyweight_circuit': 'Bodyweight Strength Circuit',
+    'full_body_workout': 'Full Body Workout',
+    'heavy_leg_day': 'Heavy Leg Day',
+    'plyometric_jumps': 'Plyometric Jump Set',
+    'hiit_sprints': 'HIIT Sprints',
+    'loaded_carry': 'Loaded Carry'
+  };
+  
+  return taskNames[taskId] || taskId;
+}
+
 export function SkillUnlockModal({ isOpen, onClose, skill }: SkillUnlockModalProps) {
   const handleShare = async () => {
     if (navigator.share) {
@@ -45,7 +70,7 @@ export function SkillUnlockModal({ isOpen, onClose, skill }: SkillUnlockModalPro
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
             className="w-16 h-16 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg"
           >
-            <i className="fas fa-star text-gray-900 text-2xl"></i>
+            <span className="text-2xl">{skill.categoryIcon}</span>
           </motion.div>
           
           <h3 className="text-xl font-bold text-white mb-2">Skill Unlocked!</h3>
@@ -59,11 +84,33 @@ export function SkillUnlockModal({ isOpen, onClose, skill }: SkillUnlockModalPro
             className="bg-gray-800 border border-gray-600 rounded-xl p-3 mb-4"
           >
             <div className="flex items-center justify-center space-x-3">
-              <i className={`${skill.categoryIcon} text-purple-400 text-lg`}></i>
+              <span className="text-purple-400 text-lg">{skill.categoryIcon}</span>
               <span className="font-semibold text-gray-200 text-sm">{skill.categoryName}</span>
               <span className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-3 py-1 rounded-full text-xs font-bold">
                 Level {skill.level}
               </span>
+            </div>
+          </motion.div>
+
+          {/* Unlock Requirements */}
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="bg-gray-800 border border-gray-600 rounded-xl p-3 mb-4"
+          >
+            <h4 className="text-white font-medium text-sm mb-2 text-center">What You Accomplished</h4>
+            <div className="space-y-1">
+              {skill.requirements?.map((req: any, index: number) => (
+                <div key={index} className="flex items-center justify-between text-xs">
+                  <span className="text-gray-300 flex-1">
+                    {getTaskDisplayName(req.taskId)} {req.consecutive ? '(consecutive)' : ''}
+                  </span>
+                  <span className="text-green-400 font-bold">
+                    ✓ {req.count}
+                  </span>
+                </div>
+              ))}
             </div>
           </motion.div>
           
