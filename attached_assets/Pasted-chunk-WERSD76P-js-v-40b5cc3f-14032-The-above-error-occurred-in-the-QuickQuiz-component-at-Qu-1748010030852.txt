@@ -1,0 +1,22 @@
+chunk-WERSD76P.js?v=40b5cc3f:14032 The above error occurred in the <QuickQuiz> component:
+
+    at QuickQuiz (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.dev/src/components/Onboarding/QuickQuiz.tsx?t=1748006435808:24:29)
+    at div
+    at MotionComponent (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=40b5cc3f:6536:40)
+    at PresenceChild (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=40b5cc3f:7742:24)
+    at AnimatePresence (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=40b5cc3f:7800:26)
+    at div
+    at div
+    at Onboarding (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.dev/src/pages/Onboarding.tsx?t=1748006435808:30:38)
+    at Home (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.dev/src/pages/Home.tsx?t=1748006435808:36:37)
+    at Route (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=40b5cc3f:323:16)
+    at Switch (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=40b5cc3f:379:17)
+    at Router
+    at div
+    at Provider (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-PLT6GTVM.js?v=40b5cc3f:38:15)
+    at TooltipProvider (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=40b5cc3f:2246:5)
+    at QueryClientProvider (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=40b5cc3f:2805:3)
+    at App (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.dev/src/App.tsx?t=1748006435808&v=eE598WkjveXpkn7FAZ1EV:48:67)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.

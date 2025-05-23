@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QUICK_QUIZ_QUESTIONS } from '@/data/onboardingData';
 import { Button } from '@/components/ui/button';
@@ -17,12 +17,12 @@ interface QuickQuizProps {
 }
 
 export function QuickQuiz({ onComplete }: QuickQuizProps) {
-  const [showPersonalInfo, setShowPersonalInfo] = useState(true);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [selectedOption, setSelectedOption] = useState<string>('');
+  const [showPersonalInfo, setShowPersonalInfo] = React.useState(true);
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [currentQuestion, setCurrentQuestion] = React.useState(0);
+  const [answers, setAnswers] = React.useState<Record<string, string>>({});
+  const [selectedOption, setSelectedOption] = React.useState<string>('');
 
   const handleOptionSelect = (value: string) => {
     setSelectedOption(value);
