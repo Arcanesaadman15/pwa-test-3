@@ -78,7 +78,7 @@ export const SKILL_DEFINITIONS: SkillDefinition[] = [
     description: 'Started your movement journey with consistent walking',
     category: 'Physical',
     level: 1,
-    requirements: [{ taskId: 'walk_30min', count: 3 }],
+    requirements: [{ taskId: 'brisk_walk_30m', count: 3 }],
     categoryColor: SKILL_CATEGORIES.Physical.color,
     categoryIcon: SKILL_CATEGORIES.Physical.icon
   },
@@ -88,7 +88,7 @@ export const SKILL_DEFINITIONS: SkillDefinition[] = [
     description: 'Discovered the power of morning natural light',
     category: 'Physical',
     level: 1,
-    requirements: [{ taskId: 'morning_sun_15min', count: 5 }],
+    requirements: [{ taskId: 'sunlight_15min', count: 5 }],
     categoryColor: SKILL_CATEGORIES.Physical.color,
     categoryIcon: SKILL_CATEGORIES.Physical.icon
   },
@@ -121,7 +121,7 @@ export const SKILL_DEFINITIONS: SkillDefinition[] = [
     description: 'Achieved consistent daily step goals',
     category: 'Physical',
     level: 1,
-    requirements: [{ taskId: 'walk_10k_steps', count: 5 }],
+    requirements: [{ taskId: 'steps_10k', count: 5 }],
     categoryColor: SKILL_CATEGORIES.Physical.color,
     categoryIcon: SKILL_CATEGORIES.Physical.icon
   },
@@ -131,7 +131,7 @@ export const SKILL_DEFINITIONS: SkillDefinition[] = [
     description: 'Embraced flexibility and mindful movement',
     category: 'Physical',
     level: 1,
-    requirements: [{ taskId: 'yoga_stretch_15min', count: 3 }],
+    requirements: [{ taskId: 'yoga_stretch_15m', count: 3 }],
     categoryColor: SKILL_CATEGORIES.Physical.color,
     categoryIcon: SKILL_CATEGORIES.Physical.icon
   },
@@ -147,6 +147,38 @@ export const SKILL_DEFINITIONS: SkillDefinition[] = [
     ],
     categoryColor: SKILL_CATEGORIES.Physical.color,
     categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+
+  // MENTAL CATEGORY SKILLS - Early unlocks for motivation
+  {
+    id: 'mindful_beginner',
+    title: 'Mindful Beginner',
+    description: 'Started your journey into mindfulness practice',
+    category: 'Mental',
+    level: 1,
+    requirements: [{ taskId: 'mindfulness_10m', count: 2 }],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+  {
+    id: 'breath_awareness',
+    title: 'Breath Awareness',
+    description: 'Developed focus through breathing and posture',
+    category: 'Mental',
+    level: 1,
+    requirements: [{ taskId: 'breath_posture_5m', count: 3 }],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+  {
+    id: 'cold_exposure_starter',
+    title: 'Cold Exposure Starter',
+    description: 'Embraced the challenge of cold therapy',
+    category: 'Mental',
+    level: 1,
+    requirements: [{ taskId: 'cold_shower_30s', count: 3 }],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
   },
 
   // Intermediate Level (Level 2)
