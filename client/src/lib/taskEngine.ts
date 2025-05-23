@@ -113,13 +113,27 @@ export class TaskEngine {
     await this.initialize();
     
     const currentActiveDay = this.getCurrentActiveDay();
+    console.log(`🔥 [TASK ENGINE] completeTask called - Task: ${taskId}, Active Day: ${currentActiveDay}, Viewing Day: ${this.viewingDay}`);
+    
     if (this.viewingDay !== currentActiveDay) {
+      console.error(`❌ [TASK ENGINE] Day mismatch - viewing ${this.viewingDay} but active is ${currentActiveDay}`);
       throw new Error("You can only complete tasks for your current active day");
     }
 
     // Validate previous days are complete
-    if (currentActiveDay > 1 && !this.isDayCompleted(currentActiveDay - 1)) {
-      throw new Error("You need to complete or skip all tasks from previous days first");
+    if (currentActiveDay > 1) {
+      const previousDay = currentActiveDay - 1;
+      const isPreviousDayComplete = this.isDayCompleted(previousDay);
+      console.log(`🔥 [TASK ENGINE] Checking Day ${previousDay} completion: ${isPreviousDayComplete}`);
+      
+      if (!isPreviousDayComplete) {
+        console.error(`❌ [TASK ENGINE] Day ${previousDay} is not complete - cannot proceed with Day ${currentActiveDay}`);
+        const previousDayTasks = this.getTaskIdsForDay(previousDay);
+        const previousDayCompletions = this.taskCompletions.filter(c => c.day === previousDay);
+        console.log(`🔥 [TASK ENGINE] Day ${previousDay} tasks:`, previousDayTasks);
+        console.log(`🔥 [TASK ENGINE] Day ${previousDay} completions:`, previousDayCompletions);
+        throw new Error("You need to complete or skip all tasks from previous days first");
+      }
     }
 
     // Remove any existing completion/skip for this task on this day
