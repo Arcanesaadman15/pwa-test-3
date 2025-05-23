@@ -1,6 +1,8 @@
 import { User } from "@/types";
 import { User as UserIcon, Settings, Trophy, Target, Calendar, Flame, Star, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { StreakSparkle } from "@/components/Rewards/StreakSparkle";
 
 interface ProfileOverviewProps {
   user: User;
@@ -8,6 +10,7 @@ interface ProfileOverviewProps {
 }
 
 export function ProfileOverview({ user, onOpenSettings }: ProfileOverviewProps) {
+  const [showTestSparkle, setShowTestSparkle] = useState(false);
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-US', { 
       year: 'numeric', 
@@ -217,7 +220,31 @@ export function ProfileOverview({ user, onOpenSettings }: ProfileOverviewProps) 
             </span>
           </div>
         </div>
+
+        {/* Debug Test Button */}
+        <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-2xl p-4">
+          <h4 className="text-yellow-300 font-bold mb-2">🧪 Test Sparkle System</h4>
+          <p className="text-yellow-200 text-sm mb-3">
+            Current streak: {user.currentStreak || 0} days • Test the celebration animation
+          </p>
+          <Button 
+            onClick={() => {
+              console.log("🎉 Testing sparkle celebration!");
+              setShowTestSparkle(true);
+            }}
+            className="w-full bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-300 border border-yellow-500/30"
+          >
+            ✨ Test Sparkle Celebration
+          </Button>
+        </div>
       </div>
+
+      {/* Test Sparkle Component */}
+      <StreakSparkle
+        streakCount={Math.max(user.currentStreak || 7, 7)}
+        isVisible={showTestSparkle}
+        onComplete={() => setShowTestSparkle(false)}
+      />
     </div>
   );
 }
