@@ -13,6 +13,7 @@ import { SkillUnlockModal } from "@/components/Modals/SkillUnlockModal";
 import { useUserProgress } from "@/hooks/useUserProgress";
 import { useTaskEngine } from "@/hooks/useTaskEngine";
 import { useSkillTree } from "@/hooks/useSkillTree";
+import { StreakSparkle } from "@/components/Rewards/StreakSparkle";
 
 type TabType = 'tasks' | 'stats' | 'skills' | 'profile';
 type ViewType = 'main' | 'settings' | 'programSelector';
@@ -22,6 +23,7 @@ export default function Home() {
   const [currentView, setCurrentView] = useState<ViewType>('main');
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showSkillModal, setShowSkillModal] = useState(false);
+  const [showStreakSparkle, setShowStreakSparkle] = useState(false);
   const [completedTaskId, setCompletedTaskId] = useState<string | null>(null);
   const [unlockedSkill, setUnlockedSkill] = useState<any>(null);
   
@@ -48,9 +50,30 @@ export default function Home() {
 
   const handleTaskComplete = async (taskId: string) => {
     try {
+      const previousStreak = user?.currentStreak || 0;
       await completeTask(taskId);
+      await loadUserData(); // Refresh user data to get updated streak
+      
       setCompletedTaskId(taskId);
       setShowCompletionModal(true);
+      
+      // Check if this completion creates a streak milestone
+      setTimeout(async () => {
+        const updatedUser = await loadUserData();
+        const newStreak = updatedUser?.currentStreak || 0;
+        
+        const isStreakMilestone = newStreak > previousStreak && (
+          newStreak === 3 || newStreak === 7 || newStreak === 14 || 
+          newStreak === 21 || newStreak === 30 || (newStreak % 10 === 0 && newStreak > 30)
+        );
+        
+        // Show streak celebration for milestones
+        if (isStreakMilestone && newStreak > 0) {
+          setTimeout(() => {
+            setShowStreakSparkle(true);
+          }, 500);
+        }
+      }, 200);
       
       // Check for skill unlocks after task completion
       const newSkills = await checkForSkillUnlocks();
@@ -160,6 +183,13 @@ export default function Home() {
         isOpen={showSkillModal}
         onClose={() => setShowSkillModal(false)}
         skill={unlockedSkill}
+      />
+      
+      {/* Streak Sparkle Celebration */}
+      <StreakSparkle
+        streakCount={user?.currentStreak || 0}
+        isVisible={showStreakSparkle}
+        onComplete={() => setShowStreakSparkle(false)}
       />
     </div>
   );

@@ -1,4 +1,5 @@
 import { User } from "@/types";
+import { StreakIndicator } from "@/components/Rewards/StreakIndicator";
 
 interface HeaderProps {
   user: User;
@@ -21,14 +22,11 @@ export function Header({ user }: HeaderProps) {
             </div>
             
             <div className="flex items-center space-x-4">
-              {/* Streak Counter */}
-              <div className="text-center">
-                <div className="flex items-center justify-center space-x-1">
-                  <i className="fas fa-fire text-orange-500 streak-flame"></i>
-                  <div className="text-2xl font-bold text-primary">0</div>
-                </div>
-                <div className="text-xs text-gray-600">Streak</div>
-              </div>
+              {/* Animated Streak Indicator */}
+              <StreakIndicator 
+                currentStreak={0}
+                longestStreak={0}
+              />
               
               {/* User Avatar */}
               <button className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors touch-feedback">
@@ -55,14 +53,11 @@ export function Header({ user }: HeaderProps) {
           </div>
           
           <div className="flex items-center space-x-4">
-            {/* Streak Counter */}
-            <div className="text-center">
-              <div className="flex items-center justify-center space-x-1">
-                <i className="fas fa-fire text-orange-500 streak-flame"></i>
-                <div className="text-2xl font-bold text-primary">{user.currentStreak || 0}</div>
-              </div>
-              <div className="text-xs text-gray-600">Streak</div>
-            </div>
+            {/* Animated Streak Indicator */}
+            <StreakIndicator 
+              currentStreak={user.currentStreak || 0}
+              longestStreak={user.longestStreak || 0}
+            />
             
             {/* User Avatar */}
             <button className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors touch-feedback">
