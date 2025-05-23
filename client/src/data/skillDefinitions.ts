@@ -181,6 +181,73 @@ export const SKILL_DEFINITIONS: SkillDefinition[] = [
     categoryIcon: SKILL_CATEGORIES.Mental.icon
   },
 
+  // INTERMEDIATE PROGRAM SKILLS (Level 2)
+  {
+    id: 'intermediate_foundation',
+    title: 'Intermediate Foundation',
+    description: 'Successfully established all core intermediate habits',
+    category: 'Physical',
+    level: 2,
+    requirements: [
+      { taskId: 'sleep_7h', count: 7, consecutive: true },
+      { taskId: 'steps_10k', count: 7, consecutive: true },
+      { taskId: 'sunlight_15min', count: 7, consecutive: true },
+      { taskId: 'protein_target', count: 7, consecutive: true }
+    ],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'strength_circuit_master',
+    title: 'Strength Circuit Master',
+    description: 'Mastered bodyweight strength circuit training',
+    category: 'Physical',
+    level: 2,
+    requirements: [{ taskId: 'bw_strength_circuit', count: 5 }],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'sprint_warrior',
+    title: 'Sprint Warrior',
+    description: 'Conquered high-intensity interval training',
+    category: 'Physical',
+    level: 2,
+    requirements: [{ taskId: 'hiit_sprints', count: 4 }],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'heavy_lifter',
+    title: 'Heavy Lifter',
+    description: 'Built impressive leg strength and power',
+    category: 'Physical',
+    level: 2,
+    requirements: [{ taskId: 'heavy_leg_day', count: 5 }],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'functional_athlete',
+    title: 'Functional Athlete',
+    description: 'Developed real-world strength through loaded carries',
+    category: 'Physical',
+    level: 2,
+    requirements: [{ taskId: 'loaded_carry', count: 3 }],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'cold_therapy_adept',
+    title: 'Cold Therapy Adept',
+    description: 'Embraced consistent cold exposure for resilience',
+    category: 'Mental',
+    level: 2,
+    requirements: [{ taskId: 'cold_shower_30s', count: 7 }],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+
   // Intermediate Level (Level 2)
   {
     id: 'stretch_master',
@@ -235,6 +302,105 @@ export const SKILL_DEFINITIONS: SkillDefinition[] = [
     categoryIcon: SKILL_CATEGORIES.Physical.icon
   },
 
+  // ADVANCED PROGRAM SKILLS (Level 3-4)
+  {
+    id: 'advanced_foundation',
+    title: 'Advanced Foundation',
+    description: 'Mastered the ultimate wellness foundation',
+    category: 'Physical',
+    level: 3,
+    requirements: [
+      { taskId: 'sleep_7h', count: 14, consecutive: true },
+      { taskId: 'steps_10k', count: 14, consecutive: true },
+      { taskId: 'sunlight_15min', count: 14, consecutive: true },
+      { taskId: 'protein_target', count: 14, consecutive: true }
+    ],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'explosive_power',
+    title: 'Explosive Power',
+    description: 'Mastered plyometric explosive movements',
+    category: 'Physical',
+    level: 3,
+    requirements: [{ taskId: 'plyo_jump_set', count: 7 }],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'elite_conditioning',
+    title: 'Elite Conditioning',
+    description: 'Achieved superior cardiovascular fitness through combined training',
+    category: 'Physical',
+    level: 3,
+    requirements: [
+      { taskId: 'hiit_sprints', count: 10 },
+      { taskId: 'bw_strength_circuit', count: 8 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'multi_modal_athlete',
+    title: 'Multi-Modal Athlete',
+    description: 'Excelled across multiple training modalities in one day',
+    category: 'Physical',
+    level: 4,
+    requirements: [
+      { taskId: 'full_body_workout', count: 8 },
+      { taskId: 'heavy_leg_day', count: 6 },
+      { taskId: 'loaded_carry', count: 5 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'ice_warrior',
+    title: 'Ice Warrior',
+    description: 'Demonstrated exceptional mental toughness through cold therapy',
+    category: 'Mental',
+    level: 3,
+    requirements: [{ taskId: 'cold_shower_30s', count: 14 }],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+  {
+    id: 'mind_body_master',
+    title: 'Mind-Body Master',
+    description: 'Integrated mindfulness with advanced physical training',
+    category: 'Mental',
+    level: 4,
+    requirements: [
+      { taskId: 'mindfulness_10m', count: 10 },
+      { taskId: 'breath_posture_5m', count: 12 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+
+  // RECOVERY CATEGORY SKILLS for all programs
+  {
+    id: 'mobility_beginner',
+    title: 'Mobility Beginner',
+    description: 'Started building flexibility and joint health',
+    category: 'Recovery',
+    level: 1,
+    requirements: [{ taskId: 'mobility_20min', count: 3 }],
+    categoryColor: SKILL_CATEGORIES.Recovery.color,
+    categoryIcon: SKILL_CATEGORIES.Recovery.icon
+  },
+  {
+    id: 'recovery_specialist',
+    title: 'Recovery Specialist',
+    description: 'Mastered consistent mobility and recovery practices',
+    category: 'Recovery',
+    level: 2,
+    requirements: [{ taskId: 'mobility_20min', count: 8 }],
+    categoryColor: SKILL_CATEGORIES.Recovery.color,
+    categoryIcon: SKILL_CATEGORIES.Recovery.icon
+  },
+
   // Advanced Level (Level 3-4)
   {
     id: 'explosive_athlete',
@@ -243,7 +409,7 @@ export const SKILL_DEFINITIONS: SkillDefinition[] = [
     category: 'Physical',
     level: 3,
     requirements: [
-      { taskId: 'plyometric_jumps', count: 5 },
+      { taskId: 'plyo_jump_set', count: 5 },
       { taskId: 'hiit_sprints', count: 5 }
     ],
     categoryColor: SKILL_CATEGORIES.Physical.color,
@@ -257,7 +423,7 @@ export const SKILL_DEFINITIONS: SkillDefinition[] = [
     level: 3,
     requirements: [
       { taskId: 'hiit_sprints', count: 7 },
-      { taskId: 'walk_10k_steps', count: 15 }
+      { taskId: 'steps_10k', count: 15 }
     ],
     categoryColor: SKILL_CATEGORIES.Physical.color,
     categoryIcon: SKILL_CATEGORIES.Physical.icon
