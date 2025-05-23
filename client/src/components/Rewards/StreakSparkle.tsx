@@ -92,7 +92,7 @@ export function StreakSparkle({ streakCount, isVisible, onComplete }: StreakSpar
           transition={{ duration: 0.3 }}
         >
           {/* Background overlay */}
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
           
           {/* Sparkles */}
           {sparkles.map((sparkle) => (
@@ -134,7 +134,7 @@ export function StreakSparkle({ streakCount, isVisible, onComplete }: StreakSpar
 
           {/* Main celebration content */}
           <motion.div
-            className="relative bg-white dark:bg-gray-800 rounded-3xl p-8 mx-4 text-center shadow-2xl border-4"
+            className="relative bg-gray-900 rounded-3xl p-8 mx-4 text-center shadow-2xl border-4"
             style={{ borderColor: getSparkleColor(streakCount) }}
             initial={{ scale: 0, y: 50 }}
             animate={{ scale: 1, y: 0 }}

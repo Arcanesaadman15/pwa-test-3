@@ -57,28 +57,14 @@ export default function Home() {
       setCompletedTaskId(taskId);
       setShowCompletionModal(true);
       
-      // Check if this completion creates a streak milestone
-      setTimeout(async () => {
-        await loadUserData();
-        const newStreak = user?.currentStreak || 0;
-        
-        console.log(`🎯 Streak check: Previous=${previousStreak}, New=${newStreak}`);
-        
-        const isStreakMilestone = newStreak > previousStreak && (
-          newStreak === 3 || newStreak === 7 || newStreak === 14 || 
-          newStreak === 21 || newStreak === 30 || (newStreak % 10 === 0 && newStreak > 30)
-        );
-        
-        console.log(`✨ Milestone check: ${isStreakMilestone} for streak ${newStreak}`);
-        
-        // Show streak celebration for milestones
-        if (isStreakMilestone && newStreak > 0) {
-          console.log(`🎉 TRIGGERING SPARKLE CELEBRATION for ${newStreak} day streak!`);
-          setTimeout(() => {
-            setShowStreakSparkle(true);
-          }, 500);
-        }
-      }, 500);
+      // Force trigger sparkle celebration for testing milestone detection
+      console.log(`🎯 Task completed! Previous streak: ${previousStreak}`);
+      
+      // Temporary: trigger sparkle for any task completion to test
+      setTimeout(() => {
+        console.log(`🎉 FORCE TRIGGERING SPARKLE CELEBRATION for testing!`);
+        setShowStreakSparkle(true);
+      }, 1000);
       
       // Check for skill unlocks after task completion
       const newSkills = await checkForSkillUnlocks();
