@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QUICK_QUIZ_QUESTIONS } from '@/data/onboardingData';
 import { Button } from '@/components/ui/button';
@@ -12,99 +13,144 @@ interface QuickQuizProps {
 }
 
 export function QuickQuiz({ onComplete }: QuickQuizProps) {
-  // Use a simple class-based approach to avoid React hooks conflicts
-  let currentQuestion = 0;
-  let answers: Record<string, string> = {};
-  let selectedOption = '';
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [selectedOption, setSelectedOption] = useState<string>('');
 
   const handleOptionSelect = (value: string) => {
-    selectedOption = value;
+    setSelectedOption(value);
     
     // Auto-advance after selection with a small delay for visual feedback
     setTimeout(() => {
       const questionId = QUICK_QUIZ_QUESTIONS[currentQuestion].id;
-      answers = { ...answers, [questionId]: value };
+      const newAnswers = { ...answers, [questionId]: value };
+      setAnswers(newAnswers);
       
       if (currentQuestion < QUICK_QUIZ_QUESTIONS.length - 1) {
-        currentQuestion = currentQuestion + 1;
-        selectedOption = '';
-        // Force re-render by calling onComplete with partial data
-        if (currentQuestion >= QUICK_QUIZ_QUESTIONS.length) {
-          onComplete({
-            ageRange: answers.ageRange || '',
-            sleepQuality: answers.sleepQuality || '',
-            exerciseFrequency: answers.exerciseFrequency || '',
-            primaryGoal: answers.primaryGoal || ''
-          });
-        }
+        setCurrentQuestion(prev => prev + 1);
+        setSelectedOption('');
       } else {
-        // Quiz completed - send answers
-        onComplete({
-          ageRange: answers.ageRange || '',
-          sleepQuality: answers.sleepQuality || '',
-          exerciseFrequency: answers.exerciseFrequency || '',
-          primaryGoal: answers.primaryGoal || ''
-        });
+        // Quiz completed
+        onComplete(newAnswers as any);
       }
     }, 300);
   };
 
-  const question = QUICK_QUIZ_QUESTIONS[0]; // Start with first question
+  const progress = ((currentQuestion + 1) / QUICK_QUIZ_QUESTIONS.length) * 100;
+  const question = QUICK_QUIZ_QUESTIONS[currentQuestion];
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white px-8 py-12">
-      {/* Quiz Content */}
-      <div className="flex flex-col items-center justify-center flex-1 max-w-2xl mx-auto">
-        {/* Question Number */}
-        <div className="text-center mb-8">
-          <div className="text-blue-400 text-sm font-medium mb-2">
-            Question 1 of {QUICK_QUIZ_QUESTIONS.length}
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col">
+      {/* Header with progress */}
+      <div className="pt-8 px-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="text-sm text-gray-400">
+            Question {currentQuestion + 1} of {QUICK_QUIZ_QUESTIONS.length}
           </div>
-          <h2 className="text-3xl font-bold mb-4">{question.question}</h2>
-          {question.subtitle && (
-            <p className="text-gray-400 text-lg">{question.subtitle}</p>
-          )}
+          <div className="text-sm text-gray-400">
+            {Math.round(progress)}% complete
+          </div>
         </div>
+        
+        {/* Progress bar */}
+        <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-gradient-to-r from-blue-500 to-purple-600"
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          />
+        </div>
+      </div>
+
+      {/* Question content */}
+      <div className="flex-1 flex flex-col justify-center px-6 pb-20">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentQuestion}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="text-center mb-12"
+          >
+            {/* Question */}
+            <h1 className="text-3xl font-bold text-white mb-4 leading-tight">
+              {question.question}
+            </h1>
+            
+            {/* Subtitle */}
+            <p className="text-lg text-gray-400 max-w-md mx-auto">
+              {question.subtitle}
+            </p>
+          </motion.div>
+        </AnimatePresence>
 
         {/* Options */}
-        <div className="w-full space-y-4">
-          {question.options.map((option, index) => (
-            <motion.button
-              key={index}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-              onClick={() => handleOptionSelect(option.value)}
-              className="w-full p-6 text-left rounded-xl border-2 border-gray-700 bg-gray-800/50 hover:border-gray-600 hover:bg-gray-800 transition-all duration-200"
-            >
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-6 h-6 rounded-full border-2 border-current flex items-center justify-center mt-1">
-                </div>
-                <div className="flex-1">
-                  <div className="font-semibold text-lg mb-1">{option.label}</div>
-                  {option.subtitle && (
-                    <div className="text-gray-400 text-sm">{option.subtitle}</div>
-                  )}
-                </div>
-              </div>
-            </motion.button>
-          ))}
+        <div className="space-y-4 max-w-lg mx-auto w-full">
+          <AnimatePresence mode="wait">
+            {question.options.map((option, index) => (
+              <motion.div
+                key={`${currentQuestion}-${option.value}`}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  delay: index * 0.1,
+                  duration: 0.4,
+                  ease: "easeOut"
+                }}
+              >
+                <Button
+                  onClick={() => handleOptionSelect(option.value)}
+                  variant="outline"
+                  className={`w-full p-6 text-left border-2 transition-all duration-200 ${
+                    selectedOption === option.value
+                      ? 'border-blue-500 bg-blue-500/10 text-white scale-105'
+                      : 'border-gray-600 bg-gray-800/50 hover:border-gray-500 hover:bg-gray-700/50 text-gray-200'
+                  }`}
+                >
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-lg mb-1">
+                      {option.label}
+                    </span>
+                    <span className="text-sm text-gray-400">
+                      {option.subtitle}
+                    </span>
+                  </div>
+                </Button>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
 
-        {/* Progress Indicator */}
-        <div className="mt-8 w-full max-w-md">
-          <div className="flex justify-between text-sm text-gray-400 mb-2">
-            <span>Progress</span>
-            <span>25%</span>
-          </div>
-          <div className="w-full bg-gray-800 rounded-full h-2">
-            <motion.div
-              className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: "25%" }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
+        {/* Help text */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="text-center mt-12"
+        >
+          <p className="text-sm text-gray-500">
+            Choose the option that best describes you
+          </p>
+        </motion.div>
+      </div>
+
+      {/* Question indicators */}
+      <div className="pb-8 px-6">
+        <div className="flex justify-center space-x-2">
+          {QUICK_QUIZ_QUESTIONS.map((_, index) => (
+            <div
+              key={index}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                index < currentQuestion
+                  ? 'bg-green-500'
+                  : index === currentQuestion
+                  ? 'bg-blue-500 scale-125'
+                  : 'bg-gray-600'
+              }`}
             />
-          </div>
+          ))}
         </div>
       </div>
     </div>

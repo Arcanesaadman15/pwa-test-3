@@ -32,34 +32,13 @@ interface OnboardingProps {
 
 export default function Onboarding({ onComplete }: OnboardingProps) {
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('splash');
-  const [onboardingData, setOnboardingData] = useState<Partial<OnboardingData>>({
-    name: '',
-    email: '',
-    ageRange: '',
-    sleepQuality: '',
-    exerciseFrequency: '',
-    primaryGoal: '',
-    waistCircumference: 32,
-    stressLevel: 5,
-    dailySteps: 5000,
-    circadianRhythm: 'morning',
-    activityLocation: 'indoor',
-    socialPreference: 'solo',
-    intensityApproach: 'gentle',
-    activityLevel: '',
-    timeCommitment: '',
-    preferences: [],
-    recommendedProgram: 'beginner'
-  });
+  const [onboardingData, setOnboardingData] = useState<Partial<OnboardingData>>({});
   const [isLoading, setIsLoading] = useState(false);
 
   // Auto-advance from splash screen
   useEffect(() => {
-    console.log('🔄 STEP CHANGE: Current step is now:', currentStep);
     if (currentStep === 'splash') {
-      console.log('⏳ AUTO-ADVANCE: Setting timer to move from splash to problems');
       const timer = setTimeout(() => {
-        console.log('✅ AUTO-ADVANCE: Timer fired, moving to problems step');
         setCurrentStep('problems');
       }, 2500);
       return () => clearTimeout(timer);
@@ -77,18 +56,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     ];
     
     const currentIndex = steps.indexOf(currentStep);
-    console.log('🔍 NAVIGATION DEBUG:');
-    console.log('  Current step:', currentStep);
-    console.log('  Current index:', currentIndex);
-    console.log('  Next step:', steps[currentIndex + 1]);
-    console.log('  All steps:', steps);
-    
     if (currentIndex < steps.length - 1) {
-      const nextStep = steps[currentIndex + 1];
-      console.log('  ✅ Moving to next step:', nextStep);
-      setCurrentStep(nextStep);
-    } else {
-      console.log('  ❌ Already at last step');
+      setCurrentStep(steps[currentIndex + 1]);
     }
   };
 
@@ -96,26 +65,21 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     setIsLoading(true);
     try {
       // Clean the data to remove any circular references
-      const cleanData: OnboardingData = {
-        name: onboardingData.name || '',
-        email: onboardingData.email || '',
-        ageRange: onboardingData.ageRange || '',
-        sleepQuality: onboardingData.sleepQuality || '',
-        exerciseFrequency: onboardingData.exerciseFrequency || '',
-        primaryGoal: onboardingData.primaryGoal || '',
-        waistCircumference: onboardingData.waistCircumference || 0,
-        stressLevel: onboardingData.stressLevel || 0,
-        dailySteps: onboardingData.dailySteps || 0,
-        circadianRhythm: onboardingData.circadianRhythm || 'morning',
-        activityLocation: onboardingData.activityLocation || 'indoor',
-        socialPreference: onboardingData.socialPreference || 'solo',
-        intensityApproach: onboardingData.intensityApproach || 'gentle',
-        activityLevel: onboardingData.activityLevel || '',
-        timeCommitment: onboardingData.timeCommitment || '',
-        preferences: onboardingData.preferences || [],
-        recommendedProgram: onboardingData.recommendedProgram || 'beginner',
+      const cleanData = {
+        ageRange: onboardingData.ageRange,
+        sleepQuality: onboardingData.sleepQuality,
+        exerciseFrequency: onboardingData.exerciseFrequency,
+        primaryGoal: onboardingData.primaryGoal,
+        waistCircumference: onboardingData.waistCircumference,
+        stressLevel: onboardingData.stressLevel,
+        dailySteps: onboardingData.dailySteps,
+        circadianRhythm: onboardingData.circadianRhythm,
+        activityLocation: onboardingData.activityLocation,
+        socialPreference: onboardingData.socialPreference,
+        intensityApproach: onboardingData.intensityApproach,
+        recommendedProgram: onboardingData.recommendedProgram,
         completedAt: new Date()
-      };
+      } as OnboardingData;
       
       await storage.saveOnboardingData(cleanData);
       await storage.setOnboardingComplete();
@@ -190,28 +154,17 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             className="absolute inset-0"
           >
             {currentStep === 'splash' && (
-              <>
-                {console.log('🎭 RENDERING: SplashScreen component')}
-                <SplashScreen onComplete={goToNextStep} />
-              </>
+              <SplashScreen onComplete={goToNextStep} />
             )}
             
             {currentStep === 'problems' && (
-              <>
-                {console.log('🎭 RENDERING: ProblemSpotlight component')}
-                <ProblemSpotlight onComplete={goToNextStep} />
-              </>
+              <ProblemSpotlight onComplete={goToNextStep} />
             )}
             
             {currentStep === 'quiz' && (
               <QuickQuiz 
                 onComplete={(data) => {
-                  console.log('🎯 QUIZ COMPLETED with data:', data);
-                  updateOnboardingData({
-                    ...data,
-                    name: 'User', // Default name
-                    email: 'user@example.com' // Default email
-                  });
+                  updateOnboardingData(data);
                   goToNextStep();
                 }}
               />

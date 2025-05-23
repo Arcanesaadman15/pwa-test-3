@@ -1,9 +1,5 @@
 // Onboarding data structure and content for testosterone/confidence focused men
 export interface OnboardingData {
-  // Personal Information
-  name: string;
-  email: string;
-  
   // Quick Quiz responses
   ageRange: string;
   sleepQuality: string;
@@ -20,11 +16,6 @@ export interface OnboardingData {
   activityLocation: 'indoor' | 'outdoor';
   socialPreference: 'solo' | 'group';
   intensityApproach: 'high' | 'gentle';
-  
-  // Legacy fields for compatibility
-  activityLevel?: string;
-  timeCommitment?: string;
-  preferences?: string[];
   
   // Recommended program
   recommendedProgram: 'beginner' | 'intermediate' | 'advanced';

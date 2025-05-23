@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Onboarding from "@/pages/Onboarding";
+import { Header } from "@/components/Layout/Header";
 import { BottomNavigation } from "@/components/Layout/BottomNavigation";
 import TaskList from "@/components/Tasks/TaskList";
 import { StatsOverview } from "@/components/Stats/StatsOverview";
@@ -201,6 +202,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#111827' }}>
+      <Header user={user} />
       <main className="pb-20">
         {renderTabContent()}
       </main>

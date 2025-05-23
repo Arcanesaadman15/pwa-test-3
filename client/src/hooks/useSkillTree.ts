@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { skillUnlockSystem } from "@/lib/skillUnlockSystem";
+import { SkillSystem } from "@/lib/skillSystem";
 import { UserSkills } from "@/types";
 
 export function useSkillTree() {
+  const [skillSystem] = useState(() => new SkillSystem());
   const [userSkills, setUserSkills] = useState<UserSkills>({});
 
   useEffect(() => {
@@ -11,16 +12,8 @@ export function useSkillTree() {
 
   const loadUserSkills = async () => {
     try {
-      const skills = await skillUnlockSystem.getAllUnlockedSkills();
-      // Convert array to UserSkills format
-      const skillsMap: UserSkills = {};
-      skills.forEach(skill => {
-        if (!skillsMap[skill.category]) {
-          skillsMap[skill.category] = [];
-        }
-        skillsMap[skill.category].push(skill.id);
-      });
-      setUserSkills(skillsMap);
+      const skills = await skillSystem.getUserSkills();
+      setUserSkills(skills);
     } catch (error) {
       console.error('Failed to load user skills:', error);
     }
@@ -28,11 +21,11 @@ export function useSkillTree() {
 
   const checkForSkillUnlocks = async () => {
     try {
-      const result = await skillUnlockSystem.checkForNewUnlocks();
-      if (result.newlyUnlocked.length > 0) {
+      const newSkills = await skillSystem.checkSkillUnlocks();
+      if (newSkills.length > 0) {
         await loadUserSkills();
       }
-      return result.newlyUnlocked;
+      return newSkills;
     } catch (error) {
       console.error('Failed to check skill unlocks:', error);
       return [];
@@ -45,7 +38,7 @@ export function useSkillTree() {
 
   const unlockSkill = async (skillId: string, category: string) => {
     try {
-      // Skill unlocking is handled automatically by the system
+      await skillSystem.unlockSkill(skillId, category);
       await loadUserSkills();
     } catch (error) {
       console.error('Failed to unlock skill:', error);
