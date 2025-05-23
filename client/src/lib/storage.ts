@@ -176,6 +176,20 @@ class Storage {
     }
   }
 
+  async clearProgressData(): Promise<void> {
+    try {
+      // Only clear progress-related data, keep onboarding status and user preferences
+      localStorage.removeItem(STORAGE_KEYS.TASK_COMPLETIONS);
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_DAY);
+      localStorage.removeItem(STORAGE_KEYS.USER_SKILLS);
+      localStorage.removeItem(STORAGE_KEYS.ACHIEVEMENTS);
+      // Keep STORAGE_KEYS.USER and STORAGE_KEYS.ONBOARDING_COMPLETE and STORAGE_KEYS.ONBOARDING_DATA
+    } catch (error) {
+      console.error('Failed to clear progress data:', error);
+      throw error;
+    }
+  }
+
   // Offline sync support
   async getPendingTaskCompletions(): Promise<TaskCompletion[]> {
     try {

@@ -379,6 +379,6 @@ export class TaskEngine {
     this.taskCompletions = [];
     this.viewingDay = 1;
     this.manualNavigation = false;
-    await storage.clearAllData();
+    await storage.clearProgressData(); // Only clear progress, keep onboarding status
   }
 }
