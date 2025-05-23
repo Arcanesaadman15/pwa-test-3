@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { RefreshCw, AlertTriangle, ArrowLeft, Trash2, RotateCcw, Download } from "lucide-react";
+import { RefreshCw, AlertTriangle, ArrowLeft, Trash2, RotateCcw, Download, Target } from "lucide-react";
 import { storage } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { usePWA } from "@/hooks/usePWA";
@@ -7,9 +7,10 @@ import { usePWA } from "@/hooks/usePWA";
 interface SettingsPanelProps {
   onBack: () => void;
   onDataReset: () => void;
+  onProgramChange: () => void;
 }
 
-export function SettingsPanel({ onBack, onDataReset }: SettingsPanelProps) {
+export function SettingsPanel({ onBack, onDataReset, onProgramChange }: SettingsPanelProps) {
   const { toast } = useToast();
   const { isInstallable, promptInstall, isIOS, isStandalone } = usePWA();
 
@@ -53,6 +54,18 @@ export function SettingsPanel({ onBack, onDataReset }: SettingsPanelProps) {
             });
           },
           disabled: true
+        }
+      ]
+    },
+    {
+      title: "Program",
+      items: [
+        {
+          icon: Target,
+          title: "Change Program",
+          description: "Switch between beginner, intermediate, and advanced",
+          action: onProgramChange,
+          disabled: false
         }
       ]
     },

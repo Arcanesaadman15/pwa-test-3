@@ -1,6 +1,8 @@
 import { Task, TaskCompletion, DayProgress, User } from "@/types";
 import { TASK_CATALOG, getTask } from "@/data/taskCatalog";
 import { BEGINNER_PROGRAM, getBeginnerDayTasks, getPhaseFromDay } from "@/data/beginnerProgram";
+import { getIntermediateDayTasks } from "@/data/intermediateProgram";
+import { getAdvancedDayTasks } from "@/data/advancedProgram";
 import { storage } from "./storage";
 
 export class TaskEngine {
@@ -308,11 +310,9 @@ export class TaskEngine {
       case 'beginner':
         return getBeginnerDayTasks(day);
       case 'intermediate':
-        // TODO: Implement intermediate program
-        return getBeginnerDayTasks(day);
+        return getIntermediateDayTasks(day);
       case 'advanced':
-        // TODO: Implement advanced program
-        return getBeginnerDayTasks(day);
+        return getAdvancedDayTasks(day);
       default:
         return [];
     }
@@ -347,11 +347,25 @@ export class TaskEngine {
   }
 
   async switchProgram(program: 'beginner' | 'intermediate' | 'advanced'): Promise<void> {
+    // Reset all progress when switching programs
+    await this.resetProgress();
+    
     this.currentProgram = program;
+    
+    // Update user program and reset to day 1
     if (this.user) {
       this.user.program = program;
+      this.user.currentDay = 1;
+      this.user.completedDays = 0;
+      this.user.currentStreak = 0;
       await storage.saveUser(this.user);
     }
+    
+    // Reset viewing day to 1
+    this.viewingDay = 1;
+    await storage.setCurrentDay(1);
+    
+    console.log(`🔄 Switched to ${program} program - starting fresh from Day 1`);
   }
 
   async resetProgress(): Promise<void> {

@@ -6,6 +6,8 @@ import { TaskList } from "@/components/Tasks/TaskList";
 import { StatsOverview } from "@/components/Stats/StatsOverview";
 import { SkillTree } from "@/components/Skills/SkillTree";
 import { ProfileOverview } from "@/components/Profile/ProfileOverview";
+import { SettingsPanel } from "@/components/Profile/SettingsPanel";
+import { ProgramSelector } from "@/components/Profile/ProgramSelector";
 import { TaskCompletionModal } from "@/components/Modals/TaskCompletionModal";
 import { SkillUnlockModal } from "@/components/Modals/SkillUnlockModal";
 import { useUserProgress } from "@/hooks/useUserProgress";
@@ -13,9 +15,11 @@ import { useTaskEngine } from "@/hooks/useTaskEngine";
 import { useSkillTree } from "@/hooks/useSkillTree";
 
 type TabType = 'tasks' | 'stats' | 'skills' | 'profile';
+type ViewType = 'main' | 'settings' | 'programSelector';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<TabType>('tasks');
+  const [currentView, setCurrentView] = useState<ViewType>('main');
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showSkillModal, setShowSkillModal] = useState(false);
   const [completedTaskId, setCompletedTaskId] = useState<string | null>(null);
@@ -32,7 +36,8 @@ export default function Home() {
     currentDayTasks,
     completeTask,
     skipTask,
-    getDayProgress
+    getDayProgress,
+    switchProgram
   } = useTaskEngine();
   
   const {
@@ -72,9 +77,40 @@ export default function Home() {
     }
   };
 
+  const handleOpenSettings = () => setCurrentView('settings');
+  const handleOpenProgramSelector = () => setCurrentView('programSelector');
+  const handleBackToMain = () => { setCurrentView('main'); setActiveTab('profile'); };
+  const handleProgramSelect = async (program: 'beginner' | 'intermediate' | 'advanced') => {
+    await switchProgram(program);
+    setCurrentView('main');
+    setActiveTab('tasks');
+  };
+  const handleDataReset = () => setCurrentView('main');
+
   // Show onboarding if not completed
   if (!isOnboardingComplete) {
     return <OnboardingFlow onComplete={completeOnboarding} />;
+  }
+
+  // Handle different views
+  if (currentView === 'settings') {
+    return (
+      <SettingsPanel 
+        onBack={handleBackToMain}
+        onDataReset={handleDataReset}
+        onProgramChange={handleOpenProgramSelector}
+      />
+    );
+  }
+
+  if (currentView === 'programSelector') {
+    return (
+      <ProgramSelector
+        currentProgram={user?.program || 'beginner'}
+        onProgramSelect={handleProgramSelect}
+        onBack={handleBackToMain}
+      />
+    );
   }
 
   const renderTabContent = () => {
@@ -86,7 +122,7 @@ export default function Home() {
       case 'skills':
         return <SkillTree userSkills={getUserSkills()} />;
       case 'profile':
-        return <ProfileOverview user={user} />;
+        return <ProfileOverview user={user} onOpenSettings={handleOpenSettings} />;
       default:
         return null;
     }
