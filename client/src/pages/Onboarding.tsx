@@ -32,7 +32,25 @@ interface OnboardingProps {
 
 export default function Onboarding({ onComplete }: OnboardingProps) {
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('splash');
-  const [onboardingData, setOnboardingData] = useState<Partial<OnboardingData>>({});
+  const [onboardingData, setOnboardingData] = useState<Partial<OnboardingData>>({
+    name: '',
+    email: '',
+    ageRange: '',
+    sleepQuality: '',
+    exerciseFrequency: '',
+    primaryGoal: '',
+    waistCircumference: 32,
+    stressLevel: 5,
+    dailySteps: 5000,
+    circadianRhythm: 'morning',
+    activityLocation: 'indoor',
+    socialPreference: 'solo',
+    intensityApproach: 'gentle',
+    activityLevel: '',
+    timeCommitment: '',
+    preferences: [],
+    recommendedProgram: 'beginner'
+  });
   const [isLoading, setIsLoading] = useState(false);
 
   // Auto-advance from splash screen
@@ -67,7 +85,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     setIsLoading(true);
     try {
       // Clean the data to remove any circular references
-      const cleanData = {
+      const cleanData: OnboardingData = {
         name: onboardingData.name || '',
         email: onboardingData.email || '',
         ageRange: onboardingData.ageRange || '',
@@ -81,6 +99,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         activityLocation: onboardingData.activityLocation || 'indoor',
         socialPreference: onboardingData.socialPreference || 'solo',
         intensityApproach: onboardingData.intensityApproach || 'gentle',
+        activityLevel: onboardingData.activityLevel || '',
+        timeCommitment: onboardingData.timeCommitment || '',
+        preferences: onboardingData.preferences || [],
         recommendedProgram: onboardingData.recommendedProgram || 'beginner',
         completedAt: new Date()
       };

@@ -21,6 +21,11 @@ export interface OnboardingData {
   socialPreference: 'solo' | 'group';
   intensityApproach: 'high' | 'gentle';
   
+  // Legacy fields for compatibility
+  activityLevel?: string;
+  timeCommitment?: string;
+  preferences?: string[];
+  
   // Recommended program
   recommendedProgram: 'beginner' | 'intermediate' | 'advanced';
   
