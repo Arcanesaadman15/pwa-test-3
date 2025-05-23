@@ -195,10 +195,10 @@ export default function Home() {
     }
   };
 
-  // Show onboarding if user hasn't completed it
-  if (!isOnboardingComplete) {
-    return <Onboarding onComplete={completeOnboarding} />;
-  }
+  // Skip onboarding for now - go straight to main app
+  // if (!isOnboardingComplete) {
+  //   return <Onboarding onComplete={completeOnboarding} />;
+  // }
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#111827' }}>
