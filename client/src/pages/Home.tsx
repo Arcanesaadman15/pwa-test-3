@@ -49,9 +49,23 @@ export default function Home() {
   } = useSkillTree();
 
   const handleTaskComplete = async (taskId: string) => {
+    console.log(`🔥 [CRITICAL] handleTaskComplete called for task: ${taskId}`);
+    console.log(`🔥 [CRITICAL] User exists: ${!!user}, TaskEngine exists: ${!!taskEngine}`);
+    
+    if (!taskEngine || !user) {
+      console.error(`❌ [CRITICAL] Missing dependencies - taskEngine: ${!!taskEngine}, user: ${!!user}`);
+      return;
+    }
+    
     try {
+      console.log(`🔥 [CRITICAL] Current day: ${taskEngine.getActiveDay()}, Viewing day: ${taskEngine.getViewingDay()}`);
+      
       const previousStreak = user?.currentStreak || 0;
-      await completeTask(taskId);
+      console.log(`🔥 [CRITICAL] Calling completeTask...`);
+      
+      const result = await completeTask(taskId);
+      console.log(`🔥 [CRITICAL] completeTask result: ${result}`);
+      
       await loadUserData(); // Refresh user data to get updated streak
       
       setCompletedTaskId(taskId);
