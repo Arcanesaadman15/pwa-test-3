@@ -31,6 +31,44 @@ export const SKILL_CATEGORIES = {
 
 // Complete skill definitions based on PRD
 export const SKILL_DEFINITIONS: SkillDefinition[] = [
+  // SLEEP CATEGORY SKILLS - Early unlocks for motivation
+  {
+    id: 'sleep_starter',
+    title: 'Sleep Starter',
+    description: 'Taking the first steps toward better sleep habits',
+    category: 'Sleep',
+    level: 1,
+    requirements: [
+      { taskId: 'sleep_7h', count: 3, consecutive: true }
+    ],
+    categoryColor: SKILL_CATEGORIES.Sleep.color,
+    categoryIcon: SKILL_CATEGORIES.Sleep.icon
+  },
+  {
+    id: 'week_one_warrior',
+    title: 'Week One Warrior',
+    description: 'Completed your first week of consistent sleep habits',
+    category: 'Sleep',
+    level: 1,
+    requirements: [
+      { taskId: 'sleep_7h', count: 7, consecutive: true }
+    ],
+    categoryColor: SKILL_CATEGORIES.Sleep.color,
+    categoryIcon: SKILL_CATEGORIES.Sleep.icon
+  },
+  {
+    id: 'sleep_champion',
+    title: 'Sleep Champion',
+    description: 'Achieved outstanding consistency in sleep habits',
+    category: 'Sleep',
+    level: 2,
+    requirements: [
+      { taskId: 'sleep_7h', count: 14, consecutive: true }
+    ],
+    categoryColor: SKILL_CATEGORIES.Sleep.color,
+    categoryIcon: SKILL_CATEGORIES.Sleep.icon
+  },
+
   // PHYSICAL CATEGORY SKILLS
   
   // Beginner Level (Level 1)
@@ -41,6 +79,16 @@ export const SKILL_DEFINITIONS: SkillDefinition[] = [
     category: 'Physical',
     level: 1,
     requirements: [{ taskId: 'walk_30min', count: 3 }],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'sunlight_seeker',
+    title: 'Sunlight Seeker',
+    description: 'Discovered the power of morning natural light',
+    category: 'Physical',
+    level: 1,
+    requirements: [{ taskId: 'morning_sun_15min', count: 5 }],
     categoryColor: SKILL_CATEGORIES.Physical.color,
     categoryIcon: SKILL_CATEGORIES.Physical.icon
   },
@@ -74,6 +122,29 @@ export const SKILL_DEFINITIONS: SkillDefinition[] = [
     category: 'Physical',
     level: 1,
     requirements: [{ taskId: 'walk_10k_steps', count: 5 }],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'yoga_novice',
+    title: 'Yoga Novice',
+    description: 'Embraced flexibility and mindful movement',
+    category: 'Physical',
+    level: 1,
+    requirements: [{ taskId: 'yoga_stretch_15min', count: 3 }],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'strength_foundation',
+    title: 'Strength Foundation',
+    description: 'Built your base with bodyweight exercises',
+    category: 'Physical',
+    level: 1,
+    requirements: [
+      { taskId: 'chair_squats', count: 5 },
+      { taskId: 'full_body_workout', count: 2 }
+    ],
     categoryColor: SKILL_CATEGORIES.Physical.color,
     categoryIcon: SKILL_CATEGORIES.Physical.icon
   },

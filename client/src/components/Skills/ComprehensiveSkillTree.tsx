@@ -130,7 +130,10 @@ export function ComprehensiveSkillTree({ onSkillClick }: SkillTreeProps) {
 
   // If connection view is selected, render the connection visualization
   if (viewMode === 'connections') {
-    return <SkillConnectionVisualization onSkillClick={onSkillClick} />;
+    return <SkillConnectionVisualization 
+      onSkillClick={onSkillClick} 
+      onBackToTree={() => setViewMode('tree')}
+    />;
   }
 
   return (

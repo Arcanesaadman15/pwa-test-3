@@ -21,9 +21,10 @@ interface SkillConnection {
 
 interface SkillConnectionVisualizationProps {
   onSkillClick?: (skill: UnlockedSkill) => void;
+  onBackToTree?: () => void;
 }
 
-export function SkillConnectionVisualization({ onSkillClick }: SkillConnectionVisualizationProps) {
+export function SkillConnectionVisualization({ onSkillClick, onBackToTree }: SkillConnectionVisualizationProps) {
   const [skillNodes, setSkillNodes] = useState<SkillNode[]>([]);
   const [connections, setConnections] = useState<SkillConnection[]>([]);
   const [unlockedSkills, setUnlockedSkills] = useState<UnlockedSkill[]>([]);
@@ -183,7 +184,7 @@ export function SkillConnectionVisualization({ onSkillClick }: SkillConnectionVi
       <div className="text-center">
         <div className="flex items-center justify-between mb-4">
           <button
-            onClick={() => window.history.back()}
+            onClick={onBackToTree}
             className="px-3 py-1 bg-gray-700 text-gray-300 rounded-lg text-sm hover:bg-gray-600"
           >
             ← Back to Tree
