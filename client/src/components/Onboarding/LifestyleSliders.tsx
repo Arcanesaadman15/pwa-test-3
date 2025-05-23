@@ -153,16 +153,18 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
               />
             </div>
             
-            {/* Slider thumb */}
+            {/* Slider thumb with larger touch area */}
             <motion.div
-              className="absolute top-1/2 transform -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-xl border-4 border-gray-900 cursor-pointer"
+              className="absolute top-1/2 transform -translate-y-1/2 w-12 h-12 flex items-center justify-center cursor-pointer"
               style={{ 
                 left: `${((currentValue - slider.min) / (slider.max - slider.min)) * 100}%`,
-                marginLeft: '-16px'
+                marginLeft: '-24px'
               }}
-              whileHover={{ scale: 1.2 }}
-              whileTap={{ scale: 0.9 }}
-            />
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <div className="w-7 h-7 bg-white rounded-full shadow-xl border-3 border-gray-800"></div>
+            </motion.div>
             
             {/* Hidden input for accessibility */}
             <input
@@ -171,7 +173,7 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
               max={slider.max}
               value={currentValue}
               onChange={(e) => handleSliderChange(slider.id, parseInt(e.target.value))}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
             />
           </div>
           
