@@ -36,6 +36,7 @@ export default function Home() {
   } = useUserProgress();
   
   const {
+    taskEngine,
     currentDayTasks,
     completeTask,
     skipTask,
