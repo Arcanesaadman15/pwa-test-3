@@ -336,7 +336,7 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full mx-auto mb-6"></div>
+          <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-6"></div>
           <p className="text-gray-400 font-medium">Loading your program...</p>
         </div>
       </div>
@@ -372,7 +372,7 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
   return (
     <div className="min-h-screen text-white pb-24" style={{ backgroundColor: '#111827' }}>
       {/* Compact Header with Day Navigation and Tabs */}
-      <div className="bg-gradient-to-br from-red-900 via-red-800 to-orange-800 px-6 pt-16 pb-6">
+      <div className="bg-gradient-to-br from-blue-900 via-purple-800 to-blue-800 px-6 pt-16 pb-6">
         {/* Day Navigation */}
         <div className="flex items-center justify-center gap-6 mb-6">
           <Button
@@ -421,7 +421,7 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
             onClick={() => setActiveTab('todo')}
             className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
               activeTab === 'todo'
-                ? 'bg-red-600 text-white'
+                ? 'bg-blue-600 text-white'
                 : 'text-gray-300 hover:text-white'
             }`}
           >
@@ -431,7 +431,7 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
             onClick={() => setActiveTab('done')}
             className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
               activeTab === 'done'
-                ? 'bg-red-600 text-white'
+                ? 'bg-blue-600 text-white'
                 : 'text-gray-300 hover:text-white'
             }`}
           >
@@ -441,7 +441,7 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
             onClick={() => setActiveTab('skipped')}
             className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
               activeTab === 'skipped'
-                ? 'bg-red-600 text-white'
+                ? 'bg-blue-600 text-white'
                 : 'text-gray-300 hover:text-white'
             }`}
           >
