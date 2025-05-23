@@ -281,6 +281,23 @@ export class TaskEngine {
         await storage.setCurrentDay(newDay);
         
         console.log(`📊 Streak update: Current=${this.user.currentStreak}, Longest=${this.user.longestStreak}`);
+        
+        // Check for streak milestone celebration
+        if (!dayHasSkippedTasks && this.user.currentStreak > 0) {
+          const streakCount = this.user.currentStreak;
+          const isStreakMilestone = (
+            streakCount === 3 || streakCount === 7 || streakCount === 14 || 
+            streakCount === 21 || streakCount === 30 || (streakCount % 10 === 0 && streakCount > 30)
+          );
+          
+          if (isStreakMilestone) {
+            console.log(`🎉 STREAK MILESTONE REACHED: ${streakCount} days!`);
+            // Trigger celebration via custom event
+            window.dispatchEvent(new CustomEvent('streakMilestone', { 
+              detail: { streak: streakCount } 
+            }));
+          }
+        }
       }
       
       // Auto-advance to next day and navigate user there
