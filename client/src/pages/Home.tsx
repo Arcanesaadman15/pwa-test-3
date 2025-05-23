@@ -140,7 +140,7 @@ export default function Home() {
 
   // Show onboarding if not completed
   if (!isOnboardingComplete) {
-    return <OnboardingFlow onComplete={completeOnboarding} />;
+    return <Onboarding onComplete={completeOnboarding} />;
   }
 
   // Handle different views
