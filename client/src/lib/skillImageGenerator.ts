@@ -13,8 +13,8 @@ export class SkillImageGenerator {
 
   constructor() {
     this.canvas = document.createElement('canvas');
-    this.canvas.width = 1200; // Social media optimal size
-    this.canvas.height = 630;
+    this.canvas.width = 1080; // Perfect for Instagram & TikTok
+    this.canvas.height = 1080; // Square format works everywhere
     this.ctx = this.canvas.getContext('2d')!;
   }
 
@@ -67,11 +67,12 @@ export class SkillImageGenerator {
   }
 
   private drawMainCard(skill: UnlockedSkill) {
-    // Draw main card background
-    const cardX = 60;
-    const cardY = 80;
-    const cardWidth = this.canvas.width - 120;
-    const cardHeight = this.canvas.height - 160;
+    // Draw main card background (square optimized)
+    const margin = 40;
+    const cardX = margin;
+    const cardY = margin;
+    const cardWidth = this.canvas.width - (margin * 2);
+    const cardHeight = this.canvas.height - (margin * 2);
     
     // Card shadow
     this.ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
@@ -79,14 +80,14 @@ export class SkillImageGenerator {
     
     // Card background with rounded corners
     this.ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
-    this.drawRoundedRect(cardX, cardY, cardWidth, cardHeight, 20);
+    this.drawRoundedRect(cardX, cardY, cardWidth, cardHeight, 30);
     
     // Card border
     this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-    this.ctx.lineWidth = 2;
+    this.ctx.lineWidth = 3;
     this.ctx.stroke();
     
-    // Category color accent
+    // Category color accent (top bar)
     const categoryColors: Record<string, string> = {
       'Physical': '#3b82f6',
       'Nutrition': '#10b981',
@@ -97,72 +98,75 @@ export class SkillImageGenerator {
     
     const accentColor = categoryColors[skill.category] || '#3b82f6';
     this.ctx.fillStyle = accentColor;
-    this.drawRoundedRect(cardX, cardY, cardWidth, 8, 4);
+    this.drawRoundedRect(cardX, cardY, cardWidth, 12, 6);
   }
 
   private drawCategoryIcon(skill: UnlockedSkill) {
-    // Draw large category icon
-    this.ctx.font = 'bold 120px Arial';
+    // Draw large category icon (optimized for square format)
+    this.ctx.font = 'bold 160px Arial';
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
     
+    const centerX = this.canvas.width / 2;
+    const iconY = 320; // Positioned higher in square format
+    
     // Icon shadow
-    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-    this.ctx.fillText(skill.categoryIcon, this.canvas.width / 2 + 3, 280 + 3);
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+    this.ctx.fillText(skill.categoryIcon, centerX + 4, iconY + 4);
     
     // Main icon
     this.ctx.fillStyle = '#ffffff';
-    this.ctx.fillText(skill.categoryIcon, this.canvas.width / 2, 280);
+    this.ctx.fillText(skill.categoryIcon, centerX, iconY);
   }
 
   private drawTextContent(skill: UnlockedSkill, userName: string, appName: string) {
     const centerX = this.canvas.width / 2;
     
-    // "SKILL UNLOCKED!" text
-    this.ctx.font = 'bold 32px Arial';
+    // "SKILL UNLOCKED!" text (positioned for square format)
+    this.ctx.font = 'bold 40px Arial';
     this.ctx.textAlign = 'center';
     this.ctx.fillStyle = '#fbbf24';
-    this.ctx.fillText('SKILL UNLOCKED!', centerX, 150);
+    this.ctx.fillText('SKILL UNLOCKED!', centerX, 180);
     
-    // Skill title
-    this.ctx.font = 'bold 48px Arial';
+    // Skill title (larger for impact)
+    this.ctx.font = 'bold 56px Arial';
     this.ctx.fillStyle = '#ffffff';
-    this.ctx.fillText(skill.title, centerX, 380);
+    this.wrapText(skill.title, centerX, 500, 900, 65);
     
-    // Skill description
-    this.ctx.font = '24px Arial';
-    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-    this.wrapText(skill.description, centerX, 420, 800, 30);
+    // Skill description (positioned below icon)
+    this.ctx.font = '28px Arial';
+    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+    this.wrapText(skill.description, centerX, 580, 900, 35);
     
     // Category and level
-    this.ctx.font = 'bold 20px Arial';
+    this.ctx.font = 'bold 24px Arial';
     this.ctx.fillStyle = '#a855f7';
-    this.ctx.fillText(`${skill.category} • Level ${skill.level}`, centerX, 480);
+    this.ctx.fillText(`${skill.category} • Level ${skill.level}`, centerX, 700);
     
     // User achievement text
-    this.ctx.font = '18px Arial';
+    this.ctx.font = '20px Arial';
     this.ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-    this.ctx.fillText(`${userName} achieved this milestone!`, centerX, 520);
+    this.ctx.fillText(`${userName} achieved this milestone!`, centerX, 740);
   }
 
   private drawAppBranding(appName: string) {
-    // App name at bottom
-    this.ctx.font = 'bold 24px Arial';
+    // App name at bottom (optimized for square)
+    this.ctx.font = 'bold 28px Arial';
     this.ctx.textAlign = 'center';
     this.ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-    this.ctx.fillText(`Join ${appName} - Your Wellness Journey`, this.canvas.width / 2, this.canvas.height - 40);
+    this.ctx.fillText(`Join ${appName} - Your Wellness Journey`, this.canvas.width / 2, this.canvas.height - 80);
     
-    // App logo/icon (placeholder mountain peak)
-    this.ctx.font = '32px Arial';
+    // App logo/icon (positioned for square format)
+    this.ctx.font = '36px Arial';
     this.ctx.fillStyle = '#3b82f6';
-    this.ctx.fillText('🏔️', this.canvas.width / 2 - 200, this.canvas.height - 35);
+    this.ctx.fillText('🏔️', this.canvas.width / 2 - 150, this.canvas.height - 75);
   }
 
   private drawAchievementBadge(skill: UnlockedSkill) {
-    // Achievement badge in top right
-    const badgeX = this.canvas.width - 150;
-    const badgeY = 100;
-    const badgeRadius = 40;
+    // Achievement badge in top right (optimized for square)
+    const badgeX = this.canvas.width - 120;
+    const badgeY = 120;
+    const badgeRadius = 45;
     
     // Badge background
     this.ctx.fillStyle = '#fbbf24';
@@ -172,18 +176,18 @@ export class SkillImageGenerator {
     
     // Badge border
     this.ctx.strokeStyle = '#ffffff';
-    this.ctx.lineWidth = 3;
+    this.ctx.lineWidth = 4;
     this.ctx.stroke();
     
     // Badge icon
-    this.ctx.font = 'bold 24px Arial';
+    this.ctx.font = 'bold 28px Arial';
     this.ctx.textAlign = 'center';
     this.ctx.fillStyle = '#1a1a2e';
-    this.ctx.fillText('★', badgeX, badgeY + 8);
+    this.ctx.fillText('★', badgeX, badgeY + 10);
     
     // Level text
-    this.ctx.font = 'bold 12px Arial';
-    this.ctx.fillText(`LV.${skill.level}`, badgeX, badgeY + 25);
+    this.ctx.font = 'bold 14px Arial';
+    this.ctx.fillText(`LV.${skill.level}`, badgeX, badgeY + 30);
   }
 
   private drawRoundedRect(x: number, y: number, width: number, height: number, radius: number) {
