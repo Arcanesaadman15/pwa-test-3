@@ -214,7 +214,7 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
     
     // Use passed handler if available, otherwise use default logic
     if (onTaskComplete) {
-      onTaskComplete(taskId);
+      await onTaskComplete(taskId);
       // Still reload tasks to update UI
       await loadTasks();
       return;
@@ -253,7 +253,7 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
     
     // Use passed handler if available, otherwise use default logic
     if (onTaskSkip) {
-      onTaskSkip(taskId);
+      await onTaskSkip(taskId);
       // Still reload tasks to update UI
       await loadTasks();
       return;
