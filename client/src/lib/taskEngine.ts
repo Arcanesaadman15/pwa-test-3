@@ -37,6 +37,8 @@ export class TaskEngine {
   private getCurrentActiveDay(): number {
     if (!this.user) return 1;
     
+    console.log(`🎯 [ACTIVE DAY CALC] Starting calculation...`);
+    
     // Find the furthest day that can be unlocked based on sequential completion
     let activeDay = 1;
     
@@ -45,15 +47,19 @@ export class TaskEngine {
       if (day === 1) {
         // Day 1 is always unlocked
         activeDay = day;
+        console.log(`🎯 [ACTIVE DAY CALC] Day 1 always unlocked`);
       } else if (this.isDayCompleted(day - 1)) {
         // If previous day is complete, this day becomes active
         activeDay = day;
+        console.log(`🎯 [ACTIVE DAY CALC] Day ${day - 1} complete, unlocking Day ${day}`);
       } else {
         // Previous day not complete, so this is as far as we can go
+        console.log(`🎯 [ACTIVE DAY CALC] Day ${day - 1} NOT complete, stopping at Day ${activeDay}`);
         break;
       }
     }
     
+    console.log(`🎯 [ACTIVE DAY CALC] Final active day: ${activeDay}`);
     return activeDay;
   }
 
@@ -62,9 +68,23 @@ export class TaskEngine {
     const taskIds = this.getTaskIdsForDay(day);
     const dayCompletions = this.taskCompletions.filter(c => c.day === day);
     
-    return taskIds.every(taskId => 
+    console.log(`🔍 [DAY COMPLETION CHECK] Day ${day}:`);
+    console.log(`🔍 [DAY COMPLETION CHECK] Expected tasks:`, taskIds);
+    console.log(`🔍 [DAY COMPLETION CHECK] Actual completions:`, dayCompletions);
+    
+    const isComplete = taskIds.every(taskId => 
       dayCompletions.some(c => c.taskId === taskId)
     );
+    
+    console.log(`🔍 [DAY COMPLETION CHECK] Day ${day} is complete: ${isComplete}`);
+    
+    // Check each task individually for debugging
+    taskIds.forEach(taskId => {
+      const hasCompletion = dayCompletions.some(c => c.taskId === taskId);
+      console.log(`🔍 [TASK CHECK] Task ${taskId}: ${hasCompletion ? '✅ Complete' : '❌ Missing'}`);
+    });
+    
+    return isComplete;
   }
 
   // Get the furthest unlocked day (same as current active day)
