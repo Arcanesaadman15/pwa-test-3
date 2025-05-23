@@ -135,9 +135,11 @@ export class TaskEngine {
     const currentActiveDay = this.getCurrentActiveDay();
     console.log(`🔥 [TASK ENGINE] completeTask called - Task: ${taskId}, Active Day: ${currentActiveDay}, Viewing Day: ${this.viewingDay}`);
     
+    // Auto-sync viewing day to active day if there's a mismatch
     if (this.viewingDay !== currentActiveDay) {
-      console.error(`❌ [TASK ENGINE] Day mismatch - viewing ${this.viewingDay} but active is ${currentActiveDay}`);
-      throw new Error("You can only complete tasks for your current active day");
+      console.log(`🔄 [AUTO-SYNC] Syncing viewing day from ${this.viewingDay} to active day ${currentActiveDay}`);
+      this.viewingDay = currentActiveDay;
+      this.manualNavigation = false;
     }
 
     // Validate previous days are complete

@@ -1,0 +1,168 @@
+taskEngine.ts:54 🎯 [ACTIVE DAY CALC] Day 1 complete, unlocking Day 2
+taskEngine.ts:71 🔍 [DAY COMPLETION CHECK] Day 2:
+taskEngine.ts:72 🔍 [DAY COMPLETION CHECK] Expected tasks: (2) ['sleep_7h', 'sunlight_15min']
+taskEngine.ts:73 🔍 [DAY COMPLETION CHECK] Actual completions: (2) [{…}, {…}]
+taskEngine.ts:79 🔍 [DAY COMPLETION CHECK] Day 2 is complete: true
+taskEngine.ts:84 🔍 [TASK CHECK] Task sleep_7h: ✅ Complete
+taskEngine.ts:84 🔍 [TASK CHECK] Task sunlight_15min: ✅ Complete
+taskEngine.ts:54 🎯 [ACTIVE DAY CALC] Day 2 complete, unlocking Day 3
+taskEngine.ts:71 🔍 [DAY COMPLETION CHECK] Day 3:
+taskEngine.ts:72 🔍 [DAY COMPLETION CHECK] Expected tasks: (2) ['sleep_7h', 'brisk_walk_30m']
+taskEngine.ts:73 🔍 [DAY COMPLETION CHECK] Actual completions: []
+taskEngine.ts:79 🔍 [DAY COMPLETION CHECK] Day 3 is complete: false
+taskEngine.ts:84 🔍 [TASK CHECK] Task sleep_7h: ❌ Missing
+taskEngine.ts:84 🔍 [TASK CHECK] Task brisk_walk_30m: ❌ Missing
+taskEngine.ts:57 🎯 [ACTIVE DAY CALC] Day 3 NOT complete, stopping at Day 3
+taskEngine.ts:62 🎯 [ACTIVE DAY CALC] Final active day: 3
+taskEngine.ts:40 🎯 [ACTIVE DAY CALC] Starting calculation...
+taskEngine.ts:50 🎯 [ACTIVE DAY CALC] Day 1 always unlocked
+taskEngine.ts:71 🔍 [DAY COMPLETION CHECK] Day 1:
+taskEngine.ts:72 🔍 [DAY COMPLETION CHECK] Expected tasks: ['sleep_7h']
+taskEngine.ts:73 🔍 [DAY COMPLETION CHECK] Actual completions: [{…}]
+taskEngine.ts:79 🔍 [DAY COMPLETION CHECK] Day 1 is complete: true
+taskEngine.ts:84 🔍 [TASK CHECK] Task sleep_7h: ✅ Complete
+taskEngine.ts:54 🎯 [ACTIVE DAY CALC] Day 1 complete, unlocking Day 2
+taskEngine.ts:71 🔍 [DAY COMPLETION CHECK] Day 2:
+taskEngine.ts:72 🔍 [DAY COMPLETION CHECK] Expected tasks: (2) ['sleep_7h', 'sunlight_15min']
+taskEngine.ts:73 🔍 [DAY COMPLETION CHECK] Actual completions: (2) [{…}, {…}]
+taskEngine.ts:79 🔍 [DAY COMPLETION CHECK] Day 2 is complete: true
+taskEngine.ts:84 🔍 [TASK CHECK] Task sleep_7h: ✅ Complete
+taskEngine.ts:84 🔍 [TASK CHECK] Task sunlight_15min: ✅ Complete
+taskEngine.ts:54 🎯 [ACTIVE DAY CALC] Day 2 complete, unlocking Day 3
+taskEngine.ts:71 🔍 [DAY COMPLETION CHECK] Day 3:
+taskEngine.ts:72 🔍 [DAY COMPLETION CHECK] Expected tasks: (2) ['sleep_7h', 'brisk_walk_30m']
+taskEngine.ts:73 🔍 [DAY COMPLETION CHECK] Actual completions: []
+taskEngine.ts:79 🔍 [DAY COMPLETION CHECK] Day 3 is complete: false
+taskEngine.ts:84 🔍 [TASK CHECK] Task sleep_7h: ❌ Missing
+taskEngine.ts:84 🔍 [TASK CHECK] Task brisk_walk_30m: ❌ Missing
+taskEngine.ts:57 🎯 [ACTIVE DAY CALC] Day 3 NOT complete, stopping at Day 3
+taskEngine.ts:62 🎯 [ACTIVE DAY CALC] Final active day: 3
+taskEngine.ts:71 🔍 [DAY COMPLETION CHECK] Day 3:
+taskEngine.ts:72 🔍 [DAY COMPLETION CHECK] Expected tasks: (2) ['sleep_7h', 'brisk_walk_30m']
+taskEngine.ts:73 🔍 [DAY COMPLETION CHECK] Actual completions: []
+taskEngine.ts:79 🔍 [DAY COMPLETION CHECK] Day 3 is complete: false
+taskEngine.ts:84 🔍 [TASK CHECK] Task sleep_7h: ❌ Missing
+taskEngine.ts:84 🔍 [TASK CHECK] Task brisk_walk_30m: ❌ Missing
+taskEngine.ts:40 🎯 [ACTIVE DAY CALC] Starting calculation...
+taskEngine.ts:50 🎯 [ACTIVE DAY CALC] Day 1 always unlocked
+taskEngine.ts:71 🔍 [DAY COMPLETION CHECK] Day 1:
+taskEngine.ts:72 🔍 [DAY COMPLETION CHECK] Expected tasks: ['sleep_7h']
+taskEngine.ts:73 🔍 [DAY COMPLETION CHECK] Actual completions: [{…}]
+taskEngine.ts:79 🔍 [DAY COMPLETION CHECK] Day 1 is complete: true
+taskEngine.ts:84 🔍 [TASK CHECK] Task sleep_7h: ✅ Complete
+taskEngine.ts:54 🎯 [ACTIVE DAY CALC] Day 1 complete, unlocking Day 2
+taskEngine.ts:71 🔍 [DAY COMPLETION CHECK] Day 2:
+taskEngine.ts:72 🔍 [DAY COMPLETION CHECK] Expected tasks: (2) ['sleep_7h', 'sunlight_15min']
+taskEngine.ts:73 🔍 [DAY COMPLETION CHECK] Actual completions: (2) [{…}, {…}]
+taskEngine.ts:79 🔍 [DAY COMPLETION CHECK] Day 2 is complete: true
+taskEngine.ts:84 🔍 [TASK CHECK] Task sleep_7h: ✅ Complete
+taskEngine.ts:84 🔍 [TASK CHECK] Task sunlight_15min: ✅ Complete
+taskEngine.ts:54 🎯 [ACTIVE DAY CALC] Day 2 complete, unlocking Day 3
+taskEngine.ts:71 🔍 [DAY COMPLETION CHECK] Day 3:
+taskEngine.ts:72 🔍 [DAY COMPLETION CHECK] Expected tasks: (2) ['sleep_7h', 'brisk_walk_30m']
+taskEngine.ts:73 🔍 [DAY COMPLETION CHECK] Actual completions: []
+taskEngine.ts:79 🔍 [DAY COMPLETION CHECK] Day 3 is complete: false
+taskEngine.ts:84 🔍 [TASK CHECK] Task sleep_7h: ❌ Missing
+taskEngine.ts:84 🔍 [TASK CHECK] Task brisk_walk_30m: ❌ Missing
+taskEngine.ts:57 🎯 [ACTIVE DAY CALC] Day 3 NOT complete, stopping at Day 3
+taskEngine.ts:62 🎯 [ACTIVE DAY CALC] Final active day: 3
+Home.tsx:53 🔥 [CRITICAL] handleTaskComplete called for task: brisk_walk_30m
+Home.tsx:54 🔥 [CRITICAL] User exists: true, TaskEngine exists: true
+taskEngine.ts:40 🎯 [ACTIVE DAY CALC] Starting calculation...
+taskEngine.ts:50 🎯 [ACTIVE DAY CALC] Day 1 always unlocked
+taskEngine.ts:71 🔍 [DAY COMPLETION CHECK] Day 1:
+taskEngine.ts:72 🔍 [DAY COMPLETION CHECK] Expected tasks: ['sleep_7h']
+taskEngine.ts:73 🔍 [DAY COMPLETION CHECK] Actual completions: [{…}]
+taskEngine.ts:79 🔍 [DAY COMPLETION CHECK] Day 1 is complete: true
+taskEngine.ts:84 🔍 [TASK CHECK] Task sleep_7h: ✅ Complete
+taskEngine.ts:54 🎯 [ACTIVE DAY CALC] Day 1 complete, unlocking Day 2
+taskEngine.ts:71 🔍 [DAY COMPLETION CHECK] Day 2:
+taskEngine.ts:72 🔍 [DAY COMPLETION CHECK] Expected tasks: (2) ['sleep_7h', 'sunlight_15min']
+taskEngine.ts:73 🔍 [DAY COMPLETION CHECK] Actual completions: (2) [{…}, {…}]
+taskEngine.ts:79 🔍 [DAY COMPLETION CHECK] Day 2 is complete: true
+taskEngine.ts:84 🔍 [TASK CHECK] Task sleep_7h: ✅ Complete
+taskEngine.ts:84 🔍 [TASK CHECK] Task sunlight_15min: ✅ Complete
+taskEngine.ts:54 🎯 [ACTIVE DAY CALC] Day 2 complete, unlocking Day 3
+taskEngine.ts:71 🔍 [DAY COMPLETION CHECK] Day 3:
+taskEngine.ts:72 🔍 [DAY COMPLETION CHECK] Expected tasks: (2) ['sleep_7h', 'brisk_walk_30m']
+taskEngine.ts:73 🔍 [DAY COMPLETION CHECK] Actual completions: []
+taskEngine.ts:79 🔍 [DAY COMPLETION CHECK] Day 3 is complete: false
+taskEngine.ts:84 🔍 [TASK CHECK] Task sleep_7h: ❌ Missing
+taskEngine.ts:84 🔍 [TASK CHECK] Task brisk_walk_30m: ❌ Missing
+taskEngine.ts:57 🎯 [ACTIVE DAY CALC] Day 3 NOT complete, stopping at Day 3
+taskEngine.ts:62 🎯 [ACTIVE DAY CALC] Final active day: 3
+Home.tsx:62 🔥 [CRITICAL] Current day: 3, Viewing day: 2
+Home.tsx:65 🔥 [CRITICAL] Calling completeTask...
+taskEngine.ts:40 🎯 [ACTIVE DAY CALC] Starting calculation...
+taskEngine.ts:50 🎯 [ACTIVE DAY CALC] Day 1 always unlocked
+taskEngine.ts:71 🔍 [DAY COMPLETION CHECK] Day 1:
+taskEngine.ts:72 🔍 [DAY COMPLETION CHECK] Expected tasks: ['sleep_7h']
+taskEngine.ts:73 🔍 [DAY COMPLETION CHECK] Actual completions: [{…}]
+taskEngine.ts:79 🔍 [DAY COMPLETION CHECK] Day 1 is complete: true
+taskEngine.ts:84 🔍 [TASK CHECK] Task sleep_7h: ✅ Complete
+taskEngine.ts:54 🎯 [ACTIVE DAY CALC] Day 1 complete, unlocking Day 2
+taskEngine.ts:71 🔍 [DAY COMPLETION CHECK] Day 2:
+taskEngine.ts:72 🔍 [DAY COMPLETION CHECK] Expected tasks: (2) ['sleep_7h', 'sunlight_15min']
+taskEngine.ts:73 🔍 [DAY COMPLETION CHECK] Actual completions: (2) [{…}, {…}]
+taskEngine.ts:79 🔍 [DAY COMPLETION CHECK] Day 2 is complete: true
+taskEngine.ts:84 🔍 [TASK CHECK] Task sleep_7h: ✅ Complete
+taskEngine.ts:84 🔍 [TASK CHECK] Task sunlight_15min: ✅ Complete
+taskEngine.ts:54 🎯 [ACTIVE DAY CALC] Day 2 complete, unlocking Day 3
+taskEngine.ts:71 🔍 [DAY COMPLETION CHECK] Day 3:
+taskEngine.ts:72 🔍 [DAY COMPLETION CHECK] Expected tasks: (2) ['sleep_7h', 'brisk_walk_30m']
+taskEngine.ts:73 🔍 [DAY COMPLETION CHECK] Actual completions: []
+taskEngine.ts:79 🔍 [DAY COMPLETION CHECK] Day 3 is complete: false
+taskEngine.ts:84 🔍 [TASK CHECK] Task sleep_7h: ❌ Missing
+taskEngine.ts:84 🔍 [TASK CHECK] Task brisk_walk_30m: ❌ Missing
+taskEngine.ts:57 🎯 [ACTIVE DAY CALC] Day 3 NOT complete, stopping at Day 3
+taskEngine.ts:62 🎯 [ACTIVE DAY CALC] Final active day: 3
+taskEngine.ts:136 🔥 [TASK ENGINE] completeTask called - Task: brisk_walk_30m, Active Day: 3, Viewing Day: 2
+taskEngine.ts:139 ❌ [TASK ENGINE] Day mismatch - viewing 2 but active is 3
+completeTask @ taskEngine.ts:139
+await in completeTask
+completeTask @ useTaskEngine.ts:27
+handleTaskComplete @ Home.tsx:67
+handleComplete @ TaskList.tsx:217
+onComplete @ TaskList.tsx:468
+callCallback2 @ chunk-WERSD76P.js?v=60d6b513:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=60d6b513:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=60d6b513:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-WERSD76P.js?v=60d6b513:3736
+executeDispatch @ chunk-WERSD76P.js?v=60d6b513:7014
+processDispatchQueueItemsInOrder @ chunk-WERSD76P.js?v=60d6b513:7034
+processDispatchQueue @ chunk-WERSD76P.js?v=60d6b513:7043
+dispatchEventsForPlugins @ chunk-WERSD76P.js?v=60d6b513:7051
+(anonymous) @ chunk-WERSD76P.js?v=60d6b513:7174
+batchedUpdates$1 @ chunk-WERSD76P.js?v=60d6b513:18913
+batchedUpdates @ chunk-WERSD76P.js?v=60d6b513:3579
+dispatchEventForPluginEventSystem @ chunk-WERSD76P.js?v=60d6b513:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-WERSD76P.js?v=60d6b513:5478
+dispatchEvent @ chunk-WERSD76P.js?v=60d6b513:5472
+dispatchDiscreteEvent @ chunk-WERSD76P.js?v=60d6b513:5449Understand this error
+Home.tsx:98 Failed to complete task: Error: You can only complete tasks for your current active day
+    at TaskEngine.completeTask (taskEngine.ts:140:13)
+    at async completeTask (useTaskEngine.ts:27:5)
+    at async handleTaskComplete (Home.tsx:67:22)
+    at async handleComplete (TaskList.tsx:217:7)
+handleTaskComplete @ Home.tsx:98
+await in handleTaskComplete
+handleComplete @ TaskList.tsx:217
+onComplete @ TaskList.tsx:468
+callCallback2 @ chunk-WERSD76P.js?v=60d6b513:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=60d6b513:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=60d6b513:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-WERSD76P.js?v=60d6b513:3736
+executeDispatch @ chunk-WERSD76P.js?v=60d6b513:7014
+processDispatchQueueItemsInOrder @ chunk-WERSD76P.js?v=60d6b513:7034
+processDispatchQueue @ chunk-WERSD76P.js?v=60d6b513:7043
+dispatchEventsForPlugins @ chunk-WERSD76P.js?v=60d6b513:7051
+(anonymous) @ chunk-WERSD76P.js?v=60d6b513:7174
+batchedUpdates$1 @ chunk-WERSD76P.js?v=60d6b513:18913
+batchedUpdates @ chunk-WERSD76P.js?v=60d6b513:3579
+dispatchEventForPluginEventSystem @ chunk-WERSD76P.js?v=60d6b513:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-WERSD76P.js?v=60d6b513:5478
+dispatchEvent @ chunk-WERSD76P.js?v=60d6b513:5472
+dispatchDiscreteEvent @ chunk-WERSD76P.js?v=60d6b513:5449Understand this error
+taskEngine.ts:40 🎯 [ACTIVE DAY CALC] Starting calculation...
+taskEngine.ts:50 🎯 [ACTIVE DAY CALC] Day 1 always unlocked
+taskEngine.ts:71 🔍 [DAY COMPLETION CHECK] Day 1:
