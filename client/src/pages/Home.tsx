@@ -14,6 +14,7 @@ import { useUserProgress } from "@/hooks/useUserProgress";
 import { useTaskEngine } from "@/hooks/useTaskEngine";
 import { useSkillTree } from "@/hooks/useSkillTree";
 import { StreakSparkle } from "@/components/Rewards/StreakSparkle";
+import { storage } from "@/lib/storage";
 
 type TabType = 'tasks' | 'stats' | 'skills' | 'profile';
 type ViewType = 'main' | 'settings' | 'programSelector';
@@ -74,7 +75,9 @@ export default function Home() {
       // Check for actual streak milestones after user data refresh
       setTimeout(async () => {
         await loadUserData();
-        const newStreak = user?.currentStreak || 0;
+        // Get fresh user data from storage to ensure we have the latest streak
+        const freshUserData = await storage.getUser();
+        const newStreak = freshUserData?.currentStreak || 0;
         
         console.log(`🎯 Streak check: Previous=${previousStreak}, New=${newStreak}`);
         
