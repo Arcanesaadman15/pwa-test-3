@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 
 interface QuickQuizProps {
   onComplete: (data: {
+    name: string;
+    email: string;
     ageRange: string;
     sleepQuality: string; 
     exerciseFrequency: string;
@@ -13,6 +15,9 @@ interface QuickQuizProps {
 }
 
 export function QuickQuiz({ onComplete }: QuickQuizProps) {
+  const [showPersonalInfo, setShowPersonalInfo] = useState(true);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [selectedOption, setSelectedOption] = useState<string>('');

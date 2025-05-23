@@ -202,7 +202,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#111827' }}>
-      <Header user={user} />
       <main className="pb-20">
         {renderTabContent()}
       </main>
