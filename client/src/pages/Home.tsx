@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { OnboardingFlow } from "@/components/Onboarding/OnboardingFlow";
 import { Header } from "@/components/Layout/Header";
 import { BottomNavigation } from "@/components/Layout/BottomNavigation";
-import { TaskList } from "@/components/Tasks/TaskList";
+import TaskList from "@/components/Tasks/TaskList";
 import { StatsOverview } from "@/components/Stats/StatsOverview";
 import { SkillTree } from "@/components/Skills/SkillTree";
 import { ProfileOverview } from "@/components/Profile/ProfileOverview";
