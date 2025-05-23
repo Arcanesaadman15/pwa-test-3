@@ -101,7 +101,15 @@ export function Paywall({ onComplete }: PaywallProps) {
           className="space-y-4"
         >
           <Button
-            onClick={onComplete}
+            onClick={() => {
+              console.log('🚀 Paywall button clicked!');
+              if (onComplete) {
+                console.log('📞 Calling onComplete function');
+                onComplete();
+              } else {
+                console.error('❌ onComplete function is missing!');
+              }
+            }}
             size="lg"
             className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 
                      text-white font-bold py-4 text-lg rounded-xl shadow-xl hover:shadow-2xl 

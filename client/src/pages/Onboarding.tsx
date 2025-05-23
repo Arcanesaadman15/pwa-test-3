@@ -80,6 +80,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   };
 
   const handlePaywallSuccess = () => {
+    console.log('🎉 Paywall success triggered!');
+    console.log('📊 Current onboarding data:', onboardingData);
     handleComplete();
   };
 
