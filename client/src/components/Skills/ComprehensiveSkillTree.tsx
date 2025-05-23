@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { SKILL_CATEGORIES, SKILL_DEFINITIONS, UnlockedSkill } from "@/data/skillDefinitions";
 import { skillUnlockSystem } from "@/lib/skillUnlockSystem";
+import { SkillConnectionVisualization } from "./SkillConnectionVisualization";
 
 interface SkillTreeProps {
   onSkillClick?: (skill: UnlockedSkill) => void;
@@ -79,6 +80,7 @@ export function ComprehensiveSkillTree({ onSkillClick }: SkillTreeProps) {
   const [unlockedSkills, setUnlockedSkills] = useState<UnlockedSkill[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [overallProgress, setOverallProgress] = useState<any>(null);
+  const [viewMode, setViewMode] = useState<'tree' | 'connections'>('tree');
 
   useEffect(() => {
     loadSkillData();
@@ -126,10 +128,33 @@ export function ComprehensiveSkillTree({ onSkillClick }: SkillTreeProps) {
     skills: getSkillsToDisplay().filter(skill => skill.level === level)
   }));
 
+  // If connection view is selected, render the connection visualization
+  if (viewMode === 'connections') {
+    return <SkillConnectionVisualization onSkillClick={onSkillClick} />;
+  }
+
   return (
     <div className="space-y-6 p-4">
       {/* Header with Progress */}
       <div className="text-center space-y-3">
+        <div className="flex items-center justify-center space-x-4 mb-4">
+          <button
+            onClick={() => setViewMode('tree')}
+            className={`px-4 py-2 rounded-lg font-medium transition-all ${
+              viewMode === 'tree' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-300'
+            }`}
+          >
+            🌳 Skill Tree
+          </button>
+          <button
+            onClick={() => setViewMode('connections')}
+            className={`px-4 py-2 rounded-lg font-medium transition-all ${
+              viewMode === 'connections' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-300'
+            }`}
+          >
+            🔗 Connections
+          </button>
+        </div>
         <h2 className="text-2xl font-bold text-white">Skill Tree</h2>
         {overallProgress && (
           <div className="bg-gray-800 rounded-xl p-4">
