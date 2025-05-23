@@ -1,0 +1,586 @@
+export interface SkillDefinition {
+  id: string;
+  title: string;
+  description: string;
+  category: 'Physical' | 'Nutrition' | 'Sleep' | 'Mental' | 'Recovery';
+  level: 1 | 2 | 3 | 4 | 5;
+  requirements: SkillRequirement[];
+  categoryColor: string;
+  categoryIcon: string;
+}
+
+export interface SkillRequirement {
+  taskId: string;
+  count: number;
+  consecutive?: boolean; // If true, requires consecutive days
+}
+
+export interface UnlockedSkill extends SkillDefinition {
+  unlockedAt: Date;
+  isRecentlyUnlocked?: boolean;
+}
+
+// Skill category configuration
+export const SKILL_CATEGORIES = {
+  Physical: { color: '#D13639', icon: '💪', name: 'Physical' },
+  Nutrition: { color: '#4BA651', icon: '🥗', name: 'Nutrition' },
+  Sleep: { color: '#3679D1', icon: '😴', name: 'Sleep' },
+  Mental: { color: '#9B59B6', icon: '🧠', name: 'Mental' },
+  Recovery: { color: '#E67E22', icon: '🔄', name: 'Recovery' }
+} as const;
+
+// Complete skill definitions based on PRD
+export const SKILL_DEFINITIONS: SkillDefinition[] = [
+  // PHYSICAL CATEGORY SKILLS
+  
+  // Beginner Level (Level 1)
+  {
+    id: 'first_steps',
+    title: 'First Steps',
+    description: 'Started your movement journey with consistent walking',
+    category: 'Physical',
+    level: 1,
+    requirements: [{ taskId: 'walk_30min', count: 3 }],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'chair_squatter',
+    title: 'Chair Squatter',
+    description: 'Mastered the fundamentals of bodyweight strength',
+    category: 'Physical',
+    level: 1,
+    requirements: [{ taskId: 'chair_squats', count: 3 }],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'early_bird',
+    title: 'Early Bird',
+    description: 'Combined movement with natural sunlight exposure',
+    category: 'Physical',
+    level: 1,
+    requirements: [
+      { taskId: 'walk_30min', count: 3 },
+      { taskId: 'morning_sun_15min', count: 2 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'step_seeker',
+    title: 'Step Seeker',
+    description: 'Achieved consistent daily step goals',
+    category: 'Physical',
+    level: 1,
+    requirements: [{ taskId: 'walk_10k_steps', count: 5 }],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+
+  // Intermediate Level (Level 2)
+  {
+    id: 'stretch_master',
+    title: 'Stretch Master',
+    description: 'Developed flexibility and mobility foundation',
+    category: 'Physical',
+    level: 2,
+    requirements: [
+      { taskId: 'yoga_stretch_15min', count: 5 },
+      { taskId: 'mobility_20min', count: 2 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'strength_builder',
+    title: 'Strength Builder',
+    description: 'Built functional strength through consistent training',
+    category: 'Physical',
+    level: 2,
+    requirements: [
+      { taskId: 'bodyweight_circuit', count: 5 },
+      { taskId: 'full_body_workout', count: 3 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'consistent_mover',
+    title: 'Consistent Mover',
+    description: 'Maintained regular movement patterns',
+    category: 'Physical',
+    level: 2,
+    requirements: [
+      { taskId: 'walk_10k_steps', count: 10 },
+      { taskId: 'walk_30min', count: 5 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'leg_power',
+    title: 'Leg Power',
+    description: 'Developed lower body strength and endurance',
+    category: 'Physical',
+    level: 2,
+    requirements: [
+      { taskId: 'heavy_leg_day', count: 3 },
+      { taskId: 'chair_squats', count: 10 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+
+  // Advanced Level (Level 3-4)
+  {
+    id: 'explosive_athlete',
+    title: 'Explosive Athlete',
+    description: 'Mastered high-intensity explosive movements',
+    category: 'Physical',
+    level: 3,
+    requirements: [
+      { taskId: 'plyometric_jumps', count: 5 },
+      { taskId: 'hiit_sprints', count: 5 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'endurance_master',
+    title: 'Endurance Master',
+    description: 'Achieved exceptional cardiovascular fitness',
+    category: 'Physical',
+    level: 3,
+    requirements: [
+      { taskId: 'hiit_sprints', count: 7 },
+      { taskId: 'walk_10k_steps', count: 15 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'strength_titan',
+    title: 'Strength Titan',
+    description: 'Reached elite levels of functional strength',
+    category: 'Physical',
+    level: 4,
+    requirements: [
+      { taskId: 'heavy_leg_day', count: 7 },
+      { taskId: 'loaded_carry', count: 5 },
+      { taskId: 'full_body_workout', count: 10 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+
+  // Master Level (Level 5)
+  {
+    id: 'iron_warrior',
+    title: 'Iron Warrior',
+    description: 'Achieved mastery across all strength disciplines',
+    category: 'Physical',
+    level: 5,
+    requirements: [
+      { taskId: 'loaded_carry', count: 10 },
+      { taskId: 'heavy_leg_day', count: 10 },
+      { taskId: 'plyometric_jumps', count: 7 },
+      { taskId: 'hiit_sprints', count: 7 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'ultimate_athlete',
+    title: 'Ultimate Athlete',
+    description: 'Reached the pinnacle of physical excellence',
+    category: 'Physical',
+    level: 5,
+    requirements: [
+      { taskId: 'plyometric_jumps', count: 20 },
+      { taskId: 'hiit_sprints', count: 20 },
+      { taskId: 'loaded_carry', count: 20 },
+      { taskId: 'heavy_leg_day', count: 20 },
+      { taskId: 'full_body_workout', count: 30 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+
+  // NUTRITION CATEGORY SKILLS
+  {
+    id: 'protein_rookie',
+    title: 'Protein Rookie',
+    description: 'Started focusing on protein intake',
+    category: 'Nutrition',
+    level: 1,
+    requirements: [{ taskId: 'protein_target', count: 3 }],
+    categoryColor: SKILL_CATEGORIES.Nutrition.color,
+    categoryIcon: SKILL_CATEGORIES.Nutrition.icon
+  },
+  {
+    id: 'daily_protein',
+    title: 'Daily Protein',
+    description: 'Established consistent protein habits',
+    category: 'Nutrition',
+    level: 2,
+    requirements: [{ taskId: 'protein_target', count: 7 }],
+    categoryColor: SKILL_CATEGORIES.Nutrition.color,
+    categoryIcon: SKILL_CATEGORIES.Nutrition.icon
+  },
+  {
+    id: 'protein_pro',
+    title: 'Protein Pro',
+    description: 'Mastered protein optimization',
+    category: 'Nutrition',
+    level: 3,
+    requirements: [{ taskId: 'protein_target', count: 15 }],
+    categoryColor: SKILL_CATEGORIES.Nutrition.color,
+    categoryIcon: SKILL_CATEGORIES.Nutrition.icon
+  },
+  {
+    id: 'meal_planner',
+    title: 'Meal Planner',
+    description: 'Developed advanced nutritional planning',
+    category: 'Nutrition',
+    level: 4,
+    requirements: [{ taskId: 'protein_target', count: 25 }],
+    categoryColor: SKILL_CATEGORIES.Nutrition.color,
+    categoryIcon: SKILL_CATEGORIES.Nutrition.icon
+  },
+  {
+    id: 'macronutrient_master',
+    title: 'Macronutrient Master',
+    description: 'Achieved nutritional precision',
+    category: 'Nutrition',
+    level: 4,
+    requirements: [{ taskId: 'protein_target', count: 35 }],
+    categoryColor: SKILL_CATEGORIES.Nutrition.color,
+    categoryIcon: SKILL_CATEGORIES.Nutrition.icon
+  },
+  {
+    id: 'elite_fueler',
+    title: 'Elite Fueler',
+    description: 'Reached the highest level of nutritional mastery',
+    category: 'Nutrition',
+    level: 5,
+    requirements: [{ taskId: 'protein_target', count: 50 }],
+    categoryColor: SKILL_CATEGORIES.Nutrition.color,
+    categoryIcon: SKILL_CATEGORIES.Nutrition.icon
+  },
+
+  // SLEEP CATEGORY SKILLS
+  {
+    id: 'night_owl',
+    title: 'Night Owl',
+    description: 'Began prioritizing quality sleep',
+    category: 'Sleep',
+    level: 1,
+    requirements: [{ taskId: 'sleep_7h', count: 3 }],
+    categoryColor: SKILL_CATEGORIES.Sleep.color,
+    categoryIcon: SKILL_CATEGORIES.Sleep.icon
+  },
+  {
+    id: 'early_riser',
+    title: 'Early Riser',
+    description: 'Combined quality sleep with morning light exposure',
+    category: 'Sleep',
+    level: 1,
+    requirements: [
+      { taskId: 'sleep_7h', count: 3 },
+      { taskId: 'morning_sun_15min', count: 3 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Sleep.color,
+    categoryIcon: SKILL_CATEGORIES.Sleep.icon
+  },
+  {
+    id: 'consistent_sleeper',
+    title: 'Consistent Sleeper',
+    description: 'Achieved a full week of quality sleep',
+    category: 'Sleep',
+    level: 2,
+    requirements: [{ taskId: 'sleep_7h', count: 7, consecutive: true }],
+    categoryColor: SKILL_CATEGORIES.Sleep.color,
+    categoryIcon: SKILL_CATEGORIES.Sleep.icon
+  },
+  {
+    id: 'relaxation_expert',
+    title: 'Relaxation Expert',
+    description: 'Combined sleep optimization with mindfulness practice',
+    category: 'Sleep',
+    level: 3,
+    requirements: [
+      { taskId: 'sleep_7h', count: 10 },
+      { taskId: 'mindfulness_10min', count: 5 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Sleep.color,
+    categoryIcon: SKILL_CATEGORIES.Sleep.icon
+  },
+  {
+    id: 'deep_sleeper',
+    title: 'Deep Sleeper',
+    description: 'Enhanced sleep quality through cold therapy',
+    category: 'Sleep',
+    level: 3,
+    requirements: [
+      { taskId: 'sleep_7h', count: 14 },
+      { taskId: 'cold_shower_30s', count: 7 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Sleep.color,
+    categoryIcon: SKILL_CATEGORIES.Sleep.icon
+  },
+  {
+    id: 'recovery_master',
+    title: 'Recovery Master',
+    description: 'Achieved three weeks of consecutive quality sleep',
+    category: 'Sleep',
+    level: 4,
+    requirements: [{ taskId: 'sleep_7h', count: 21, consecutive: true }],
+    categoryColor: SKILL_CATEGORIES.Sleep.color,
+    categoryIcon: SKILL_CATEGORIES.Sleep.icon
+  },
+
+  // MENTAL CATEGORY SKILLS
+  {
+    id: 'breath_beginner',
+    title: 'Breath Beginner',
+    description: 'Started practicing mindful breathing',
+    category: 'Mental',
+    level: 1,
+    requirements: [{ taskId: 'breath_posture_5min', count: 3 }],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+  {
+    id: 'sunshine_seeker',
+    title: 'Sunshine Seeker',
+    description: 'Prioritized natural light for mental wellness',
+    category: 'Mental',
+    level: 1,
+    requirements: [{ taskId: 'morning_sun_15min', count: 5 }],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+  {
+    id: 'mindfulness_adept',
+    title: 'Mindfulness Adept',
+    description: 'Developed a foundation in mindfulness practice',
+    category: 'Mental',
+    level: 2,
+    requirements: [{ taskId: 'mindfulness_10min', count: 5 }],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+  {
+    id: 'posture_pro',
+    title: 'Posture Pro',
+    description: 'Mastered breath and posture awareness',
+    category: 'Mental',
+    level: 2,
+    requirements: [{ taskId: 'breath_posture_5min', count: 7 }],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+  {
+    id: 'stress_manager',
+    title: 'Stress Manager',
+    description: 'Combined mindfulness with physical relaxation',
+    category: 'Mental',
+    level: 3,
+    requirements: [
+      { taskId: 'mindfulness_10min', count: 7 },
+      { taskId: 'yoga_stretch_15min', count: 5 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+  {
+    id: 'cold_warrior',
+    title: 'Cold Warrior',
+    description: 'Built mental resilience through cold exposure',
+    category: 'Mental',
+    level: 3,
+    requirements: [{ taskId: 'cold_shower_30s', count: 7 }],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+  {
+    id: 'zen_master',
+    title: 'Zen Master',
+    description: 'Achieved advanced mental discipline and awareness',
+    category: 'Mental',
+    level: 5,
+    requirements: [
+      { taskId: 'mindfulness_10min', count: 15 },
+      { taskId: 'cold_shower_30s', count: 10 },
+      { taskId: 'breath_posture_5min', count: 15 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+
+  // RECOVERY CATEGORY SKILLS
+  {
+    id: 'restful_breaks',
+    title: 'Restful Breaks',
+    description: 'Started incorporating active recovery',
+    category: 'Recovery',
+    level: 1,
+    requirements: [{ taskId: 'breath_posture_5min', count: 3 }],
+    categoryColor: SKILL_CATEGORIES.Recovery.color,
+    categoryIcon: SKILL_CATEGORIES.Recovery.icon
+  },
+  {
+    id: 'stretch_novice',
+    title: 'Stretch Novice',
+    description: 'Began flexibility and mobility work',
+    category: 'Recovery',
+    level: 1,
+    requirements: [{ taskId: 'yoga_stretch_15min', count: 3 }],
+    categoryColor: SKILL_CATEGORIES.Recovery.color,
+    categoryIcon: SKILL_CATEGORIES.Recovery.icon
+  },
+  {
+    id: 'mobility_explorer',
+    title: 'Mobility Explorer',
+    description: 'Discovered the benefits of mobility training',
+    category: 'Recovery',
+    level: 1,
+    requirements: [{ taskId: 'mobility_20min', count: 3 }],
+    categoryColor: SKILL_CATEGORIES.Recovery.color,
+    categoryIcon: SKILL_CATEGORIES.Recovery.icon
+  },
+  {
+    id: 'cold_therapy_user',
+    title: 'Cold Therapy User',
+    description: 'Began using cold exposure for recovery',
+    category: 'Recovery',
+    level: 2,
+    requirements: [{ taskId: 'cold_shower_30s', count: 5 }],
+    categoryColor: SKILL_CATEGORIES.Recovery.color,
+    categoryIcon: SKILL_CATEGORIES.Recovery.icon
+  },
+  {
+    id: 'restoration_specialist',
+    title: 'Restoration Specialist',
+    description: 'Mastered multiple recovery modalities',
+    category: 'Recovery',
+    level: 4,
+    requirements: [
+      { taskId: 'cold_shower_30s', count: 7 },
+      { taskId: 'mobility_20min', count: 5 },
+      { taskId: 'yoga_stretch_15min', count: 7 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Recovery.color,
+    categoryIcon: SKILL_CATEGORIES.Recovery.icon
+  },
+  {
+    id: 'rejuvenation_master',
+    title: 'Rejuvenation Master',
+    description: 'Achieved mastery in holistic recovery practices',
+    category: 'Recovery',
+    level: 5,
+    requirements: [
+      { taskId: 'cold_shower_30s', count: 10 },
+      { taskId: 'mobility_20min', count: 7 },
+      { taskId: 'morning_sun_15min', count: 15 },
+      { taskId: 'mindfulness_10min', count: 10 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Recovery.color,
+    categoryIcon: SKILL_CATEGORIES.Recovery.icon
+  },
+
+  // PROGRAM COMPLETION ACHIEVEMENTS
+  {
+    id: 'beginner_graduate',
+    title: 'Beginner Graduate',
+    description: 'Mastered the fundamentals of wellness',
+    category: 'Physical',
+    level: 4,
+    requirements: [
+      { taskId: 'sleep_7h', count: 50 },
+      { taskId: 'walk_10k_steps', count: 40 },
+      { taskId: 'protein_target', count: 30 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'intermediate_graduate',
+    title: 'Intermediate Graduate',
+    description: 'Advanced beyond the basics with structured training',
+    category: 'Physical',
+    level: 4,
+    requirements: [
+      { taskId: 'sleep_7h', count: 60 },
+      { taskId: 'walk_10k_steps', count: 50 },
+      { taskId: 'protein_target', count: 40 },
+      { taskId: 'full_body_workout', count: 20 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'advanced_graduate',
+    title: 'Advanced Graduate',
+    description: 'Reached elite levels across all wellness domains',
+    category: 'Physical',
+    level: 5,
+    requirements: [
+      { taskId: 'sleep_7h', count: 60 },
+      { taskId: 'walk_10k_steps', count: 60 },
+      { taskId: 'protein_target', count: 50 },
+      { taskId: 'full_body_workout', count: 30 },
+      { taskId: 'heavy_leg_day', count: 15 },
+      { taskId: 'hiit_sprints', count: 15 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+
+  // RARE ACHIEVEMENT SKILLS
+  {
+    id: 'wellness_grandmaster',
+    title: 'Wellness Grandmaster',
+    description: 'Achieved excellence across all dimensions of health',
+    category: 'Mental',
+    level: 5,
+    requirements: [
+      { taskId: 'sleep_7h', count: 60 },
+      { taskId: 'protein_target', count: 60 },
+      { taskId: 'cold_shower_30s', count: 30 },
+      { taskId: 'mindfulness_10min', count: 30 },
+      { taskId: 'mobility_20min', count: 20 },
+      { taskId: 'walk_10k_steps', count: 60 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+  {
+    id: 'iron_resolve',
+    title: 'Iron Resolve',
+    description: 'Perfect completion - the ultimate achievement',
+    category: 'Mental',
+    level: 5,
+    requirements: [
+      { taskId: 'sleep_7h', count: 63 },
+      { taskId: 'walk_10k_steps', count: 63 },
+      { taskId: 'protein_target', count: 63 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  }
+];
+
+// Helper functions
+export function getSkillsByCategory(category: string): SkillDefinition[] {
+  return SKILL_DEFINITIONS.filter(skill => skill.category === category);
+}
+
+export function getSkillsByLevel(level: number): SkillDefinition[] {
+  return SKILL_DEFINITIONS.filter(skill => skill.level === level);
+}
+
+export function getSkillById(id: string): SkillDefinition | undefined {
+  return SKILL_DEFINITIONS.find(skill => skill.id === id);
+}

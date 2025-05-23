@@ -4,7 +4,7 @@ import { Header } from "@/components/Layout/Header";
 import { BottomNavigation } from "@/components/Layout/BottomNavigation";
 import TaskList from "@/components/Tasks/TaskList";
 import { StatsOverview } from "@/components/Stats/StatsOverview";
-import { SkillTree } from "@/components/Skills/SkillTree";
+import { ComprehensiveSkillTree } from "@/components/Skills/ComprehensiveSkillTree";
 import { ProfileOverview } from "@/components/Profile/ProfileOverview";
 import { SettingsPanel } from "@/components/Profile/SettingsPanel";
 import { ProgramSelector } from "@/components/Profile/ProgramSelector";
@@ -15,6 +15,7 @@ import { useTaskEngine } from "@/hooks/useTaskEngine";
 import { useSkillTree } from "@/hooks/useSkillTree";
 import { StreakSparkle } from "@/components/Rewards/StreakSparkle";
 import { storage } from "@/lib/storage";
+import { skillUnlockSystem } from "@/lib/skillUnlockSystem";
 
 type TabType = 'tasks' | 'stats' | 'skills' | 'profile';
 type ViewType = 'main' | 'settings' | 'programSelector';
@@ -100,10 +101,10 @@ export default function Home() {
         }
       }, 1500);
       
-      // Check for skill unlocks after task completion
-      const newSkills = await checkForSkillUnlocks();
-      if (newSkills.length > 0) {
-        setUnlockedSkill(newSkills[0]);
+      // Check for skill unlocks after task completion using new comprehensive system
+      const skillResult = await skillUnlockSystem.checkForNewUnlocks();
+      if (skillResult.newlyUnlocked.length > 0) {
+        setUnlockedSkill(skillResult.newlyUnlocked[0]);
         setTimeout(() => {
           setShowSkillModal(true);
         }, 1500);
@@ -170,7 +171,10 @@ export default function Home() {
       case 'stats':
         return <StatsOverview user={user} />;
       case 'skills':
-        return <SkillTree userSkills={getUserSkills()} />;
+        return <ComprehensiveSkillTree onSkillClick={(skill) => {
+          setUnlockedSkill(skill);
+          setShowSkillModal(true);
+        }} />;
       case 'profile':
         return <ProfileOverview user={user} onOpenSettings={handleOpenSettings} />;
       default:
