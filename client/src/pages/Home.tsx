@@ -48,19 +48,7 @@ export default function Home() {
     getUserSkills
   } = useSkillTree();
 
-  // Listen for streak milestone events from taskEngine
-  useEffect(() => {
-    const handleStreakMilestone = (event: CustomEvent) => {
-      console.log(`🎉 Received streak milestone event:`, event.detail);
-      setShowStreakSparkle(true);
-    };
 
-    window.addEventListener('streakMilestone', handleStreakMilestone as EventListener);
-    
-    return () => {
-      window.removeEventListener('streakMilestone', handleStreakMilestone as EventListener);
-    };
-  }, []);
 
   const handleTaskComplete = async (taskId: string) => {
     console.log(`🔥 [CRITICAL] handleTaskComplete called for task: ${taskId}`);
@@ -81,6 +69,27 @@ export default function Home() {
       console.log(`🔥 [CRITICAL] completeTask result: ${result}`);
       
       await loadUserData(); // Refresh user data to get updated streak
+      
+      // Check if day was completed and show streak celebration
+      setTimeout(async () => {
+        const freshUser = await storage.getUser();
+        const newStreak = freshUser?.currentStreak || 0;
+        
+        console.log(`🎯 Checking streak: Previous=${previousStreak}, New=${newStreak}`);
+        
+        // Show sparkles for actual streak milestones when streak increased
+        if (newStreak > previousStreak) {
+          const isStreakMilestone = (
+            newStreak === 3 || newStreak === 7 || newStreak === 14 || 
+            newStreak === 21 || newStreak === 30 || (newStreak % 10 === 0 && newStreak > 30)
+          );
+          
+          if (isStreakMilestone) {
+            console.log(`🎉 TRIGGERING SPARKLE for ${newStreak} day streak milestone!`);
+            setShowStreakSparkle(true);
+          }
+        }
+      }, 1000);
       
       // Check for skill unlocks after task completion
       const newSkills = await checkForSkillUnlocks();

@@ -33,11 +33,11 @@ export function SkillUnlockModal({ isOpen, onClose, skill }: SkillUnlockModalPro
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-sm mx-4">
+      <DialogContent className="max-w-xs mx-4 w-[90vw]">
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="text-center p-6"
+          className="text-center p-4"
         >
           <motion.div
             initial={{ scale: 0, rotate: -180 }}
@@ -49,8 +49,8 @@ export function SkillUnlockModal({ isOpen, onClose, skill }: SkillUnlockModalPro
           </motion.div>
           
           <h3 className="text-xl font-bold text-gray-800 mb-2">Skill Unlocked!</h3>
-          <p className="text-gray-600 mb-2">{skill.title}</p>
-          <p className="text-sm text-gray-500 mb-6">{skill.description}</p>
+          <p className="text-gray-600 mb-2 text-sm">{skill.title}</p>
+          <p className="text-xs text-gray-500 mb-4">{skill.description}</p>
           
           <motion.div
             initial={{ y: 20, opacity: 0 }}
