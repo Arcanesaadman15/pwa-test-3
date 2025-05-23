@@ -75,7 +75,8 @@ export default function Home() {
         const freshUser = await storage.getUser();
         const newStreak = freshUser?.currentStreak || 0;
         
-        console.log(`🎯 Checking streak: Previous=${previousStreak}, New=${newStreak}`);
+        console.log(`🎯 DEBUG: Previous streak=${previousStreak}, New streak=${newStreak}`);
+        console.log(`🎯 DEBUG: Streak increased? ${newStreak > previousStreak}`);
         
         // Show sparkles for actual streak milestones when streak increased
         if (newStreak > previousStreak) {
@@ -84,12 +85,20 @@ export default function Home() {
             newStreak === 21 || newStreak === 30 || (newStreak % 10 === 0 && newStreak > 30)
           );
           
+          console.log(`🎯 DEBUG: Is milestone (${newStreak})? ${isStreakMilestone}`);
+          
           if (isStreakMilestone) {
             console.log(`🎉 TRIGGERING SPARKLE for ${newStreak} day streak milestone!`);
             setShowStreakSparkle(true);
           }
         }
-      }, 1000);
+        
+        // TEMPORARY: Force show sparkle for testing any streak increase
+        if (newStreak > previousStreak && newStreak >= 1) {
+          console.log(`🧪 TEST: Forcing sparkle for ANY streak increase: ${newStreak}`);
+          setShowStreakSparkle(true);
+        }
+      }, 1500);
       
       // Check for skill unlocks after task completion
       const newSkills = await checkForSkillUnlocks();
