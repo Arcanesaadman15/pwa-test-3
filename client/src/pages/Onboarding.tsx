@@ -196,11 +196,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             )}
             
             {currentStep === 'paywall' && (
-              <Paywall 
-                data={onboardingData}
-                onSuccess={handlePaywallSuccess}
-                isLoading={isLoading}
-              />
+              <Paywall onComplete={handlePaywallSuccess} />
             )}
           </motion.div>
         </AnimatePresence>
