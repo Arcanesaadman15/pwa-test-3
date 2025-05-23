@@ -219,12 +219,32 @@ export class TaskEngine {
     if (this.isDayCompleted(currentActiveDay) && currentActiveDay < 63) {
       const newDay = currentActiveDay + 1;
       
-      // Update user's current day first
+      // Calculate streak for the completed day
+      const dayHasSkippedTasks = this.hasDaySkippedTasks(currentActiveDay);
+      
+      // Update user's current day and streak
       if (this.user) {
         this.user.currentDay = newDay;
         this.user.completedDays = (this.user.completedDays || 0) + 1;
+        
+        // Update streak: reset if any tasks were skipped, otherwise increment
+        if (dayHasSkippedTasks) {
+          console.log(`🔄 Day ${currentActiveDay} had skipped tasks - resetting streak`);
+          this.user.currentStreak = 0;
+        } else {
+          console.log(`✅ Day ${currentActiveDay} completed with no skips - incrementing streak`);
+          this.user.currentStreak = (this.user.currentStreak || 0) + 1;
+          
+          // Update longest streak if current streak is higher
+          if (this.user.currentStreak > (this.user.longestStreak || 0)) {
+            this.user.longestStreak = this.user.currentStreak;
+          }
+        }
+        
         await storage.saveUser(this.user);
         await storage.setCurrentDay(newDay);
+        
+        console.log(`📊 Streak update: Current=${this.user.currentStreak}, Longest=${this.user.longestStreak}`);
       }
       
       // Auto-advance to next day and navigate user there
@@ -235,6 +255,12 @@ export class TaskEngine {
     }
     
     return false; // No advancement
+  }
+
+  private hasDaySkippedTasks(day: number): boolean {
+    return this.taskCompletions.some(completion => 
+      completion.day === day && completion.skipped === true
+    );
   }
 
   // Get tasks for viewing day with proper three-panel organization
