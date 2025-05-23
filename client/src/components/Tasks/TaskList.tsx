@@ -38,7 +38,7 @@ function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReaso
       <div
         key={i}
         className={`w-2 h-2 rounded-full ${
-          i < difficulty ? 'bg-red-500' : 'bg-gray-600'
+          i < difficulty ? 'bg-blue-500' : 'bg-gray-600'
         }`}
       />
     ));
@@ -48,14 +48,14 @@ function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReaso
     <div className={`bg-gray-800 rounded-2xl p-5 border transition-all duration-200 ${
       status === 'completed' ? 'border-green-500/30 bg-green-900/20' :
       status === 'skipped' ? 'border-gray-600 bg-gray-700/50' :
-      canInteract ? 'border-red-500/30 hover:border-red-400/50' : 'border-gray-600 opacity-60'
+      canInteract ? 'border-blue-500/30 hover:border-blue-400/50' : 'border-gray-600 opacity-60'
     }`}>
       <div className="flex items-start gap-4">
         {/* Category Icon */}
         <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl ${
           status === 'completed' ? 'bg-green-600' :
           status === 'skipped' ? 'bg-gray-600' :
-          canInteract ? 'bg-red-600' : 'bg-gray-600'
+          canInteract ? 'bg-blue-600' : 'bg-gray-600'
         }`}>
           {getCategoryIcon(task.category)}
         </div>
@@ -142,7 +142,7 @@ function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReaso
             <XCircle className="w-6 h-6 text-gray-500" />
           )}
           {status === 'active' && canInteract && (
-            <Play className="w-6 h-6 text-red-500" />
+            <Play className="w-6 h-6 text-blue-500" />
           )}
           {status === 'active' && !canInteract && (
             <Lock className="w-6 h-6 text-gray-500" />
@@ -336,7 +336,7 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full mx-auto mb-6"></div>
+          <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-6"></div>
           <p className="text-gray-400 font-medium">Loading your program...</p>
         </div>
       </div>
@@ -372,7 +372,7 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
   return (
     <div className="min-h-screen text-white pb-24" style={{ backgroundColor: '#111827' }}>
       {/* Compact Header with Day Navigation and Tabs */}
-      <div className="bg-gradient-to-br from-red-900 via-red-800 to-orange-800 px-6 pt-16 pb-6">
+      <div className="bg-gradient-to-br from-blue-900 via-purple-800 to-indigo-800 px-6 pt-16 pb-6">
         {/* Day Navigation */}
         <div className="flex items-center justify-center gap-6 mb-6">
           <Button
@@ -421,7 +421,7 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
             onClick={() => setActiveTab('todo')}
             className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
               activeTab === 'todo'
-                ? 'bg-red-600 text-white'
+                ? 'bg-blue-600 text-white'
                 : 'text-gray-300 hover:text-white'
             }`}
           >
@@ -431,7 +431,7 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
             onClick={() => setActiveTab('done')}
             className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
               activeTab === 'done'
-                ? 'bg-red-600 text-white'
+                ? 'bg-blue-600 text-white'
                 : 'text-gray-300 hover:text-white'
             }`}
           >
@@ -441,7 +441,7 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
             onClick={() => setActiveTab('skipped')}
             className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
               activeTab === 'skipped'
-                ? 'bg-red-600 text-white'
+                ? 'bg-blue-600 text-white'
                 : 'text-gray-300 hover:text-white'
             }`}
           >
