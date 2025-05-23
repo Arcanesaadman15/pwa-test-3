@@ -38,8 +38,12 @@ export function useTaskEngine() {
   };
 
   const switchProgram = async (program: 'beginner' | 'intermediate' | 'advanced') => {
+    console.log(`🔄 useTaskEngine: Switching to ${program} program`);
     await taskEngine.switchProgram(program);
-    refreshTasks();
+    await refreshTasks();
+    
+    // Force refresh the entire page to ensure all components get updated user data
+    window.location.reload();
   };
 
   const unSkipTask = async (taskId: string) => {

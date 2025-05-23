@@ -347,9 +347,12 @@ export class TaskEngine {
   }
 
   async switchProgram(program: 'beginner' | 'intermediate' | 'advanced'): Promise<void> {
+    console.log(`🔄 Starting program switch from ${this.currentProgram} to ${program}`);
+    
     // Reset all progress when switching programs
     await this.resetProgress();
     
+    // Update current program
     this.currentProgram = program;
     
     // Update user program and reset to day 1
@@ -359,13 +362,17 @@ export class TaskEngine {
       this.user.completedDays = 0;
       this.user.currentStreak = 0;
       await storage.saveUser(this.user);
+      console.log(`✅ User updated: program=${this.user.program}, day=${this.user.currentDay}`);
     }
     
     // Reset viewing day to 1
     this.viewingDay = 1;
     await storage.setCurrentDay(1);
     
-    console.log(`🔄 Switched to ${program} program - starting fresh from Day 1`);
+    // Re-initialize to ensure everything is loaded properly
+    await this.initialize();
+    
+    console.log(`🎯 Program switch complete - now on ${this.currentProgram} program, viewing day ${this.viewingDay}`);
   }
 
   async resetProgress(): Promise<void> {
