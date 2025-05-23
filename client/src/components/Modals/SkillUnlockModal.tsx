@@ -9,15 +9,24 @@ interface SkillUnlockModalProps {
 }
 
 export function SkillUnlockModal({ isOpen, onClose, skill }: SkillUnlockModalProps) {
-  const handleShare = () => {
+  const handleShare = async () => {
     if (navigator.share) {
-      navigator.share({
-        title: 'PeakForge Achievement',
-        text: `I just unlocked "${skill?.title}" in my wellness journey!`,
-        url: window.location.href
-      });
+      try {
+        await navigator.share({
+          title: 'PeakForge Achievement',
+          text: `I just unlocked "${skill?.title}" in my wellness journey!`,
+          url: window.location.href
+        });
+        // Only close if sharing was successful
+        onClose();
+      } catch (error) {
+        // User cancelled the share - don't close the modal
+        console.log('Share cancelled or failed:', error);
+      }
+    } else {
+      // Fallback for browsers without native share
+      onClose();
     }
-    onClose();
   };
 
   if (!skill) return null;

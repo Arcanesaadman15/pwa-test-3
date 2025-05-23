@@ -134,7 +134,7 @@ export function StreakSparkle({ streakCount, isVisible, onComplete }: StreakSpar
 
           {/* Main celebration content */}
           <motion.div
-            className="relative bg-gray-900 rounded-2xl p-4 mx-4 text-center shadow-2xl border-2 max-w-xs"
+            className="relative bg-gray-900 rounded-xl p-3 mx-6 text-center shadow-xl border max-w-xs"
             style={{ borderColor: getSparkleColor(streakCount) }}
             initial={{ scale: 0, y: 50 }}
             animate={{ scale: 1, y: 0 }}
@@ -160,7 +160,7 @@ export function StreakSparkle({ streakCount, isVisible, onComplete }: StreakSpar
               }}
             >
               <StreakIcon 
-                size={40} 
+                size={32} 
                 style={{ color: getSparkleColor(streakCount) }}
                 className="drop-shadow-lg"
               />
@@ -168,7 +168,7 @@ export function StreakSparkle({ streakCount, isVisible, onComplete }: StreakSpar
 
             {/* Streak message */}
             <motion.h2
-              className="text-lg font-bold text-white mb-2"
+              className="text-base font-bold text-white mb-1"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
