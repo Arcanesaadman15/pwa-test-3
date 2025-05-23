@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QUICK_QUIZ_QUESTIONS } from '@/data/onboardingData';
 import { Button } from '@/components/ui/button';
@@ -12,7 +12,7 @@ interface QuickQuizProps {
   }) => void;
 }
 
-export function QuickQuiz({ onComplete }: QuickQuizProps) {
+export const QuickQuiz: React.FC<QuickQuizProps> = ({ onComplete }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [selectedOption, setSelectedOption] = useState<string>('');
