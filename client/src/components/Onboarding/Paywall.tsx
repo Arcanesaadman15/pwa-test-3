@@ -1,211 +1,136 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { OnboardingData } from '@/data/onboardingData';
-import { Button } from '@/components/ui/button';
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { CheckCircle, Clock, Users, Zap } from "lucide-react";
 
 interface PaywallProps {
-  data: Partial<OnboardingData>;
-  onSuccess: () => void;
-  isLoading: boolean;
+  onComplete: () => void;
 }
 
-export function Paywall({ data, onSuccess, isLoading }: PaywallProps) {
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
-
-  const handleSubscribe = async () => {
-    // Placeholder for Stripe integration
-    // For now, just simulate successful payment
-    setTimeout(() => {
-      onSuccess();
-    }, 1000);
-  };
-
-  const monthlyPrice = 29.99;
-  const yearlyPrice = 199.99;
-  const yearlySavings = (monthlyPrice * 12) - yearlyPrice;
+export function Paywall({ onComplete }: PaywallProps) {
+  const features = [
+    "Complete 63-day testosterone optimization program",
+    "Personalized daily tasks and routines",
+    "Advanced skill tree progression system",
+    "Expert-designed nutrition protocols",
+    "Sleep optimization techniques",
+    "Stress management strategies",
+    "Progress tracking and analytics",
+    "Exclusive community access"
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black px-6 py-8">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="text-center mb-8"
-      >
-        <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <span className="text-3xl">🚀</span>
-        </div>
-        <h1 className="text-3xl font-bold text-white mb-2">
-          Ready to Transform Your Life?
-        </h1>
-        <p className="text-lg text-gray-400">
-          Join thousands of men who've unlocked their peak potential
-        </p>
-      </motion.div>
-
-      {/* Value Propositions */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.6 }}
-        className="mb-8"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          {[
-            { icon: '🎯', title: 'Personalized 63-Day Program', desc: 'Custom-built for your testosterone goals' },
-            { icon: '🏆', title: 'Skill Tree Progression', desc: 'Unlock achievements as you transform' },
-            { icon: '📊', title: 'Progress Tracking', desc: 'See your improvements in real-time' },
-            { icon: '🔥', title: 'Proven Results', desc: '89% completion rate, 4.8/5 satisfaction' }
-          ].map((item, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
-              className="bg-gray-800/50 rounded-xl p-4 border border-gray-700"
-            >
-              <div className="flex items-start space-x-3">
-                <span className="text-2xl">{item.icon}</span>
-                <div>
-                  <h3 className="font-semibold text-white mb-1">{item.title}</h3>
-                  <p className="text-sm text-gray-400">{item.desc}</p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Pricing Plans */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8, duration: 0.6 }}
-        className="mb-8"
-      >
-        <h2 className="text-xl font-bold text-white text-center mb-6">Choose Your Plan</h2>
-        
-        <div className="space-y-4 max-w-md mx-auto">
-          {/* Yearly Plan - Recommended */}
-          <div
-            onClick={() => setSelectedPlan('yearly')}
-            className={`relative p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${
-              selectedPlan === 'yearly'
-                ? 'border-blue-500 bg-blue-500/10 shadow-lg scale-105'
-                : 'border-gray-600 bg-gray-800/50 hover:border-gray-500'
-            }`}
-          >
-            {/* Best Value Badge */}
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <span className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-1 rounded-full text-sm font-bold">
-                BEST VALUE
-              </span>
-            </div>
-            
-            <div className="text-center">
-              <h3 className="text-xl font-bold text-white mb-2">Yearly Access</h3>
-              <div className="mb-2">
-                <span className="text-3xl font-bold text-white">${yearlyPrice}</span>
-                <span className="text-gray-400">/year</span>
-              </div>
-              <p className="text-green-400 font-medium mb-2">Save ${yearlySavings.toFixed(0)} per year</p>
-              <p className="text-sm text-gray-400">Just $16.67/month</p>
-            </div>
-          </div>
-
-          {/* Monthly Plan */}
-          <div
-            onClick={() => setSelectedPlan('monthly')}
-            className={`p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${
-              selectedPlan === 'monthly'
-                ? 'border-purple-500 bg-purple-500/10 shadow-lg scale-105'
-                : 'border-gray-600 bg-gray-800/50 hover:border-gray-500'
-            }`}
-          >
-            <div className="text-center">
-              <h3 className="text-xl font-bold text-white mb-2">Monthly Access</h3>
-              <div className="mb-2">
-                <span className="text-3xl font-bold text-white">${monthlyPrice}</span>
-                <span className="text-gray-400">/month</span>
-              </div>
-              <p className="text-sm text-gray-400">Cancel anytime</p>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Trust Indicators */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.1, duration: 0.6 }}
-        className="mb-8"
-      >
-        <div className="bg-gray-800/30 rounded-xl p-4 text-center">
-          <div className="flex justify-center space-x-6 text-sm text-gray-400">
-            <div className="flex items-center">
-              <span className="text-green-500 mr-1">🔒</span>
-              Secure Payment
-            </div>
-            <div className="flex items-center">
-              <span className="text-blue-500 mr-1">↩️</span>
-              30-Day Guarantee
-            </div>
-            <div className="flex items-center">
-              <span className="text-purple-500 mr-1">✖️</span>
-              Cancel Anytime
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* CTA Button */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.4, duration: 0.6 }}
-        className="text-center"
-      >
-        <Button
-          onClick={handleSubscribe}
-          disabled={isLoading}
-          size="lg"
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 
-                   text-white font-bold px-12 py-4 text-lg rounded-xl shadow-xl hover:shadow-2xl 
-                   transform hover:scale-105 transition-all duration-200 w-full max-w-md"
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white">
+      <div className="container mx-auto px-4 py-8 max-w-md">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-8"
         >
-          {isLoading ? (
-            <div className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-              Processing...
-            </div>
-          ) : (
-            `Start My Transformation - $${selectedPlan === 'yearly' ? yearlyPrice : monthlyPrice}`
-          )}
-        </Button>
-        
-        <p className="text-xs text-gray-500 mt-4 max-w-md mx-auto">
-          By continuing, you agree to our Terms of Service and Privacy Policy. 
-          Subscription renews automatically. Cancel anytime.
-        </p>
-      </motion.div>
+          <h1 className="text-3xl font-bold mb-4">Unlock Your Transformation</h1>
+          <p className="text-gray-300">Join thousands of men who've already boosted their testosterone naturally</p>
+        </motion.div>
 
-      {/* Social Proof */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.7, duration: 0.6 }}
-        className="mt-8 text-center"
-      >
-        <p className="text-sm text-gray-400 mb-2">Join 15,000+ men already transforming their lives</p>
-        <div className="flex justify-center">
-          {[...Array(5)].map((_, i) => (
-            <span key={i} className="text-yellow-400 text-lg">⭐</span>
-          ))}
-          <span className="text-gray-400 ml-2 text-sm">4.8/5 average rating</span>
-        </div>
-      </motion.div>
+        {/* Pricing Card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2 }}
+          className="bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-3xl p-8 mb-8 backdrop-blur-lg border-2 border-blue-400/30 relative overflow-hidden"
+        >
+          {/* Popular Badge */}
+          <div className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs font-bold px-4 py-2 rounded-bl-xl">
+            MOST POPULAR
+          </div>
+
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-bold mb-2">PeakForge Premium</h2>
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <span className="text-4xl font-bold">$47</span>
+              <div className="text-left">
+                <div className="text-sm text-gray-400 line-through">$97</div>
+                <div className="text-sm text-green-400">One-time</div>
+              </div>
+            </div>
+            <div className="bg-red-500/20 border border-red-400/30 rounded-lg p-2 mb-4">
+              <div className="flex items-center justify-center space-x-2 text-red-300">
+                <Clock className="w-4 h-4" />
+                <span className="text-sm font-medium">Limited Time: 50% OFF</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Features List */}
+          <div className="space-y-3 mb-6">
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 + index * 0.1 }}
+                className="flex items-center space-x-3"
+              >
+                <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
+                <span className="text-sm">{feature}</span>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Social Proof */}
+          <div className="bg-white/5 rounded-xl p-4 mb-6">
+            <div className="flex items-center justify-center space-x-4 text-center">
+              <div>
+                <Users className="w-6 h-6 text-blue-400 mx-auto mb-1" />
+                <div className="text-sm font-bold">50,000+</div>
+                <div className="text-xs text-gray-400">Active Users</div>
+              </div>
+              <div>
+                <Zap className="w-6 h-6 text-yellow-400 mx-auto mb-1" />
+                <div className="text-sm font-bold">40%</div>
+                <div className="text-xs text-gray-400">Avg T-Boost</div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* CTA Buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="space-y-4"
+        >
+          <Button
+            onClick={onComplete}
+            size="lg"
+            className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 
+                     text-white font-bold py-4 text-lg rounded-xl shadow-xl hover:shadow-2xl 
+                     transform hover:scale-105 transition-all duration-200"
+          >
+            🚀 Start My Transformation Now
+          </Button>
+          
+          <div className="text-center">
+            <p className="text-xs text-gray-400 mb-2">
+              ✅ 30-day money-back guarantee
+            </p>
+            <p className="text-xs text-gray-400">
+              🔒 Secure payment • Cancel anytime
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Urgency Elements */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.0 }}
+          className="text-center mt-6"
+        >
+          <p className="text-sm text-yellow-300">
+            ⚡ Only 247 spots left at this price
+          </p>
+        </motion.div>
+      </div>
     </div>
   );
 }

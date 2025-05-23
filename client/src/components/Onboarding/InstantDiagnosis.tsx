@@ -1,193 +1,158 @@
-import { motion } from 'framer-motion';
-import { generatePersonalizedInsights, calculateRecommendedProgram, OnboardingData } from '@/data/onboardingData';
-import { Button } from '@/components/ui/button';
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { CheckCircle, AlertTriangle, TrendingUp } from "lucide-react";
+import { OnboardingData } from "@/data/onboardingData";
 
 interface InstantDiagnosisProps {
   data: Partial<OnboardingData>;
-  onComplete: (data: { recommendedProgram: 'beginner' | 'intermediate' | 'advanced' }) => void;
+  onComplete: () => void;
 }
 
 export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
-  const insights = generatePersonalizedInsights(data);
-  const recommendedProgram = calculateRecommendedProgram(data);
-
-  const handleContinue = () => {
-    onComplete({ recommendedProgram });
+  // Calculate testosterone score based on user responses
+  const calculateTestosteroneScore = () => {
+    let score = 50; // Base score
+    
+    // Age factor
+    if (data.ageRange === "18-25") score += 15;
+    else if (data.ageRange === "26-35") score += 10;
+    else if (data.ageRange === "36-45") score += 5;
+    else if (data.ageRange === "46-55") score -= 5;
+    else score -= 10;
+    
+    // Sleep quality
+    if (data.sleepQuality === "excellent") score += 15;
+    else if (data.sleepQuality === "good") score += 10;
+    else if (data.sleepQuality === "fair") score += 5;
+    else score -= 10;
+    
+    // Exercise frequency
+    if (data.exerciseFrequency === "daily") score += 20;
+    else if (data.exerciseFrequency === "weekly") score += 15;
+    else if (data.exerciseFrequency === "monthly") score += 5;
+    else score -= 15;
+    
+    // Stress level (inverted)
+    const stressLevel = data.stressLevel || 5;
+    score -= (stressLevel - 5) * 3;
+    
+    // Waist circumference
+    const waist = data.waistCircumference || 32;
+    if (waist < 32) score += 10;
+    else if (waist > 40) score -= 15;
+    else if (waist > 36) score -= 10;
+    
+    return Math.max(20, Math.min(100, score));
   };
 
+  const testosteroneScore = calculateTestosteroneScore();
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'from-green-500 to-emerald-600';
-    if (score >= 60) return 'from-yellow-500 to-amber-600';
-    if (score >= 40) return 'from-orange-500 to-red-500';
-    return 'from-red-500 to-red-700';
+    if (score >= 80) return "text-green-400";
+    if (score >= 60) return "text-yellow-400";
+    return "text-red-400";
   };
 
-  const getScoreText = (score: number) => {
-    if (score >= 80) return 'Strong Foundation';
-    if (score >= 60) return 'Good Potential';
-    if (score >= 40) return 'Room for Growth';
-    return 'Major Opportunity';
+  const getScoreStatus = (score: number) => {
+    if (score >= 80) return { icon: CheckCircle, text: "Excellent", color: "text-green-400" };
+    if (score >= 60) return { icon: TrendingUp, text: "Good", color: "text-yellow-400" };
+    return { icon: AlertTriangle, text: "Needs Improvement", color: "text-red-400" };
   };
 
-  const getProgramDescription = (program: string) => {
-    switch (program) {
-      case 'advanced':
-        return 'You\'re ready for the most challenging testosterone optimization protocol. Expect rapid, dramatic results.';
-      case 'intermediate':
-        return 'You have a solid foundation. This program will elevate your testosterone and confidence to the next level.';
-      default:
-        return 'Perfect starting point to build unshakeable habits and naturally boost your testosterone from the ground up.';
-    }
-  };
+  const status = getScoreStatus(testosteroneScore);
+  const StatusIcon = status.icon;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black px-6 py-8">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="text-center mb-8"
-      >
-        <h1 className="text-3xl font-bold text-white mb-2">
-          Your Testosterone Assessment
-        </h1>
-        <p className="text-lg text-gray-400">
-          Based on your responses, here's your personalized analysis
-        </p>
-      </motion.div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white">
+      <div className="container mx-auto px-4 py-8 max-w-md">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-8"
+        >
+          <h1 className="text-3xl font-bold mb-4">Your Instant Diagnosis</h1>
+          <p className="text-gray-300">Based on your responses, here's your personalized testosterone assessment</p>
+        </motion.div>
 
-      {/* Wellness Score */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.3, duration: 0.6 }}
-        className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 mb-8 border border-gray-700"
-      >
-        <div className="text-center mb-6">
-          <div className="relative w-32 h-32 mx-auto mb-4">
-            {/* Score circle */}
-            <div className="w-32 h-32 rounded-full bg-gray-700 flex items-center justify-center relative overflow-hidden">
-              <motion.div
-                className={`absolute inset-0 rounded-full bg-gradient-to-br ${getScoreColor(insights.wellnessScore)}`}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
-                style={{
-                  clipPath: `polygon(50% 50%, 50% 0%, ${50 + (insights.wellnessScore / 100) * 50}% 0%, 100% 100%, 0% 100%)`
-                }}
-              />
-              <div className="relative z-10 text-center">
-                <div className="text-3xl font-bold text-white">{insights.wellnessScore}</div>
-                <div className="text-xs text-gray-300">SCORE</div>
-              </div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2 }}
+          className="bg-white/10 rounded-3xl p-8 mb-8 backdrop-blur-lg border border-white/20"
+        >
+          <div className="text-center mb-6">
+            <div className="flex items-center justify-center mb-4">
+              <StatusIcon className={`w-12 h-12 ${status.color}`} />
+            </div>
+            <h2 className="text-4xl font-bold mb-2">
+              <span className={getScoreColor(testosteroneScore)}>{testosteroneScore}%</span>
+            </h2>
+            <p className="text-xl font-semibold mb-2">Testosterone Potential</p>
+            <p className={`text-lg ${status.color}`}>{status.text}</p>
+          </div>
+
+          <div className="mb-6">
+            <Progress value={testosteroneScore} className="h-3 mb-2" />
+            <div className="flex justify-between text-sm text-gray-400">
+              <span>Low</span>
+              <span>Optimal</span>
             </div>
           </div>
-          <h3 className="text-xl font-bold text-white mb-2">{getScoreText(insights.wellnessScore)}</h3>
-          <p className="text-gray-400">Current testosterone optimization potential</p>
-        </div>
-      </motion.div>
 
-      {/* Key Areas to Address */}
-      {insights.keyAreas.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
-          className="bg-gradient-to-br from-red-900/20 to-orange-900/20 rounded-2xl p-6 mb-8 border border-red-800/30"
-        >
-          <h3 className="text-lg font-bold text-red-400 mb-4 flex items-center">
-            <span className="mr-2">⚠️</span>
-            Priority Areas Crushing Your T-Levels
-          </h3>
-          <div className="space-y-2">
-            {insights.keyAreas.map((area, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.8 + index * 0.1, duration: 0.4 }}
-                className="flex items-center text-gray-300"
-              >
-                <span className="w-2 h-2 bg-red-500 rounded-full mr-3"></span>
-                {area}
-              </motion.div>
-            ))}
+          <div className="space-y-4">
+            <div className="bg-white/5 rounded-xl p-4">
+              <h3 className="font-semibold mb-2">🔥 Key Insights:</h3>
+              <ul className="text-sm space-y-1 text-gray-300">
+                {testosteroneScore < 60 && (
+                  <>
+                    <li>• Your sleep and stress levels are impacting T-levels</li>
+                    <li>• Targeted exercise can boost testosterone by 40%</li>
+                  </>
+                )}
+                {testosteroneScore >= 60 && testosteroneScore < 80 && (
+                  <>
+                    <li>• You're on the right track but have room to optimize</li>
+                    <li>• Fine-tuning your routine can unlock 20-30% more gains</li>
+                  </>
+                )}
+                {testosteroneScore >= 80 && (
+                  <>
+                    <li>• Great foundation! Let's maximize your potential</li>
+                    <li>• Advanced strategies can push you to peak performance</li>
+                  </>
+                )}
+                <li>• Our 63-day program is designed for your specific profile</li>
+              </ul>
+            </div>
+
+            <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl p-4 border border-blue-400/30">
+              <h3 className="font-semibold mb-2">🎯 Recommended Program:</h3>
+              <p className="text-lg font-bold text-blue-300">
+                {data.recommendedProgram?.charAt(0).toUpperCase() + data.recommendedProgram?.slice(1) || 'Beginner'} Track
+              </p>
+              <p className="text-sm text-gray-300 mt-1">
+                Personalized for your current fitness level and goals
+              </p>
+            </div>
           </div>
         </motion.div>
-      )}
 
-      {/* Personalized Insights */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.9, duration: 0.6 }}
-        className="bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-2xl p-6 mb-8 border border-blue-800/30"
-      >
-        <h3 className="text-lg font-bold text-blue-400 mb-4 flex items-center">
-          <span className="mr-2">💡</span>
-          Your Personalized Game Plan
-        </h3>
-        <div className="space-y-3">
-          {insights.insights.map((insight, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.1 + index * 0.1, duration: 0.4 }}
-              className="text-gray-300 leading-relaxed"
-            >
-              <span className="text-blue-400 mr-2">•</span>
-              {insight}
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Program Recommendation */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.4, duration: 0.6 }}
-        className="bg-gradient-to-br from-green-900/20 to-emerald-900/20 rounded-2xl p-6 mb-8 border border-green-800/30"
-      >
-        <h3 className="text-lg font-bold text-green-400 mb-4 flex items-center">
-          <span className="mr-2">🎯</span>
-          Recommended Program
-        </h3>
-        <div className="bg-gray-800/50 rounded-xl p-4 mb-4">
-          <div className="text-2xl font-bold text-white mb-2 capitalize">
-            {recommendedProgram} Program
-          </div>
-          <p className="text-gray-300 leading-relaxed">
-            {getProgramDescription(recommendedProgram)}
-          </p>
-        </div>
-        <p className="text-sm text-gray-400">
-          {insights.recommendation}
-        </p>
-      </motion.div>
-
-      {/* CTA */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.7, duration: 0.6 }}
-        className="text-center"
-      >
-        <Button
-          onClick={handleContinue}
-          size="lg"
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 
-                   text-white font-bold px-12 py-4 text-lg rounded-xl shadow-xl hover:shadow-2xl 
-                   transform hover:scale-105 transition-all duration-200"
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
         >
-          Show Me My 63-Day Journey →
-        </Button>
-        <p className="text-sm text-gray-500 mt-4">
-          See exactly how you'll transform your testosterone and confidence
-        </p>
-      </motion.div>
+          <Button
+            onClick={onComplete}
+            size="lg"
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 
+                     text-white font-semibold py-4 text-lg rounded-xl shadow-xl hover:shadow-2xl 
+                     transform hover:scale-105 transition-all duration-200"
+          >
+            See Your 63-Day Roadmap →
+          </Button>
+        </motion.div>
+      </div>
     </div>
   );
 }
