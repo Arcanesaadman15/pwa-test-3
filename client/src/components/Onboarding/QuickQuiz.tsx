@@ -12,7 +12,7 @@ interface QuickQuizProps {
   }) => void;
 }
 
-export const QuickQuiz: React.FC<QuickQuizProps> = ({ onComplete }) => {
+const QuickQuiz: React.FC<QuickQuizProps> = ({ onComplete }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [selectedOption, setSelectedOption] = useState<string>('');
@@ -155,4 +155,6 @@ export const QuickQuiz: React.FC<QuickQuizProps> = ({ onComplete }) => {
       </div>
     </div>
   );
-}
+};
+
+export { QuickQuiz };
