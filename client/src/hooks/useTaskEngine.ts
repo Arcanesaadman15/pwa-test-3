@@ -41,9 +41,6 @@ export function useTaskEngine() {
     console.log(`🔄 useTaskEngine: Switching to ${program} program`);
     await taskEngine.switchProgram(program);
     await refreshTasks();
-    
-    // Force refresh the entire page to ensure all components get updated user data
-    window.location.reload();
   };
 
   const unSkipTask = async (taskId: string) => {

@@ -29,7 +29,8 @@ export default function Home() {
     user,
     isOnboardingComplete,
     completeOnboarding,
-    updateUserProgress
+    updateUserProgress,
+    loadUserData
   } = useUserProgress();
   
   const {
@@ -82,6 +83,7 @@ export default function Home() {
   const handleBackToMain = () => { setCurrentView('main'); setActiveTab('profile'); };
   const handleProgramSelect = async (program: 'beginner' | 'intermediate' | 'advanced') => {
     await switchProgram(program);
+    await loadUserData(); // Refresh user data to reflect the program change
     setCurrentView('main');
     setActiveTab('tasks');
   };
