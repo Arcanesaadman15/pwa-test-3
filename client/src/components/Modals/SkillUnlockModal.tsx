@@ -1,6 +1,7 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { generateAndShareSkillImage } from "@/lib/skillImageGenerator";
 
 interface SkillUnlockModalProps {
   isOpen: boolean;
@@ -35,22 +36,28 @@ function getTaskDisplayName(taskId: string): string {
 
 export function SkillUnlockModal({ isOpen, onClose, skill }: SkillUnlockModalProps) {
   const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'PeakForge Achievement',
-          text: `I just unlocked "${skill?.title}" in my wellness journey!`,
-          url: window.location.href
-        });
-        // Only close if sharing was successful
-        onClose();
-      } catch (error) {
-        // User cancelled the share - don't close the modal
-        console.log('Share cancelled or failed:', error);
-      }
-    } else {
-      // Fallback for browsers without native share
+    try {
+      await generateAndShareSkillImage(skill, "PeakForge Champion");
       onClose();
+    } catch (error) {
+      console.log('Image share failed, falling back to text');
+      // Fallback to text sharing if image fails
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'PeakForge Achievement',
+            text: `I just unlocked "${skill?.title}" in my wellness journey!`,
+            url: window.location.href
+          });
+          onClose();
+        } catch (shareError) {
+          console.log('Share cancelled or failed:', shareError);
+        }
+      } else {
+        const shareText = `🎉 I unlocked ${skill?.title}! Just achieved "${skill?.title}" in PeakForge! ${skill?.description}`;
+        navigator.clipboard.writeText(shareText);
+        onClose();
+      }
     }
   };
 
