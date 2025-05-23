@@ -7,8 +7,15 @@ interface SplashScreenProps {
 
 export function SplashScreen({ onComplete }: SplashScreenProps) {
   useEffect(() => {
-    const timer = setTimeout(onComplete, 2500);
-    return () => clearTimeout(timer);
+    console.log('🚀 SPLASH SCREEN: Starting 2.5s timer');
+    const timer = setTimeout(() => {
+      console.log('⏰ SPLASH SCREEN: Timer completed, calling onComplete');
+      onComplete();
+    }, 2500);
+    return () => {
+      console.log('🧹 SPLASH SCREEN: Cleaning up timer');
+      clearTimeout(timer);
+    };
   }, [onComplete]);
 
   return (

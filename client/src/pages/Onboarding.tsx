@@ -55,8 +55,11 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   // Auto-advance from splash screen
   useEffect(() => {
+    console.log('🔄 STEP CHANGE: Current step is now:', currentStep);
     if (currentStep === 'splash') {
+      console.log('⏳ AUTO-ADVANCE: Setting timer to move from splash to problems');
       const timer = setTimeout(() => {
+        console.log('✅ AUTO-ADVANCE: Timer fired, moving to problems step');
         setCurrentStep('problems');
       }, 2500);
       return () => clearTimeout(timer);
@@ -74,10 +77,18 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     ];
     
     const currentIndex = steps.indexOf(currentStep);
-    console.log('Current step:', currentStep, 'Index:', currentIndex, 'Next step:', steps[currentIndex + 1]);
+    console.log('🔍 NAVIGATION DEBUG:');
+    console.log('  Current step:', currentStep);
+    console.log('  Current index:', currentIndex);
+    console.log('  Next step:', steps[currentIndex + 1]);
+    console.log('  All steps:', steps);
     
     if (currentIndex < steps.length - 1) {
-      setCurrentStep(steps[currentIndex + 1]);
+      const nextStep = steps[currentIndex + 1];
+      console.log('  ✅ Moving to next step:', nextStep);
+      setCurrentStep(nextStep);
+    } else {
+      console.log('  ❌ Already at last step');
     }
   };
 
@@ -179,11 +190,17 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             className="absolute inset-0"
           >
             {currentStep === 'splash' && (
-              <SplashScreen onComplete={goToNextStep} />
+              <>
+                {console.log('🎭 RENDERING: SplashScreen component')}
+                <SplashScreen onComplete={goToNextStep} />
+              </>
             )}
             
             {currentStep === 'problems' && (
-              <ProblemSpotlight onComplete={goToNextStep} />
+              <>
+                {console.log('🎭 RENDERING: ProblemSpotlight component')}
+                <ProblemSpotlight onComplete={goToNextStep} />
+              </>
             )}
             
             {currentStep === 'quiz' && (
