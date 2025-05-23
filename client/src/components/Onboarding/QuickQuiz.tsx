@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QUICK_QUIZ_QUESTIONS } from '@/data/onboardingData';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface QuickQuizProps {
   onComplete: (data: {
@@ -35,11 +37,80 @@ export function QuickQuiz({ onComplete }: QuickQuizProps) {
         setCurrentQuestion(prev => prev + 1);
         setSelectedOption('');
       } else {
-        // Quiz completed
-        onComplete(newAnswers as any);
+        // Quiz completed - include name, email, and all answers
+        onComplete({
+          name,
+          email,
+          ageRange: newAnswers.ageRange || '',
+          sleepQuality: newAnswers.sleepQuality || '',
+          exerciseFrequency: newAnswers.exerciseFrequency || '',
+          primaryGoal: newAnswers.primaryGoal || ''
+        });
       }
     }, 300);
   };
+
+  const handlePersonalInfoComplete = () => {
+    if (name.trim() && email.trim()) {
+      setShowPersonalInfo(false);
+    }
+  };
+
+  // Show personal info form first
+  if (showPersonalInfo) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col">
+        {/* Header */}
+        <div className="pt-8 px-6">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-bold text-white mb-2">Let's get started!</h2>
+            <p className="text-gray-400">First, tell us a bit about yourself</p>
+          </div>
+        </div>
+
+        {/* Personal Info Form */}
+        <div className="flex-1 flex flex-col justify-center px-6 pb-20">
+          <div className="max-w-md mx-auto w-full space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-white font-medium">
+                What's your name? *
+              </Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Enter your first name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-blue-500"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-white font-medium">
+                Email address *
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-blue-500"
+              />
+            </div>
+
+            <Button
+              onClick={handlePersonalInfoComplete}
+              disabled={!name.trim() || !email.trim()}
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 py-3 text-lg font-semibold"
+            >
+              Start Quick Assessment →
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const progress = ((currentQuestion + 1) / QUICK_QUIZ_QUESTIONS.length) * 100;
   const question = QUICK_QUIZ_QUESTIONS[currentQuestion];
