@@ -44,14 +44,14 @@ export function useUserProgress() {
         level: 1,
         onboardingComplete: true,
         preferences: onboardingData ? {
-          morningPerson: onboardingData.preferences.morningPerson,
-          outdoorActivities: onboardingData.preferences.outdoorActivities,
-          socialActivities: onboardingData.preferences.socialActivities,
-          highIntensity: onboardingData.preferences.highIntensity,
-          timeCommitment: onboardingData.timeCommitment,
-          stressLevel: onboardingData.stressLevel,
-          sleepQuality: onboardingData.sleepQuality,
-          activityLevel: onboardingData.activityLevel
+          morningPerson: (onboardingData as any).circadianRhythm === 'morning',
+          outdoorActivities: (onboardingData as any).activityLocation === 'outdoor',
+          socialActivities: (onboardingData as any).socialPreference === 'group',
+          highIntensity: (onboardingData as any).intensityApproach === 'high',
+          timeCommitment: 30, // Default 30 minutes
+          stressLevel: (onboardingData as any).stressLevel || 5,
+          sleepQuality: 3, // Convert string to number (1-5 scale)
+          activityLevel: 3 // Convert string to number (1-5 scale)
         } : undefined
       };
       

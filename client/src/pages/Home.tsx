@@ -165,6 +165,19 @@ export default function Home() {
   }
 
   const renderTabContent = () => {
+    // Show loading state if user is still loading
+    if (!user) {
+      return (
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-pulse text-center">
+            <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4"></div>
+            <div className="h-4 bg-gray-200 rounded w-32 mx-auto mb-2"></div>
+            <div className="h-3 bg-gray-200 rounded w-24 mx-auto"></div>
+          </div>
+        </div>
+      );
+    }
+
     switch (activeTab) {
       case 'tasks':
         return <TaskList onTaskComplete={handleTaskComplete} onTaskSkip={handleTaskSkip} />;
@@ -189,7 +202,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#111827' }}>
-      <Header />
+      <Header user={user} />
       <main className="pb-20">
         {renderTabContent()}
       </main>

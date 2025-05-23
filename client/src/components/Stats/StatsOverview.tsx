@@ -6,6 +6,19 @@ interface StatsOverviewProps {
 }
 
 export function StatsOverview({ user }: StatsOverviewProps) {
+  // Handle null user case
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-pulse text-center">
+          <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4"></div>
+          <div className="h-4 bg-gray-200 rounded w-32 mx-auto mb-2"></div>
+          <div className="h-3 bg-gray-200 rounded w-24 mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
+
   // Calculate stats from user data
   const totalDays = 63;
   const completedDays = user.completedDays || 0;

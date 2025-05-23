@@ -1,0 +1,30 @@
+chunk-WERSD76P.js?v=cac5c922:14032 The above error occurred in the <StatsOverview> component:
+
+    at StatsOverview (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.dev/src/components/Stats/StatsOverview.tsx:18:33)
+    at main
+    at div
+    at Home (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.dev/src/pages/Home.tsx?t=1748005421986:37:37)
+    at Route (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=60fec06a:323:16)
+    at Switch (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=60fec06a:379:17)
+    at Router
+    at div
+    at Provider (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.…unner/workspace/node_modules/.vite/deps/chunk-C6CIBY4I.js?v=cac5c922:44:15)
+    at TooltipProvider (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.…space/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=0b9fbd6b:2244:5)
+    at QueryClientProvider (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=7fb65d02:2805:3)
+    at App (https://47b35e5a-d98b-408c-bf7a-19366ff0445e-00-1s4an7uxnkhss.riker.replit.dev/src/App.tsx?t=1748005421986&v=on6HKvz22v8WV8fuBuD8z:48:67)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError	@	chunk-WERSD76P.js?v=cac5c922:14032
+update.callback	@	chunk-WERSD76P.js?v=cac5c922:14052
+callCallback	@	chunk-WERSD76P.js?v=cac5c922:11248
+commitUpdateQueue	@	chunk-WERSD76P.js?v=cac5c922:11265
+commitLayoutEffectOnFiber	@	chunk-WERSD76P.js?v=cac5c922:17093
+commitLayoutMountEffects_complete	@	chunk-WERSD76P.js?v=cac5c922:17980
+commitLayoutEffects_begin	@	chunk-WERSD76P.js?v=cac5c922:17969
+commitLayoutEffects	@	chunk-WERSD76P.js?v=cac5c922:17920
+commitRootImpl	@	chunk-WERSD76P.js?v=cac5c922:19353
+commitRoot	@	chunk-WERSD76P.js?v=cac5c922:19277
+performSyncWorkOnRoot	@	chunk-WERSD76P.js?v=cac5c922:18895
+flushSyncCallbacks	@	chunk-WERSD76P.js?v=cac5c922:9119
+(anonymous)	@	chunk-WERSD76P.js?v=cac5c922:18627
