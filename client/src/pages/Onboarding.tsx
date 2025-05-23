@@ -56,6 +56,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     ];
     
     const currentIndex = steps.indexOf(currentStep);
+    console.log('Current step:', currentStep, 'Index:', currentIndex, 'Next step:', steps[currentIndex + 1]);
+    
     if (currentIndex < steps.length - 1) {
       setCurrentStep(steps[currentIndex + 1]);
     }
