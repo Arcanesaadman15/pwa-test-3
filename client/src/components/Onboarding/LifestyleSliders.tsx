@@ -1,223 +1,222 @@
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Clock, Gauge, Bed, Activity } from "lucide-react";
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { LIFESTYLE_SLIDERS } from '@/data/onboardingData';
+import { Button } from '@/components/ui/button';
 
 interface LifestyleSlidersProps {
-  onNext: () => void;
-  onPrevious: () => void;
-  data: any;
-  updateData: (data: any) => void;
-  currentStep: number;
-  totalSteps: number;
+  onComplete: (data: {
+    waistCircumference: number;
+    stressLevel: number;
+    dailySteps: number;
+  }) => void;
 }
 
-export function LifestyleSliders({ 
-  onNext, 
-  onPrevious, 
-  data, 
-  updateData, 
-  currentStep, 
-  totalSteps 
-}: LifestyleSlidersProps) {
-  const sliders = [
-    {
-      id: 'timeCommitment',
-      icon: Clock,
-      title: 'Daily Time Commitment',
-      description: 'How many minutes per day can you dedicate?',
-      value: data.timeCommitment || 30,
-      min: 15,
-      max: 90,
-      step: 15,
-      unit: 'min',
-      color: 'purple'
-    },
-    {
-      id: 'stressLevel',
-      icon: Gauge,
-      title: 'Current Stress Level',
-      description: 'Rate your typical daily stress (1-5)',
-      value: data.stressLevel || 3,
-      min: 1,
-      max: 5,
-      step: 1,
-      unit: '/5',
-      color: 'orange'
-    },
-    {
-      id: 'sleepQuality',
-      icon: Bed,
-      title: 'Sleep Quality',
-      description: 'How well do you typically sleep? (1-5)',
-      value: data.sleepQuality || 3,
-      min: 1,
-      max: 5,
-      step: 1,
-      unit: '/5',
-      color: 'blue'
+export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
+  const [values, setValues] = useState<Record<string, number>>({
+    waistCircumference: 34,
+    stressLevel: 5,
+    dailySteps: 5000
+  });
+
+  const [currentSlider, setCurrentSlider] = useState(0);
+
+  const handleSliderChange = (sliderId: string, value: number) => {
+    setValues(prev => ({ ...prev, [sliderId]: value }));
+  };
+
+  const goNext = () => {
+    if (currentSlider < LIFESTYLE_SLIDERS.length - 1) {
+      setCurrentSlider(prev => prev + 1);
+    } else {
+      onComplete(values as any);
     }
-  ];
-
-  const activityLevels = [
-    { id: 'low', label: 'Beginner', description: 'Just starting out', icon: '🌱' },
-    { id: 'moderate', label: 'Moderate', description: 'Some experience', icon: '⚡' },
-    { id: 'high', label: 'Active', description: 'Regular exerciser', icon: '🔥' }
-  ];
-
-  const updateSlider = (id: string, value: number) => {
-    updateData({ [id]: value });
   };
 
-  const updateActivityLevel = (level: string) => {
-    updateData({ activityLevel: level });
+  const goBack = () => {
+    if (currentSlider > 0) {
+      setCurrentSlider(prev => prev - 1);
+    }
   };
 
-  const getColorClasses = (color: string) => {
-    const colors = {
-      purple: { bg: 'bg-purple-600', slider: 'accent-purple-500' },
-      orange: { bg: 'bg-orange-600', slider: 'accent-orange-500' },
-      blue: { bg: 'bg-blue-600', slider: 'accent-blue-500' }
-    };
-    return colors[color as keyof typeof colors] || colors.purple;
+  const slider = LIFESTYLE_SLIDERS[currentSlider];
+  const currentValue = values[slider.id] || slider.default;
+  const progress = ((currentSlider + 1) / LIFESTYLE_SLIDERS.length) * 100;
+
+  // Get color based on value for stress level
+  const getSliderColor = () => {
+    if (slider.id === 'stressLevel') {
+      if (currentValue <= 3) return 'from-green-500 to-blue-500';
+      if (currentValue <= 6) return 'from-yellow-500 to-orange-500';
+      return 'from-orange-500 to-red-500';
+    }
+    return slider.gradient;
+  };
+
+  const getValueDescription = () => {
+    if (slider.id === 'waistCircumference') {
+      if (currentValue <= 32) return 'Lean physique';
+      if (currentValue <= 36) return 'Average build';
+      if (currentValue <= 40) return 'Above average';
+      return 'Higher body fat';
+    }
+    
+    if (slider.id === 'stressLevel') {
+      if (currentValue <= 3) return 'Low stress - great for T levels';
+      if (currentValue <= 6) return 'Moderate stress';
+      if (currentValue <= 8) return 'High stress - needs attention';
+      return 'Very high stress - major concern';
+    }
+    
+    if (slider.id === 'dailySteps') {
+      if (currentValue <= 3000) return 'Sedentary lifestyle';
+      if (currentValue <= 7000) return 'Lightly active';
+      if (currentValue <= 10000) return 'Moderately active';
+      return 'Very active';
+    }
+    
+    return '';
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col">
       {/* Header */}
-      <div className="bg-gradient-to-br from-purple-900 via-indigo-800 to-blue-800 px-6 pt-16 pb-12">
-        <div className="flex items-center gap-4 mb-6">
-          <Button
-            onClick={onPrevious}
-            className="bg-white/10 hover:bg-white/20 text-white border border-white/20 p-2"
-            size="sm"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
-          <div className="flex-1">
-            <div className="text-sm text-purple-200 mb-1">
-              Step {currentStep} of {totalSteps}
-            </div>
-            <div className="w-full bg-purple-800 rounded-full h-1">
-              <div 
-                className="bg-purple-300 h-1 rounded-full transition-all duration-300"
-                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-              ></div>
-            </div>
+      <div className="pt-8 px-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="text-sm text-gray-400">
+            {currentSlider + 1} of {LIFESTYLE_SLIDERS.length}
+          </div>
+          <div className="text-sm text-gray-400">
+            Baseline Assessment
           </div>
         </div>
         
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-white mb-4">
-            Your Lifestyle
-          </h1>
-          <p className="text-xl text-purple-200 leading-relaxed">
-            Help us understand your current situation
-          </p>
+        {/* Progress bar */}
+        <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-gradient-to-r from-blue-500 to-purple-600"
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          />
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 px-6 py-8 space-y-8">
-        {/* Activity Level */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <Activity className="w-5 h-5 text-green-400" />
-            Activity Level
-          </h3>
-          <div className="grid grid-cols-3 gap-3">
-            {activityLevels.map((level) => (
-              <div 
-                key={level.id}
-                onClick={() => updateActivityLevel(level.id)}
-                className={`p-4 rounded-2xl border-2 transition-all cursor-pointer text-center ${
-                  data.activityLevel === level.id 
-                    ? 'border-green-500 bg-green-900/30' 
-                    : 'border-gray-700 bg-gray-800 hover:border-gray-600'
+      {/* Main content */}
+      <div className="flex-1 flex flex-col justify-center px-6 py-12">
+        <motion.div
+          key={currentSlider}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-16"
+        >
+          {/* Icon */}
+          <div className={`w-24 h-24 rounded-full bg-gradient-to-br ${getSliderColor()} 
+                         flex items-center justify-center mx-auto mb-8 shadow-2xl`}>
+            <span className="text-4xl">{slider.icon}</span>
+          </div>
+
+          {/* Title */}
+          <h1 className="text-3xl font-bold text-white mb-4">
+            {slider.title}
+          </h1>
+          
+          {/* Subtitle */}
+          <p className="text-lg text-gray-400 max-w-md mx-auto mb-8">
+            {slider.subtitle}
+          </p>
+
+          {/* Current value display */}
+          <div className="mb-12">
+            <div className="text-5xl font-bold text-white mb-2">
+              {currentValue}
+              <span className="text-2xl text-gray-400 ml-2">{slider.unit}</span>
+            </div>
+            <div className="text-lg text-gray-400">
+              {getValueDescription()}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Slider */}
+        <div className="max-w-lg mx-auto w-full">
+          <div className="relative">
+            {/* Slider track */}
+            <div className="w-full h-3 bg-gray-700 rounded-full relative overflow-hidden">
+              {/* Active track */}
+              <motion.div
+                className={`h-full bg-gradient-to-r ${getSliderColor()} rounded-full`}
+                style={{ 
+                  width: `${((currentValue - slider.min) / (slider.max - slider.min)) * 100}%` 
+                }}
+                transition={{ duration: 0.2 }}
+              />
+            </div>
+            
+            {/* Slider thumb */}
+            <motion.div
+              className="absolute top-1/2 transform -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-xl border-4 border-gray-900 cursor-pointer"
+              style={{ 
+                left: `${((currentValue - slider.min) / (slider.max - slider.min)) * 100}%`,
+                marginLeft: '-16px'
+              }}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.9 }}
+            />
+            
+            {/* Hidden input for accessibility */}
+            <input
+              type="range"
+              min={slider.min}
+              max={slider.max}
+              value={currentValue}
+              onChange={(e) => handleSliderChange(slider.id, parseInt(e.target.value))}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
+          </div>
+          
+          {/* Min/Max labels */}
+          <div className="flex justify-between mt-4 text-sm text-gray-500">
+            <span>{slider.min}{slider.unit}</span>
+            <span>{slider.max}{slider.unit}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <div className="px-6 pb-8">
+        <div className="flex justify-between items-center">
+          <Button
+            onClick={goBack}
+            variant="outline"
+            disabled={currentSlider === 0}
+            className="px-6 py-3"
+          >
+            Back
+          </Button>
+          
+          <div className="flex space-x-2">
+            {LIFESTYLE_SLIDERS.map((_, index) => (
+              <div
+                key={index}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  index < currentSlider
+                    ? 'bg-green-500'
+                    : index === currentSlider
+                    ? 'bg-blue-500 scale-125'
+                    : 'bg-gray-600'
                 }`}
-              >
-                <div className="text-2xl mb-2">{level.icon}</div>
-                <h4 className="font-bold text-white text-sm mb-1">{level.label}</h4>
-                <p className="text-gray-400 text-xs">{level.description}</p>
-              </div>
+              />
             ))}
           </div>
-        </div>
 
-        {/* Sliders */}
-        <div className="space-y-6">
-          {sliders.map((slider) => {
-            const colors = getColorClasses(slider.color);
-            return (
-              <div key={slider.id} className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${colors.bg}`}>
-                    <slider.icon className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold text-white">{slider.title}</h3>
-                    <p className="text-gray-400 text-sm">{slider.description}</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-white">
-                      {slider.value}{slider.unit}
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="mt-4">
-                  <input
-                    type="range"
-                    min={slider.min}
-                    max={slider.max}
-                    step={slider.step}
-                    value={slider.value}
-                    onChange={(e) => updateSlider(slider.id, parseInt(e.target.value))}
-                    className={`w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer ${colors.slider}`}
-                  />
-                  <div className="flex justify-between text-xs text-gray-500 mt-1">
-                    <span>{slider.min}{slider.unit}</span>
-                    <span>{slider.max}{slider.unit}</span>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          <Button
+            onClick={goNext}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-6 py-3"
+          >
+            {currentSlider === LIFESTYLE_SLIDERS.length - 1 ? 'Continue' : 'Next'}
+          </Button>
         </div>
-
-        {/* Summary */}
-        <div className="bg-gradient-to-r from-indigo-900/50 to-purple-900/50 rounded-2xl p-6 border border-indigo-500/30">
-          <h3 className="text-lg font-bold text-white mb-3">
-            📊 Your Profile Summary
-          </h3>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <span className="text-gray-400">Activity:</span>
-              <span className="text-white ml-2 font-medium capitalize">{data.activityLevel || 'moderate'}</span>
-            </div>
-            <div>
-              <span className="text-gray-400">Time:</span>
-              <span className="text-white ml-2 font-medium">{data.timeCommitment || 30} min/day</span>
-            </div>
-            <div>
-              <span className="text-gray-400">Stress:</span>
-              <span className="text-white ml-2 font-medium">{data.stressLevel || 3}/5</span>
-            </div>
-            <div>
-              <span className="text-gray-400">Sleep:</span>
-              <span className="text-white ml-2 font-medium">{data.sleepQuality || 3}/5</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Action Button */}
-      <div className="px-6 pb-8">
-        <Button
-          onClick={onNext}
-          className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-4 rounded-2xl text-lg font-medium"
-        >
-          Create My Program
-          <ArrowRight className="w-5 h-5 ml-2" />
-        </Button>
       </div>
     </div>
   );

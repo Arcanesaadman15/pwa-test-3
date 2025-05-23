@@ -1,163 +1,170 @@
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Sun, Trees, Users, Zap } from "lucide-react";
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { PERSONALIZATION_TOGGLES } from '@/data/onboardingData';
+import { Button } from '@/components/ui/button';
 
 interface PersonalizationTogglesProps {
-  onNext: () => void;
-  onPrevious: () => void;
-  data: any;
-  updateData: (data: any) => void;
-  currentStep: number;
-  totalSteps: number;
+  onComplete: (data: {
+    circadianRhythm: 'morning' | 'evening';
+    activityLocation: 'indoor' | 'outdoor';
+    socialPreference: 'solo' | 'group';
+    intensityApproach: 'high' | 'gentle';
+  }) => void;
 }
 
-export function PersonalizationToggles({ 
-  onNext, 
-  onPrevious, 
-  data, 
-  updateData, 
-  currentStep, 
-  totalSteps 
-}: PersonalizationTogglesProps) {
-  const preferences = [
-    {
-      id: 'morningPerson',
-      icon: Sun,
-      title: 'Morning Person',
-      description: 'I prefer morning workouts and early starts',
-      value: data.preferences?.morningPerson || false
-    },
-    {
-      id: 'outdoorActivities',
-      icon: Trees,
-      title: 'Outdoor Activities',
-      description: 'I enjoy exercising outside when possible',
-      value: data.preferences?.outdoorActivities || false
-    },
-    {
-      id: 'socialActivities',
-      icon: Users,
-      title: 'Social Activities',
-      description: 'I like group activities and accountability',
-      value: data.preferences?.socialActivities || false
-    },
-    {
-      id: 'highIntensity',
-      icon: Zap,
-      title: 'High Intensity',
-      description: 'I enjoy challenging, intense workouts',
-      value: data.preferences?.highIntensity || false
-    }
-  ];
+export function PersonalizationToggles({ onComplete }: PersonalizationTogglesProps) {
+  const [preferences, setPreferences] = useState<Record<string, string>>({});
+  const [currentToggle, setCurrentToggle] = useState(0);
 
-  const togglePreference = (id: string) => {
-    updateData({
-      preferences: {
-        ...data.preferences,
-        [id]: !data.preferences?.[id]
+  const handleToggleSelect = (toggleId: string, value: string) => {
+    setPreferences(prev => ({ ...prev, [toggleId]: value }));
+    
+    // Auto-advance after selection
+    setTimeout(() => {
+      if (currentToggle < PERSONALIZATION_TOGGLES.length - 1) {
+        setCurrentToggle(prev => prev + 1);
+      } else {
+        // All toggles completed
+        onComplete(preferences as any);
       }
-    });
+    }, 500);
   };
 
+  const toggle = PERSONALIZATION_TOGGLES[currentToggle];
+  const selectedValue = preferences[toggle.id];
+  const progress = ((currentToggle + 1) / PERSONALIZATION_TOGGLES.length) * 100;
+
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col">
       {/* Header */}
-      <div className="bg-gradient-to-br from-green-900 via-teal-800 to-blue-800 px-6 pt-16 pb-12">
-        <div className="flex items-center gap-4 mb-6">
-          <Button
-            onClick={onPrevious}
-            className="bg-white/10 hover:bg-white/20 text-white border border-white/20 p-2"
-            size="sm"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
-          <div className="flex-1">
-            <div className="text-sm text-teal-200 mb-1">
-              Step {currentStep} of {totalSteps}
-            </div>
-            <div className="w-full bg-teal-800 rounded-full h-1">
-              <div 
-                className="bg-teal-300 h-1 rounded-full transition-all duration-300"
-                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-              ></div>
-            </div>
+      <div className="pt-8 px-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="text-sm text-gray-400">
+            {currentToggle + 1} of {PERSONALIZATION_TOGGLES.length}
+          </div>
+          <div className="text-sm text-gray-400">
+            Personalization
           </div>
         </div>
         
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-white mb-4">
-            Your Preferences
-          </h1>
-          <p className="text-xl text-teal-200 leading-relaxed">
-            Tell us what you enjoy to personalize your experience
-          </p>
+        {/* Progress bar */}
+        <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-gradient-to-r from-blue-500 to-purple-600"
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          />
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 px-6 py-8 space-y-6">
-        {/* Preference Cards */}
-        <div className="space-y-4">
-          {preferences.map((preference) => (
-            <div 
-              key={preference.id}
-              onClick={() => togglePreference(preference.id)}
-              className={`p-6 rounded-2xl border-2 transition-all cursor-pointer ${
-                preference.value 
-                  ? 'border-teal-500 bg-teal-900/30' 
-                  : 'border-gray-700 bg-gray-800 hover:border-gray-600'
+      {/* Main content */}
+      <div className="flex-1 flex flex-col justify-center px-6">
+        <motion.div
+          key={currentToggle}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-16"
+        >
+          {/* Title */}
+          <h1 className="text-3xl font-bold text-white mb-4">
+            {toggle.title}
+          </h1>
+          
+          {/* Description */}
+          <p className="text-lg text-gray-400 max-w-md mx-auto mb-12">
+            {toggle.description}
+          </p>
+        </motion.div>
+
+        {/* Toggle Options */}
+        <div className="space-y-4 max-w-lg mx-auto w-full">
+          {/* Left option */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
+            <Button
+              onClick={() => handleToggleSelect(toggle.id, toggle.leftValue)}
+              variant="outline"
+              className={`w-full p-6 text-left border-2 transition-all duration-300 ${
+                selectedValue === toggle.leftValue
+                  ? 'border-blue-500 bg-blue-500/20 text-white scale-105 shadow-lg'
+                  : 'border-gray-600 bg-gray-800/50 hover:border-gray-500 hover:bg-gray-700/50 text-gray-200'
               }`}
             >
-              <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                  preference.value ? 'bg-teal-600' : 'bg-gray-700'
-                }`}>
-                  <preference.icon className="w-6 h-6 text-white" />
-                </div>
-                
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-white mb-1">
-                    {preference.title}
-                  </h3>
-                  <p className="text-gray-400 text-sm">
-                    {preference.description}
-                  </p>
-                </div>
-                
-                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                  preference.value 
-                    ? 'border-teal-500 bg-teal-500' 
-                    : 'border-gray-500'
-                }`}>
-                  {preference.value && (
-                    <div className="w-2 h-2 bg-white rounded-full"></div>
-                  )}
+              <div className="flex items-center space-x-4">
+                <span className="text-3xl">{toggle.leftIcon}</span>
+                <div>
+                  <div className="font-semibold text-lg">{toggle.leftLabel}</div>
+                  <div className="text-sm text-gray-400">Choose this style</div>
                 </div>
               </div>
-            </div>
-          ))}
+            </Button>
+          </motion.div>
+
+          {/* VS indicator */}
+          <div className="text-center py-2">
+            <span className="text-gray-500 font-medium">VS</span>
+          </div>
+
+          {/* Right option */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
+            <Button
+              onClick={() => handleToggleSelect(toggle.id, toggle.rightValue)}
+              variant="outline"
+              className={`w-full p-6 text-left border-2 transition-all duration-300 ${
+                selectedValue === toggle.rightValue
+                  ? 'border-purple-500 bg-purple-500/20 text-white scale-105 shadow-lg'
+                  : 'border-gray-600 bg-gray-800/50 hover:border-gray-500 hover:bg-gray-700/50 text-gray-200'
+              }`}
+            >
+              <div className="flex items-center space-x-4">
+                <span className="text-3xl">{toggle.rightIcon}</span>
+                <div>
+                  <div className="font-semibold text-lg">{toggle.rightLabel}</div>
+                  <div className="text-sm text-gray-400">Choose this style</div>
+                </div>
+              </div>
+            </Button>
+          </motion.div>
         </div>
 
-        {/* Info Box */}
-        <div className="bg-blue-900/20 rounded-2xl p-6 border border-blue-500/30">
-          <h3 className="text-lg font-bold text-blue-400 mb-2">
-            💡 Personalization Benefits
-          </h3>
-          <p className="text-blue-200 text-sm leading-relaxed">
-            Your preferences help us recommend the best tasks and timing for your lifestyle. 
-            You can always change these later in your profile settings.
+        {/* Help text */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="text-center mt-12"
+        >
+          <p className="text-sm text-gray-500">
+            Select the approach that feels right for you
           </p>
-        </div>
+        </motion.div>
       </div>
 
-      {/* Action Button */}
-      <div className="px-6 pb-8">
-        <Button
-          onClick={onNext}
-          className="w-full bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 text-white py-4 rounded-2xl text-lg font-medium"
-        >
-          Continue
-          <ArrowRight className="w-5 h-5 ml-2" />
-        </Button>
+      {/* Progress indicators */}
+      <div className="pb-8 px-6">
+        <div className="flex justify-center space-x-2">
+          {PERSONALIZATION_TOGGLES.map((_, index) => (
+            <div
+              key={index}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                index < currentToggle
+                  ? 'bg-green-500'
+                  : index === currentToggle
+                  ? 'bg-blue-500 scale-125'
+                  : 'bg-gray-600'
+              }`}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
