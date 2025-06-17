@@ -1,22 +1,24 @@
 import { useState, useEffect } from "react";
-import { User } from "@/types";
+import { useAuth } from "@/contexts/AuthContext";
 import { storage } from "@/lib/storage";
 
 export function useUserProgress() {
-  const [user, setUser] = useState<User | null>(null);
+  const { user: authUser, userProfile, loading, updateProfile } = useAuth();
   const [isOnboardingComplete, setIsOnboardingComplete] = useState(false);
 
   useEffect(() => {
     loadUserData();
-  }, []);
+  }, [userProfile]);
 
   const loadUserData = async () => {
     try {
-      const userData = await storage.getUser();
-      const onboardingComplete = await storage.getOnboardingStatus();
-      
-      setUser(userData);
-      setIsOnboardingComplete(onboardingComplete);
+      if (userProfile) {
+        setIsOnboardingComplete(userProfile.onboarding_complete);
+      } else {
+        // Check local storage for onboarding status if no user profile
+        const onboardingComplete = await storage.getOnboardingStatus();
+        setIsOnboardingComplete(onboardingComplete);
+      }
     } catch (error) {
       console.error('Failed to load user data:', error);
     }
@@ -24,70 +26,60 @@ export function useUserProgress() {
 
   const completeOnboarding = async () => {
     try {
+      console.log('🎯 completeOnboarding called');
       await storage.setOnboardingComplete();
       setIsOnboardingComplete(true);
       
-      // Always create/update user after onboarding
-      const onboardingData = await storage.getOnboardingData();
-      const programType = determineProgramType(onboardingData);
+      // If we have a user profile, update it to mark onboarding as complete
+      if (updateProfile && userProfile) {
+        console.log('🎯 Updating profile to mark onboarding complete');
+        await updateProfile({ onboarding_complete: true });
+      }
       
-      const newUser: User = {
-        id: 'user1',
-        name: 'Wellness Warrior',
-        program: programType,
-        currentDay: 1,
-        currentStreak: 0,
-        longestStreak: 0,
-        completedDays: 0,
-        startDate: new Date(),
-        achievements: 0,
-        level: 1,
-        onboardingComplete: true,
-        preferences: onboardingData ? {
-          morningPerson: (onboardingData as any).circadianRhythm === 'morning',
-          outdoorActivities: (onboardingData as any).activityLocation === 'outdoor',
-          socialActivities: (onboardingData as any).socialPreference === 'group',
-          highIntensity: (onboardingData as any).intensityApproach === 'high',
-          timeCommitment: 30, // Default 30 minutes
-          stressLevel: (onboardingData as any).stressLevel || 5,
-          sleepQuality: 3, // Convert string to number (1-5 scale)
-          activityLevel: 3 // Convert string to number (1-5 scale)
-        } : undefined
-      };
-      
-      await storage.saveUser(newUser);
-      setUser(newUser);
+      console.log('🎯 Onboarding completed successfully');
     } catch (error) {
       console.error('Failed to complete onboarding:', error);
     }
   };
 
-  const determineProgramType = (data: any): 'beginner' | 'intermediate' | 'advanced' => {
-    if (!data) return 'beginner';
-    
-    if (data.activityLevel === 'sedentary' || data.timeCommitment <= 30) {
-      return 'beginner';
-    } else if (data.activityLevel === 'very' && data.preferences?.highIntensity) {
-      return 'advanced';
-    }
-    return 'intermediate';
-  };
-
-  const updateUserProgress = async (updates: Partial<User>) => {
-    if (!user) return;
+  const updateUserProgress = async (updates: any) => {
+    if (!userProfile) return;
     
     try {
-      const updatedUser = { ...user, ...updates };
-      await storage.saveUser(updatedUser);
-      setUser(updatedUser);
+      // Convert old property names to new ones
+      const convertedUpdates: any = {};
+      
+      if (updates.currentStreak !== undefined) {
+        convertedUpdates.current_streak = updates.currentStreak;
+      }
+      if (updates.completedDays !== undefined) {
+        convertedUpdates.completed_days = updates.completedDays;
+      }
+      if (updates.longestStreak !== undefined) {
+        convertedUpdates.longest_streak = updates.longestStreak;
+      }
+      if (updates.currentDay !== undefined) {
+        convertedUpdates.current_day = updates.currentDay;
+      }
+      
+      // Add any other properties as is
+      Object.keys(updates).forEach(key => {
+        if (!['currentStreak', 'completedDays', 'longestStreak', 'currentDay'].includes(key)) {
+          convertedUpdates[key] = updates[key];
+        }
+      });
+
+      await updateProfile(convertedUpdates);
     } catch (error) {
       console.error('Failed to update user progress:', error);
     }
   };
 
   return {
-    user,
+    user: userProfile,
+    authUser,
     isOnboardingComplete,
+    loading,
     completeOnboarding,
     updateUserProgress,
     loadUserData

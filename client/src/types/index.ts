@@ -114,16 +114,22 @@ export interface DayProgram {
 }
 
 export interface OnboardingData {
-  activityLevel: string;
-  timeCommitment: number;
+  // Quick Quiz responses
+  ageRange: string;
+  sleepQuality: string;
+  exerciseFrequency: string;
+  primaryGoal: string;
+  
+  // Lifestyle Sliders
+  waistCircumference: number;
   stressLevel: number;
-  sleepQuality: number;
-  preferences: {
-    morningPerson: boolean;
-    outdoorActivities: boolean;
-    socialActivities: boolean;
-    highIntensity: boolean;
-  };
+  dailySteps: number;
+  
+  // Recommended program
+  recommendedProgram: 'beginner' | 'intermediate' | 'advanced';
+  
+  // Completion status
+  completedAt?: Date;
 }
 
 export interface ProgramType {

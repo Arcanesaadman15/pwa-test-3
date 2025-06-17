@@ -190,6 +190,51 @@ class Storage {
     }
   }
 
+  async resetOnboarding(): Promise<void> {
+    try {
+      // Clear localStorage onboarding data
+      localStorage.removeItem(STORAGE_KEYS.ONBOARDING_COMPLETE);
+      localStorage.removeItem(STORAGE_KEYS.ONBOARDING_DATA);
+      
+      // Also clear user data to force fresh start
+      localStorage.removeItem(STORAGE_KEYS.USER);
+      
+      console.log('✅ Onboarding reset! The user will see onboarding flow on next app load.');
+    } catch (error) {
+      console.error('Failed to reset onboarding:', error);
+      throw error;
+    }
+  }
+
+  async resetOnboardingAndAuth(): Promise<void> {
+    try {
+      // Clear localStorage onboarding data
+      localStorage.removeItem(STORAGE_KEYS.ONBOARDING_COMPLETE);
+      localStorage.removeItem(STORAGE_KEYS.ONBOARDING_DATA);
+      localStorage.removeItem(STORAGE_KEYS.USER);
+      
+      // Try to sign out from Supabase if available
+      try {
+        const { createClient } = await import('@supabase/supabase-js');
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+        
+        if (supabaseUrl && supabaseKey) {
+          const supabase = createClient(supabaseUrl, supabaseKey);
+          await supabase.auth.signOut();
+          console.log('✅ Signed out from Supabase');
+        }
+      } catch (authError) {
+        console.warn('⚠️ Could not sign out from Supabase:', authError);
+      }
+      
+      console.log('✅ Complete onboarding and auth reset! The user will see onboarding flow on next app load.');
+    } catch (error) {
+      console.error('Failed to reset onboarding and auth:', error);
+      throw error;
+    }
+  }
+
   // Offline sync support
   async getPendingTaskCompletions(): Promise<TaskCompletion[]> {
     try {

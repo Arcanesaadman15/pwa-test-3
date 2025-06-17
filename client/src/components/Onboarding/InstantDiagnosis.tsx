@@ -1,7 +1,7 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, AlertTriangle, TrendingUp } from "lucide-react";
+import { CheckCircle, AlertTriangle, TrendingUp, Zap, Target, Heart } from "lucide-react";
 import { OnboardingData } from "@/data/onboardingData";
 
 interface InstantDiagnosisProps {
@@ -58,124 +58,489 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
     return "text-red-400";
   };
 
+  const getScoreGradient = (score: number) => {
+    if (score >= 80) return "from-green-400 to-green-500";
+    if (score >= 60) return "from-yellow-400 to-orange-500";
+    return "from-red-400 to-red-500";
+  };
+
   const getScoreStatus = (score: number) => {
-    if (score >= 80) return { icon: CheckCircle, text: "Excellent", color: "text-green-400" };
-    if (score >= 60) return { icon: TrendingUp, text: "Good", color: "text-yellow-400" };
-    return { icon: AlertTriangle, text: "Needs Improvement", color: "text-red-400" };
+    if (score >= 80) return { icon: CheckCircle, text: "Excellent", color: "text-green-400", bgGradient: "from-green-500/20 to-emerald-600/20" };
+    if (score >= 60) return { icon: TrendingUp, text: "Good", color: "text-yellow-400", bgGradient: "from-yellow-500/20 to-orange-600/20" };
+    return { icon: AlertTriangle, text: "Needs Improvement", color: "text-red-400", bgGradient: "from-red-500/20 to-orange-600/20" };
   };
 
   const status = getScoreStatus(testosteroneScore);
   const StatusIcon = status.icon;
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white overflow-y-auto">
-      <div className="min-h-screen px-4 py-8">
-        <div className="container mx-auto max-w-md">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-8"
-          >
-            <h1 className="text-3xl font-bold mb-4">Your Instant Diagnosis</h1>
-            <p className="text-gray-300">Based on your responses, here's your personalized testosterone assessment</p>
-          </motion.div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white overflow-x-hidden relative">
+      {/* Enhanced background effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <motion.div
+          className="absolute top-20 right-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.3, 0.6, 0.3],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        <motion.div
+          className="absolute bottom-20 left-10 w-48 h-48 bg-purple-500/10 rounded-full blur-2xl"
+          animate={{
+            scale: [0.8, 1.2, 0.8],
+            opacity: [0.2, 0.5, 0.2],
+            y: [0, -20, 0],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 3
+          }}
+        />
+        <motion.div
+          className="absolute top-1/2 left-1/2 w-32 h-32 bg-cyan-500/5 rounded-full blur-xl"
+          animate={{
+            scale: [0.5, 1, 0.5],
+            opacity: [0.1, 0.3, 0.1],
+            x: [-50, 50, -50],
+            y: [-25, 25, -25],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1
+          }}
+        />
+      </div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white/10 rounded-3xl p-8 mb-8 backdrop-blur-lg border border-white/20"
-          >
-            <div className="text-center mb-6">
-              <div className="flex items-center justify-center mb-4">
-                <StatusIcon className={`w-12 h-12 ${status.color}`} />
-              </div>
-              <h2 className="text-4xl font-bold mb-2">
-                <span className={getScoreColor(testosteroneScore)}>{testosteroneScore}%</span>
-              </h2>
-              <p className="text-xl font-semibold mb-2">Testosterone Potential</p>
-              <p className={`text-lg ${status.color}`}>{status.text}</p>
-            </div>
-
-            <div className="mb-6">
-              <Progress value={testosteroneScore} className="h-3 mb-2" />
-              <div className="flex justify-between text-sm text-gray-400">
-                <span>Low</span>
-                <span>Optimal</span>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="bg-white/5 rounded-xl p-4">
-                <h3 className="font-semibold mb-2">🔥 Your Personal Insights:</h3>
-                <ul className="text-sm space-y-1 text-gray-300">
-                  {/* Sleep Quality Insights */}
-                  {data.sleepQuality === "poor" && (
-                    <li>• Poor sleep is significantly lowering your testosterone</li>
-                  )}
-                  {data.sleepQuality === "fair" && (
-                    <li>• Improving sleep quality could boost T-levels by 15-20%</li>
-                  )}
-                  {data.sleepQuality === "good" && (
-                    <li>• Good sleep foundation - let's optimize further</li>
-                  )}
-                  
-                  {/* Exercise Insights */}
-                  {data.exerciseFrequency === "rarely" && (
-                    <li>• Adding regular exercise could increase testosterone by 40%</li>
-                  )}
-                  {data.exerciseFrequency === "weekly" && (
-                    <li>• Your exercise routine is helping - more frequency = more gains</li>
-                  )}
-                  
-                  {/* Stress Level Insights */}
-                  {(data.stressLevel || 5) > 7 && (
-                    <li>• High stress is blocking testosterone production</li>
-                  )}
-                  {(data.stressLevel || 5) > 5 && (data.stressLevel || 5) <= 7 && (
-                    <li>• Managing stress better will unlock significant T-gains</li>
-                  )}
-                  
-                  {/* Waist Circumference Insights */}
-                  {(data.waistCircumference || 32) > 40 && (
-                    <li>• Reducing waist size will dramatically boost hormone levels</li>
-                  )}
-                  {(data.waistCircumference || 32) > 36 && (data.waistCircumference || 32) <= 40 && (
-                    <li>• Body composition improvements will enhance testosterone</li>
-                  )}
-                  
-                  <li>• Your {(data.recommendedProgram || 'beginner')} program is perfectly tailored for you</li>
-                </ul>
-              </div>
-
-              <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl p-4 border border-blue-400/30">
-                <h3 className="font-semibold mb-2">🎯 Recommended Program:</h3>
-                <p className="text-lg font-bold text-blue-300">
-                  {(data.recommendedProgram || 'beginner').charAt(0).toUpperCase() + (data.recommendedProgram || 'beginner').slice(1)} Track
-                </p>
-                <p className="text-sm text-gray-300 mt-1">
-                  Personalized for your current fitness level and goals
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="pb-8"
-          >
-            <Button
-              onClick={onComplete}
-              size="lg"
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 
-                       text-white font-semibold py-4 text-lg rounded-xl shadow-xl hover:shadow-2xl 
-                       transform hover:scale-105 transition-all duration-200"
+      {/* Main content with proper mobile spacing */}
+      <div className="relative z-10 px-4 pt-safe-top pb-safe-bottom">
+        {/* Mobile-safe top padding */}
+        <div className="pt-6 md:pt-8">
+          <div className="container mx-auto max-w-md">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-center mb-6 md:mb-8"
             >
-              See Your 63-Day Roadmap →
-            </Button>
-          </motion.div>
+              <motion.h1 
+                className="text-2xl md:text-3xl font-bold mb-3 md:mb-4"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+              >
+                <span className="bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent">
+                  Your Wake-Up Call
+                </span>
+              </motion.h1>
+              <motion.p 
+                className="text-gray-300 text-base md:text-lg leading-relaxed px-2"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+              >
+                Here's the brutal truth about your testosterone - and exactly how to fix it
+              </motion.p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
+              className={`bg-gradient-to-br ${status.bgGradient} rounded-2xl md:rounded-3xl p-6 md:p-8 mb-6 md:mb-8 backdrop-blur-lg border-2 border-white/20 relative overflow-hidden shadow-2xl`}
+            >
+              {/* Enhanced background shimmer */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0"
+                animate={{ 
+                  opacity: [0, 0.5, 0],
+                  x: [-100, 400]
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 1
+                }}
+              />
+
+              <div className="text-center mb-4 md:mb-6 relative z-10">
+                <motion.div 
+                  className="flex items-center justify-center mb-4 md:mb-6"
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ delay: 0.6, type: "spring", stiffness: 200, damping: 15 }}
+                >
+                  <motion.div
+                    className={`p-3 md:p-4 rounded-full bg-gradient-to-r ${getScoreGradient(testosteroneScore)} shadow-lg relative`}
+                    animate={{ 
+                      boxShadow: [
+                        "0 0 0 0 rgba(59, 130, 246, 0.3)",
+                        "0 0 0 20px rgba(59, 130, 246, 0)",
+                        "0 0 0 0 rgba(59, 130, 246, 0)"
+                      ]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <StatusIcon className="w-6 h-6 md:w-8 md:h-8 text-white" />
+                  </motion.div>
+                </motion.div>
+
+                <motion.h2 
+                  className="text-4xl md:text-5xl font-bold mb-3 md:mb-4"
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.8, type: "spring", stiffness: 200, damping: 20 }}
+                >
+                  <span className={`${getScoreColor(testosteroneScore)} relative`}>
+                    {testosteroneScore}%
+                    {/* Glow effect behind text */}
+                    <motion.span
+                      className={`absolute inset-0 bg-gradient-to-r ${getScoreGradient(testosteroneScore)} opacity-20 blur-lg`}
+                      animate={{ opacity: [0.1, 0.3, 0.1] }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      {testosteroneScore}%
+                    </motion.span>
+                  </span>
+                </motion.h2>
+
+                <motion.p 
+                  className="text-lg md:text-xl font-semibold mb-2 md:mb-3"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.0, duration: 0.6 }}
+                >
+                  <span className="bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
+                    Masculine Power Level
+                  </span>
+                </motion.p>
+
+                <motion.p 
+                  className={`text-base md:text-lg font-bold ${status.color}`}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 1.1, duration: 0.5 }}
+                >
+                  {status.text}
+                </motion.p>
+              </div>
+
+              {/* Enhanced Progress Bar */}
+              <motion.div 
+                className="mb-4 md:mb-6"
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: "100%" }}
+                transition={{ delay: 1.2, duration: 0.8 }}
+              >
+                <div className="relative">
+                  <div className="h-3 md:h-4 bg-gray-700/60 rounded-full overflow-hidden backdrop-blur-sm border border-gray-600/50">
+                    <motion.div
+                      className={`h-full bg-gradient-to-r ${getScoreGradient(testosteroneScore)} rounded-full shadow-lg relative`}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${testosteroneScore}%` }}
+                      transition={{ delay: 1.4, duration: 1.2, ease: "easeOut" }}
+                    >
+                      {/* Progress bar shine effect */}
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                        animate={{ x: [-100, 300] }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                          delay: 2
+                        }}
+                      />
+                    </motion.div>
+                  </div>
+                  <div className="flex justify-between text-xs md:text-sm text-gray-400 mt-2">
+                    <span>Low</span>
+                    <span>Optimal</span>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Enhanced Insights Section */}
+              <AnimatePresence>
+                <motion.div 
+                  className="space-y-3 md:space-y-4"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.6, duration: 0.6 }}
+                >
+                  <motion.div 
+                    className="bg-white/10 rounded-xl p-3 md:p-4 backdrop-blur-sm border border-white/20 relative overflow-hidden"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                  >
+                    {/* Background pattern */}
+                    <div className="absolute inset-0 opacity-5">
+                      <div className="absolute top-2 left-2">
+                        <Zap className="w-3 h-3 md:w-4 md:h-4" />
+                      </div>
+                      <div className="absolute bottom-2 right-2">
+                        <Target className="w-3 h-3 md:w-4 md:h-4" />
+                      </div>
+                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                        <Heart className="w-5 h-5 md:w-6 md:h-6" />
+                      </div>
+                    </div>
+
+                    <motion.h3 
+                      className="font-semibold mb-2 md:mb-3 flex items-center text-sm md:text-base"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 1.8, duration: 0.5 }}
+                    >
+                      <motion.span 
+                        className="mr-2"
+                        animate={{ rotate: [0, 10, -10, 0] }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                      >
+                        🔥
+                      </motion.span>
+                      Your Personal Insights:
+                    </motion.h3>
+                    <ul className="text-xs md:text-sm space-y-1.5 md:space-y-2 text-gray-300 relative z-10">
+                      {/* Sleep Quality Insights */}
+                      {data.sleepQuality === "poor" && (
+                        <motion.li 
+                          className="flex items-start"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 2.0, duration: 0.4 }}
+                        >
+                          <span className="mr-2 mt-0.5 text-sm">💤</span>
+                          Poor sleep is significantly lowering your testosterone
+                        </motion.li>
+                      )}
+                      {data.sleepQuality === "fair" && (
+                        <motion.li 
+                          className="flex items-start"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 2.0, duration: 0.4 }}
+                        >
+                          <span className="mr-2 mt-0.5 text-sm">🛌</span>
+                          Improving sleep quality could boost T-levels by 15-20%
+                        </motion.li>
+                      )}
+                      {data.sleepQuality === "good" && (
+                        <motion.li 
+                          className="flex items-start"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 2.0, duration: 0.4 }}
+                        >
+                          <span className="mr-2 mt-0.5 text-sm">✨</span>
+                          Good sleep foundation - let's optimize further
+                        </motion.li>
+                      )}
+                      
+                      {/* Exercise Insights */}
+                      {data.exerciseFrequency === "rarely" && (
+                        <motion.li 
+                          className="flex items-start"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 2.2, duration: 0.4 }}
+                        >
+                          <span className="mr-2 mt-0.5 text-sm">💪</span>
+                          Adding regular exercise could increase testosterone by 40%
+                        </motion.li>
+                      )}
+                      {data.exerciseFrequency === "weekly" && (
+                        <motion.li 
+                          className="flex items-start"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 2.2, duration: 0.4 }}
+                        >
+                          <span className="mr-2 mt-0.5 text-sm">🏋️</span>
+                          Your exercise routine is helping - more frequency = more gains
+                        </motion.li>
+                      )}
+                      
+                      {/* Stress Level Insights */}
+                      {(data.stressLevel || 5) > 7 && (
+                        <motion.li 
+                          className="flex items-start"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 2.4, duration: 0.4 }}
+                        >
+                          <span className="mr-2 mt-0.5 text-sm">⚡</span>
+                          High stress is blocking testosterone production
+                        </motion.li>
+                      )}
+                      {(data.stressLevel || 5) > 5 && (data.stressLevel || 5) <= 7 && (
+                        <motion.li 
+                          className="flex items-start"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 2.4, duration: 0.4 }}
+                        >
+                          <span className="mr-2 mt-0.5 text-sm">🧘</span>
+                          Managing stress better will unlock significant T-gains
+                        </motion.li>
+                      )}
+                      
+                      {/* Waist Circumference Insights */}
+                      {(data.waistCircumference || 32) > 40 && (
+                        <motion.li 
+                          className="flex items-start"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 2.6, duration: 0.4 }}
+                        >
+                          <span className="mr-2 mt-0.5 text-sm">📏</span>
+                          Reducing waist size will dramatically boost hormone levels
+                        </motion.li>
+                      )}
+                      {(data.waistCircumference || 32) > 36 && (data.waistCircumference || 32) <= 40 && (
+                        <motion.li 
+                          className="flex items-start"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 2.6, duration: 0.4 }}
+                        >
+                          <span className="mr-2 mt-0.5 text-sm">🎯</span>
+                          Body composition improvements will enhance testosterone
+                        </motion.li>
+                      )}
+                      
+                      <motion.li 
+                        className="flex items-start"
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 2.8, duration: 0.4 }}
+                      >
+                        <span className="mr-2 mt-0.5 text-sm">🚀</span>
+                        Your {(data.recommendedProgram || 'beginner')} program is perfectly tailored for you
+                      </motion.li>
+                    </ul>
+                  </motion.div>
+
+                  <motion.div 
+                    className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl p-3 md:p-4 border border-blue-400/30 backdrop-blur-sm relative overflow-hidden"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 3.0, duration: 0.6 }}
+                    whileHover={{ scale: 1.02 }}
+                  >
+                    {/* Background glow */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-purple-400/10 blur-xl"
+                      animate={{ opacity: [0.3, 0.6, 0.3] }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+
+                    <motion.h3 
+                      className="font-semibold mb-1 md:mb-2 flex items-center relative z-10 text-sm md:text-base"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 3.2, duration: 0.5 }}
+                    >
+                      <motion.span 
+                        className="mr-2"
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{
+                          duration: 1.5,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                      >
+                        🎯
+                      </motion.span>
+                      Recommended Program:
+                    </motion.h3>
+                    <motion.p 
+                      className="text-base md:text-lg font-bold text-blue-300 relative z-10"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 3.4, duration: 0.5 }}
+                    >
+                      {(data.recommendedProgram || 'beginner').charAt(0).toUpperCase() + (data.recommendedProgram || 'beginner').slice(1)} Track
+                    </motion.p>
+                    <motion.p 
+                      className="text-xs md:text-sm text-gray-300 mt-1 relative z-10"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 3.6, duration: 0.5 }}
+                    >
+                      Personalized for your current fitness level and goals
+                    </motion.p>
+                  </motion.div>
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 3.8, duration: 0.6 }}
+              className="pb-8 md:pb-12"
+            >
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              >
+                <Button
+                  onClick={onComplete}
+                  size="lg"
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 
+                           text-white font-semibold py-3 md:py-4 text-base md:text-lg rounded-xl shadow-xl hover:shadow-2xl 
+                           transform transition-all duration-300 relative overflow-hidden min-h-[56px] touch-manipulation"
+                >
+                  {/* Button background shimmer */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0"
+                    animate={{ 
+                      opacity: [0, 0.5, 0],
+                      x: [-100, 300]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 4
+                    }}
+                  />
+                  <span className="relative z-10">See Your 63-Day Roadmap →</span>
+                </Button>
+              </motion.div>
+            </motion.div>
+
+            {/* Extra padding for mobile safe area */}
+            <div className="h-8 md:h-0" />
+          </div>
         </div>
       </div>
     </div>

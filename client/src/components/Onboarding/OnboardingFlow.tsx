@@ -38,24 +38,20 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
   const totalSteps = 4;
 
   const steps = [
-    <ProblemSpotlight key="problem" onNext={nextStep} />,
+    <ProblemSpotlight key="problem" onComplete={nextStep} />,
     <PersonalizationToggles 
       key="personalization"
-      onNext={nextStep}
-      onPrevious={previousStep}
-      data={onboardingData}
-      updateData={updateData}
-      currentStep={2}
-      totalSteps={totalSteps}
+      onComplete={(preferences) => {
+        updateData({ preferences });
+        nextStep();
+      }}
     />,
     <LifestyleSliders 
       key="lifestyle"
-      onNext={nextStep}
-      onPrevious={previousStep}
-      data={onboardingData}
-      updateData={updateData}
-      currentStep={3}
-      totalSteps={totalSteps}
+      onComplete={(lifestyleData) => {
+        updateData(lifestyleData);
+        nextStep();
+      }}
     />,
     <ProgramPreview 
       key="preview"

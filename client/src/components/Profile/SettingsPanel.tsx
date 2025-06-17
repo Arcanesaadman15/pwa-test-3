@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { RefreshCw, AlertTriangle, ArrowLeft, Trash2, RotateCcw, Download, Target } from "lucide-react";
+import { RefreshCw, AlertTriangle, ArrowLeft, Trash2, RotateCcw, Download, Target, LogOut } from "lucide-react";
 import { storage } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { usePWA } from "@/hooks/usePWA";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface SettingsPanelProps {
   onBack: () => void;
@@ -13,6 +14,7 @@ interface SettingsPanelProps {
 export function SettingsPanel({ onBack, onDataReset, onProgramChange }: SettingsPanelProps) {
   const { toast } = useToast();
   const { isInstallable, promptInstall, isIOS, isStandalone } = usePWA();
+  const { signOut, userProfile } = useAuth();
 
   const handleResetData = async () => {
     try {
@@ -27,12 +29,50 @@ export function SettingsPanel({ onBack, onDataReset, onProgramChange }: Settings
       toast({
         title: "Error",
         description: "Failed to reset data. Please try again.",
-        variant: "destructive"
+        variant: "error"
       });
     }
   };
 
-  const settingsSections = [
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Signed Out",
+        description: "You have been successfully signed out.",
+      });
+    } catch (error) {
+      console.error('Sign out error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to sign out. Please try again.",
+        variant: "error"
+      });
+    }
+  };
+
+  type SettingsItem = {
+    icon: any;
+    title: string;
+    description: string;
+    action: () => void;
+    disabled?: boolean;
+    destructive?: boolean;
+  };
+
+  const settingsSections: { title: string; items: SettingsItem[] }[] = [
+    {
+      title: "Account",
+      items: [
+        {
+          icon: LogOut,
+          title: "Sign Out",
+          description: `Signed in as ${userProfile?.email || 'user'}`,
+          action: handleSignOut,
+          destructive: true
+        }
+      ]
+    },
     {
       title: "App",
       items: [

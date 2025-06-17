@@ -1,21 +1,44 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+import tailwindcss from "tailwindcss";
+import autoprefixer from "autoprefixer";
+// import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
 export default defineConfig({
   plugins: [
     react(),
-    runtimeErrorOverlay(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
-      ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer(),
-          ),
-        ]
-      : []),
+    // runtimeErrorOverlay(),
   ],
+  envDir: "./",
+  envPrefix: "VITE_",
+  server: {
+    host: true, // Allow external hosts
+    port: 5173,
+    strictPort: false,
+    // Proxy API calls to the backend server
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false
+      }
+    },
+    // Allow specific ngrok hosts
+    allowedHosts: [
+      'localhost',
+      '7c38-2a01-4b00-871d-f300-5028-f064-6707-207f.ngrok-free.app',
+      '.ngrok-free.app'
+    ]
+  },
+  css: {
+    postcss: {
+      plugins: [
+        tailwindcss(),
+        autoprefixer(),
+      ],
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),

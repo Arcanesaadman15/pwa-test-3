@@ -17,8 +17,8 @@ export function SocialProof({ onComplete }: SocialProofProps) {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-8"
           >
-            <h1 className="text-3xl font-bold mb-4">Join 50,000+ Men</h1>
-            <p className="text-gray-300">Who've already transformed their lives with PeakForge</p>
+            <h1 className="text-3xl font-bold mb-4">Join the Brotherhood</h1>
+            <p className="text-gray-300">50,000+ men have reclaimed their power. You're next.</p>
           </motion.div>
 
           {/* Success Stats */}
@@ -30,15 +30,15 @@ export function SocialProof({ onComplete }: SocialProofProps) {
           >
             <div className="text-center bg-white/10 rounded-xl p-4 backdrop-blur-lg">
               <div className="text-2xl font-bold text-blue-400">50K+</div>
-              <div className="text-xs text-gray-300 mt-1">Active Users</div>
+              <div className="text-xs text-gray-300 mt-1">Men Rebuilt</div>
             </div>
             <div className="text-center bg-white/10 rounded-xl p-4 backdrop-blur-lg">
-              <div className="text-2xl font-bold text-green-400">+40%</div>
-              <div className="text-xs text-gray-300 mt-1">T-Level Boost</div>
+              <div className="text-2xl font-bold text-green-400">+47%</div>
+              <div className="text-xs text-gray-300 mt-1">T-Boost Avg</div>
             </div>
             <div className="text-center bg-white/10 rounded-xl p-4 backdrop-blur-lg">
-              <div className="text-2xl font-bold text-yellow-400">93%</div>
-              <div className="text-xs text-gray-300 mt-1">Success Rate</div>
+              <div className="text-2xl font-bold text-yellow-400">92%</div>
+              <div className="text-xs text-gray-300 mt-1">Feel Like Men Again</div>
             </div>
           </motion.div>
 
@@ -89,9 +89,9 @@ export function SocialProof({ onComplete }: SocialProofProps) {
             className="bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-xl p-4 mb-8 border border-green-400/30"
           >
             <div className="text-center">
-              <h3 className="font-semibold mb-2">✅ Science-Backed Results</h3>
+              <h3 className="font-semibold mb-2">💪 Real Men, Real Results</h3>
               <p className="text-sm text-gray-300">
-                Developed with leading fitness experts and backed by clinical research
+                No gimmicks, no shortcuts - just the natural methods that actually work
               </p>
             </div>
           </motion.div>
@@ -109,7 +109,7 @@ export function SocialProof({ onComplete }: SocialProofProps) {
                        text-white font-semibold py-4 text-lg rounded-xl shadow-xl hover:shadow-2xl 
                        transform hover:scale-105 transition-all duration-200"
             >
-              Start My Transformation →
+              I'm Ready to Reclaim My Power →
             </Button>
           </motion.div>
         </div>

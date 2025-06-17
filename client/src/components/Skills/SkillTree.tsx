@@ -18,9 +18,9 @@ export function SkillTree({ userSkills }: SkillTreeProps) {
       maxLevel: 10,
       skills: [
         { name: 'Sleep Tracker', unlocked: true, description: 'Monitor your sleep quality' },
-        { name: 'Bedtime Routine', unlocked: userSkills.sleep?.level >= 2, description: 'Create consistent evening habits' },
-        { name: 'Sleep Environment', unlocked: userSkills.sleep?.level >= 4, description: 'Optimize your bedroom' },
-        { name: 'Advanced Recovery', unlocked: userSkills.sleep?.level >= 7, description: 'Deep sleep techniques' }
+        { name: 'Bedtime Routine', unlocked: (userSkills.sleep?.level || 0) >= 2, description: 'Create consistent evening habits' },
+        { name: 'Sleep Environment', unlocked: (userSkills.sleep?.level || 0) >= 4, description: 'Optimize your bedroom' },
+        { name: 'Advanced Recovery', unlocked: (userSkills.sleep?.level || 0) >= 7, description: 'Deep sleep techniques' }
       ]
     },
     {
@@ -34,9 +34,9 @@ export function SkillTree({ userSkills }: SkillTreeProps) {
       maxLevel: 10,
       skills: [
         { name: 'Daily Walks', unlocked: true, description: 'Build walking consistency' },
-        { name: 'Strength Training', unlocked: userSkills.movement?.level >= 3, description: 'Progressive resistance' },
-        { name: 'Mobility Master', unlocked: userSkills.movement?.level >= 5, description: 'Flexibility and range' },
-        { name: 'Athletic Performance', unlocked: userSkills.movement?.level >= 8, description: 'Peak physical condition' }
+        { name: 'Strength Training', unlocked: (userSkills.movement?.level || 0) >= 3, description: 'Progressive resistance' },
+        { name: 'Mobility Master', unlocked: (userSkills.movement?.level || 0) >= 5, description: 'Flexibility and range' },
+        { name: 'Athletic Performance', unlocked: (userSkills.movement?.level || 0) >= 8, description: 'Peak physical condition' }
       ]
     },
     {
@@ -50,9 +50,9 @@ export function SkillTree({ userSkills }: SkillTreeProps) {
       maxLevel: 10,
       skills: [
         { name: 'Meal Planning', unlocked: true, description: 'Plan balanced meals' },
-        { name: 'Macro Balance', unlocked: userSkills.nutrition?.level >= 2, description: 'Understand macronutrients' },
-        { name: 'Meal Prep Pro', unlocked: userSkills.nutrition?.level >= 4, description: 'Efficient food preparation' },
-        { name: 'Nutrition Expert', unlocked: userSkills.nutrition?.level >= 6, description: 'Advanced nutrition knowledge' }
+        { name: 'Macro Balance', unlocked: (userSkills.nutrition?.level || 0) >= 2, description: 'Understand macronutrients' },
+        { name: 'Meal Prep Pro', unlocked: (userSkills.nutrition?.level || 0) >= 4, description: 'Efficient food preparation' },
+        { name: 'Nutrition Expert', unlocked: (userSkills.nutrition?.level || 0) >= 6, description: 'Advanced nutrition knowledge' }
       ]
     },
     {
@@ -66,9 +66,9 @@ export function SkillTree({ userSkills }: SkillTreeProps) {
       maxLevel: 10,
       skills: [
         { name: 'Stress Awareness', unlocked: true, description: 'Recognize stress signals' },
-        { name: 'Breathing Techniques', unlocked: userSkills.recovery?.level >= 2, description: 'Controlled breathing' },
-        { name: 'Recovery Protocols', unlocked: userSkills.recovery?.level >= 4, description: 'Active recovery methods' },
-        { name: 'Zen Master', unlocked: userSkills.recovery?.level >= 7, description: 'Complete stress mastery' }
+        { name: 'Breathing Techniques', unlocked: (userSkills.recovery?.level || 0) >= 2, description: 'Controlled breathing' },
+        { name: 'Recovery Protocols', unlocked: (userSkills.recovery?.level || 0) >= 4, description: 'Active recovery methods' },
+        { name: 'Zen Master', unlocked: (userSkills.recovery?.level || 0) >= 7, description: 'Complete stress mastery' }
       ]
     },
     {
@@ -82,9 +82,9 @@ export function SkillTree({ userSkills }: SkillTreeProps) {
       maxLevel: 10,
       skills: [
         { name: 'Meditation Basics', unlocked: true, description: 'Daily meditation practice' },
-        { name: 'Focus Training', unlocked: userSkills.mindfulness?.level >= 3, description: 'Concentration exercises' },
-        { name: 'Emotional Balance', unlocked: userSkills.mindfulness?.level >= 5, description: 'Emotional regulation' },
-        { name: 'Mindfulness Master', unlocked: userSkills.mindfulness?.level >= 8, description: 'Deep awareness state' }
+        { name: 'Focus Training', unlocked: (userSkills.mindfulness?.level || 0) >= 3, description: 'Concentration exercises' },
+        { name: 'Emotional Balance', unlocked: (userSkills.mindfulness?.level || 0) >= 5, description: 'Emotional regulation' },
+        { name: 'Mindfulness Master', unlocked: (userSkills.mindfulness?.level || 0) >= 8, description: 'Deep awareness state' }
       ]
     }
   ];

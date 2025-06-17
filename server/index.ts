@@ -1,10 +1,46 @@
+import { config } from "dotenv";
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
+// Configure dotenv to load from server directory
+config({ path: "./server/.env" });
+
 const app = express();
+
+// Special handling for webhooks - capture raw body before JSON parsing
+app.use('/api/lemonsqueezy/webhooks', express.raw({ type: 'application/json' }));
+
+// For all other routes, use normal JSON parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Add CORS middleware to allow requests from the Vite dev server
+app.use((req, res, next) => {
+  // Allow requests from localhost on any port AND local network IPs (for mobile testing)
+  const origin = req.headers.origin;
+  if (origin && (
+    origin.startsWith('http://localhost:') || 
+    origin.startsWith('http://127.0.0.1:') ||
+    origin.startsWith('http://192.168.') ||
+    origin.startsWith('http://10.') ||
+    origin.startsWith('http://172.')
+  )) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  // Handle preflight OPTIONS requests
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+    return;
+  }
+  
+  next();
+});
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -56,15 +92,9 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
+  // Use a different port to avoid macOS restrictions
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+  server.listen(port, '0.0.0.0', () => {
+    log(`serving on port ${port} (accessible at http://192.168.1.105:${port})`);
   });
 })();

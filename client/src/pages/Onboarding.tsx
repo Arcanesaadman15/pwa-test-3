@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { OnboardingData } from '@/data/onboardingData';
 import { storage } from '@/lib/storage';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Import all onboarding screens
 import { SplashScreen } from '@/components/Onboarding/SplashScreen';
 import { ProblemSpotlight } from '@/components/Onboarding/ProblemSpotlight';
 import { QuickQuiz } from '@/components/Onboarding/QuickQuiz';
 import { LifestyleSliders } from '@/components/Onboarding/LifestyleSliders';
-import { PersonalizationToggles } from '@/components/Onboarding/PersonalizationToggles';
+import { CommitmentQuestions } from '@/components/Onboarding/CommitmentQuestions';
 import { InstantDiagnosis } from '@/components/Onboarding/InstantDiagnosis';
 import { RoadmapPreview } from '@/components/Onboarding/RoadmapPreview';
 import { SocialProof } from '@/components/Onboarding/SocialProof';
@@ -19,7 +20,7 @@ export type OnboardingStep =
   | 'problems' 
   | 'quiz'
   | 'sliders'
-  | 'toggles'
+  | 'commitment'
   | 'diagnosis'
   | 'roadmap'
   | 'social'
@@ -34,6 +35,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('splash');
   const [onboardingData, setOnboardingData] = useState<Partial<OnboardingData>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const { updateProfile } = useAuth();
 
   // Auto-advance from splash screen
   useEffect(() => {
@@ -51,7 +53,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   const goToNextStep = () => {
     const steps: OnboardingStep[] = [
-      'splash', 'problems', 'quiz', 'sliders', 'toggles', 
+      'splash', 'problems', 'quiz', 'sliders', 'commitment', 
       'diagnosis', 'roadmap', 'social', 'paywall', 'complete'
     ];
     
@@ -73,16 +75,19 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         waistCircumference: onboardingData.waistCircumference,
         stressLevel: onboardingData.stressLevel,
         dailySteps: onboardingData.dailySteps,
-        circadianRhythm: onboardingData.circadianRhythm,
-        activityLocation: onboardingData.activityLocation,
-        socialPreference: onboardingData.socialPreference,
-        intensityApproach: onboardingData.intensityApproach,
+        // Note: No longer saving meaningless personalization data
         recommendedProgram: onboardingData.recommendedProgram,
         completedAt: new Date()
       } as OnboardingData;
       
+      // Save to localStorage for backup
       await storage.saveOnboardingData(cleanData);
       await storage.setOnboardingComplete();
+      
+      // Most importantly: Update the user profile to mark onboarding as complete
+      console.log('🎯 Onboarding completed, updating user profile...');
+      await updateProfile({ onboarding_complete: true });
+      
       onComplete(cleanData);
     } catch (error) {
       console.error('Error completing onboarding:', error);
@@ -99,7 +104,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   // Progress calculation for progress bar
   const getProgress = () => {
-    const steps = ['splash', 'problems', 'quiz', 'sliders', 'toggles', 'diagnosis', 'roadmap', 'social', 'paywall'];
+    const steps = ['splash', 'problems', 'quiz', 'sliders', 'commitment', 'diagnosis', 'roadmap', 'social', 'paywall'];
     const currentIndex = steps.indexOf(currentStep);
     return ((currentIndex + 1) / steps.length) * 100;
   };
@@ -123,10 +128,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white overflow-hidden">
-      {/* Progress Bar - Hidden on splash and paywall */}
-      {currentStep !== 'splash' && currentStep !== 'paywall' && (
+      {/* Progress Bar - Only show during data collection steps */}
+      {!['splash', 'paywall'].includes(currentStep) && (
         <div className="fixed top-0 left-0 right-0 z-50">
-          <div className="h-1 bg-gray-800">
+          <div className="h-1 bg-gray-800/50">
             <motion.div
               className="h-full bg-gradient-to-r from-blue-500 to-purple-600"
               initial={{ width: 0 }}
@@ -139,7 +144,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
       {/* Screen Container */}
       <div className="relative w-full h-screen">
-        <AnimatePresence mode="wait" custom={1}>
+        <AnimatePresence mode="wait">
           <motion.div
             key={currentStep}
             custom={1}
@@ -179,8 +184,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               />
             )}
             
-            {currentStep === 'toggles' && (
-              <PersonalizationToggles 
+            {currentStep === 'commitment' && (
+              <CommitmentQuestions 
                 onComplete={(data) => {
                   updateOnboardingData(data);
                   goToNextStep();
@@ -191,16 +196,12 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             {currentStep === 'diagnosis' && (
               <InstantDiagnosis 
                 data={onboardingData}
-                onComplete={(data) => {
-                  updateOnboardingData(data);
-                  goToNextStep();
-                }}
+                onComplete={goToNextStep}
               />
             )}
             
             {currentStep === 'roadmap' && (
               <RoadmapPreview 
-                data={onboardingData}
                 onComplete={goToNextStep}
               />
             )}
@@ -210,7 +211,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             )}
             
             {currentStep === 'paywall' && (
-              <Paywall onComplete={handlePaywallSuccess} />
+              <Paywall 
+                onComplete={handlePaywallSuccess} 
+                onboardingData={onboardingData}
+              />
             )}
           </motion.div>
         </AnimatePresence>

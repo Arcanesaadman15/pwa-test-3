@@ -4,3 +4,7 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz
+
+# Mobile testing environment files (contain local IPs)
+client/.env.mobile
+.env.mobile

@@ -1,10 +1,26 @@
 import { useState, useEffect } from "react";
 import { Task } from "@/types";
 import { useTaskEngine } from "@/hooks/useTaskEngine";
+import { useOffline } from "@/hooks/useOffline";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, CheckCircle, XCircle, Clock, Lock, Play, Calendar } from "lucide-react";
+import { PullToRefresh } from "@/components/ui/pull-to-refresh";
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  CheckCircle, 
+  XCircle, 
+  Clock, 
+  Lock, 
+  Play, 
+  Calendar, 
+  Wifi, 
+  WifiOff,
+  Target,
+  Flame
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface TaskCardProps {
   task: Task;
@@ -15,9 +31,10 @@ interface TaskCardProps {
   skipReason?: string;
   onComplete?: () => void;
   onSkip?: () => void;
+  index?: number;
 }
 
-function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReason, onComplete, onSkip }: TaskCardProps) {
+function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReason, onComplete, onSkip, index = 0 }: TaskCardProps) {
   const getCategoryIcon = (category: string) => {
     const icons = {
       'Sleep': '🌙',
@@ -33,123 +50,195 @@ function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReaso
     return icons[category as keyof typeof icons] || '📋';
   };
 
-  const getDifficultyDots = (difficulty: number) => {
-    return Array.from({ length: 3 }, (_, i) => (
-      <div
-        key={i}
-        className={`w-2 h-2 rounded-full ${
-          i < difficulty ? 'bg-red-500' : 'bg-gray-600'
-        }`}
-      />
-    ));
+  const getCategoryColor = (category: string) => {
+    const colors = {
+      'Sleep': '#8B5CF6',
+      'Movement': '#10B981',
+      'Nutrition': '#F59E0B',
+      'Recovery': '#3B82F6',
+      'Mindfulness': '#EC4899',
+      'Training': '#EF4444',
+      'Explosive Training': '#F97316',
+      'Breath & Tension': '#06B6D4',
+      'Mind': '# F1'
+    };
+    return colors[category as keyof typeof colors] || '#6B7280';
+  };
+
+  const getDifficultyColor = (difficulty: number) => {
+    if (difficulty >= 3) return '#EF4444'; // Red for hard
+    if (difficulty >= 2) return '#F59E0B'; // Orange for medium
+    return '#10B981'; // Green for easy
   };
 
   return (
-    <div className={`bg-gray-800 rounded-2xl p-5 border transition-all duration-200 ${
-      status === 'completed' ? 'border-green-500/30 bg-green-900/20' :
-      status === 'skipped' ? 'border-gray-600 bg-gray-700/50' :
-      canInteract ? 'border-red-500/30 hover:border-red-400/50' : 'border-gray-600 opacity-60'
-    }`}>
-      <div className="flex items-start gap-4">
+    <motion.div 
+      className={`bg-white rounded-2xl p-4 shadow-sm border transition-all duration-200 ${
+        status === 'completed' ? 'border-green-200 bg-green-50' :
+        status === 'skipped' ? 'border-gray-200 bg-gray-50' :
+        canInteract ? 'border-gray-200 hover:border-gray-300 hover:shadow-md' : 
+        'border-gray-100 opacity-60'
+      }`}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05, duration: 0.3 }}
+    >
+      <div className="flex items-start gap-3">
         {/* Category Icon */}
-        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl ${
-          status === 'completed' ? 'bg-green-600' :
-          status === 'skipped' ? 'bg-gray-600' :
-          canInteract ? 'bg-red-600' : 'bg-gray-600'
-        }`}>
+        <div 
+          className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl ${
+            status === 'completed' ? 'bg-green-100' :
+            status === 'skipped' ? 'bg-gray-100' :
+            canInteract ? 'bg-blue-50' : 'bg-gray-100'
+          }`}
+          style={{
+            backgroundColor: canInteract && status !== 'completed' && status !== 'skipped' 
+              ? `${getCategoryColor(task.category)}15` 
+              : undefined
+          }}
+        >
           {getCategoryIcon(task.category)}
         </div>
 
         {/* Task Content */}
-        <div className="flex-1">
-          <h3 className={`font-bold text-lg mb-1 ${
-            status === 'completed' ? 'text-green-400' :
-            status === 'skipped' ? 'text-gray-400' : 'text-white'
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between mb-2">
+            <div className="flex-1 min-w-0">
+              <h3 className={`font-semibold text-lg leading-tight mb-1 ${
+                status === 'completed' ? 'text-green-700' :
+                status === 'skipped' ? 'text-gray-500' : 'text-gray-900'
           }`}>
             {task.title}
           </h3>
-          <p className={`text-sm mb-3 ${
-            status === 'completed' ? 'text-green-300' :
-            status === 'skipped' ? 'text-gray-500' : 'text-gray-300'
+              
+              {/* Category and Difficulty */}
+              <div className="flex items-center gap-2 mb-2">
+                <span 
+                  className="text-xs font-medium px-2 py-1 rounded-full"
+                  style={{ 
+                    backgroundColor: `${getCategoryColor(task.category)}15`,
+                    color: getCategoryColor(task.category)
+                  }}
+                >
+                  {task.category}
+                </span>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: 3 }, (_, i) => (
+                    <div
+                      key={i}
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        i < task.difficulty ? '' : 'bg-gray-200'
+                      }`}
+                      style={{ 
+                        backgroundColor: i < task.difficulty 
+                          ? getDifficultyColor(task.difficulty) 
+                          : undefined 
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Status indicator */}
+            {status === 'completed' && (
+              <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                <CheckCircle className="w-4 h-4 text-white" />
+              </div>
+            )}
+          </div>
+
+          <p className={`text-sm leading-relaxed mb-3 ${
+            status === 'completed' ? 'text-green-600' :
+            status === 'skipped' ? 'text-gray-400' : 'text-gray-600'
           }`}>
             {task.subtitle}
           </p>
 
-          {/* Difficulty Dots */}
-          <div className="flex items-center gap-1 mb-4">
-            {getDifficultyDots(task.difficulty)}
-          </div>
-
-          {/* Status Info */}
+          {/* Status Messages */}
+          <AnimatePresence>
           {status === 'completed' && (
-            <div className="text-xs text-green-400 mb-3">
-              ✅ Task completed
+              <motion.div 
+                className="flex items-center justify-between p-3 bg-green-50 rounded-xl border border-green-200 mb-3"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+              >
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span className="text-sm font-medium text-green-700">Completed</span>
             </div>
+                {completedAt && (
+                  <span className="text-xs text-green-600">
+                    {completedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                )}
+              </motion.div>
           )}
 
           {status === 'skipped' && (
-            <div className="mb-3">
-              <div className="text-xs text-gray-400 mb-2">
-                ⏭️ Task skipped
+              <motion.div 
+                className="space-y-3"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
+                  <div className="flex items-center gap-2">
+                    <XCircle className="w-4 h-4 text-gray-500" />
+                    <span className="text-sm text-gray-600">Skipped</span>
+                  </div>
+                  {skippedAt && (
+                    <span className="text-xs text-gray-500">
+                      {skippedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  )}
               </div>
               <Button
                 onClick={onComplete}
-                className="bg-green-600 hover:bg-green-700 text-white text-xs py-1 px-3 rounded-lg"
+                  className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-xl"
               >
-                <CheckCircle className="w-3 h-3 mr-1" />
-                Mark as Done
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Mark as Completed
               </Button>
-            </div>
+              </motion.div>
           )}
+          </AnimatePresence>
 
           {/* Action Buttons */}
           {status === 'active' && canInteract && (
             <div className="flex gap-2">
               <Button
                 onClick={onComplete}
-                className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 rounded-xl"
+                className="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-xl"
               >
-                <CheckCircle className="w-4 h-4 mr-1" />
-                Done
+                <CheckCircle className="w-4 h-4 mr-2" />
+                Complete
               </Button>
               <Button
                 onClick={onSkip}
                 variant="outline"
-                className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700 py-2 rounded-xl"
+                className="flex-1 bg-yellow-400 border-yellow-500 text-yellow-900 hover:bg-yellow-500 hover:border-yellow-600 py-3 rounded-xl font-medium"
               >
-                <XCircle className="w-4 h-4 mr-1" />
+                <XCircle className="w-4 h-4 mr-2" />
                 Skip
               </Button>
             </div>
           )}
 
           {status === 'active' && !canInteract && (
-            <div className="bg-gray-700 rounded-lg p-2 text-center">
-              <Lock className="w-4 h-4 text-gray-400 mx-auto mb-1" />
-              <div className="text-xs text-gray-400">
+            <div className="bg-gray-50 rounded-xl p-4 text-center border border-gray-200">
+              <Lock className="w-5 h-5 text-gray-400 mx-auto mb-2" />
+              <div className="text-sm text-gray-600 font-medium">
                 Complete previous days first
+              </div>
+              <div className="text-xs text-gray-500 mt-1">
+                Tasks unlock progressively
               </div>
             </div>
           )}
         </div>
-
-        {/* Status Icon */}
-        <div className="flex-shrink-0">
-          {status === 'completed' && (
-            <CheckCircle className="w-6 h-6 text-green-500" />
-          )}
-          {status === 'skipped' && (
-            <XCircle className="w-6 h-6 text-gray-500" />
-          )}
-          {status === 'active' && canInteract && (
-            <Play className="w-6 h-6 text-red-500" />
-          )}
-          {status === 'active' && !canInteract && (
-            <Lock className="w-6 h-6 text-gray-500" />
-          )}
-        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -160,6 +249,7 @@ export interface TaskListProps {
 
 function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
   const { taskEngine, unSkipTask } = useTaskEngine();
+  const { isOnline, addPendingAction, hasPendingActions } = useOffline();
   const { toast } = useToast();
   const [tasks, setTasks] = useState<{
     active: Task[];
@@ -170,356 +260,365 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
       isCurrentDay: boolean;
       isUnlocked: boolean;
       canInteract: boolean;
-      completionStatus: 'incomplete' | 'completed';
-      phase: number;
     };
-  } | null>(null);
-  const [activeTab, setActiveTab] = useState<'todo' | 'done' | 'skipped'>('todo');
-  const [loading, setLoading] = useState(true);
-
-  const loadTasks = async () => {
-    if (!taskEngine) return;
-    
-    try {
-      setLoading(true);
-      const taskData = await taskEngine.getCurrentDayTasks();
-      setTasks(taskData);
-      
-      // Auto-switch to todo tab if there are active tasks
-      if (taskData.active.length > 0) {
-        setActiveTab('todo');
-      } else if (taskData.completed.length > 0) {
-        setActiveTab('done');
-      } else if (taskData.skipped.length > 0) {
-        setActiveTab('skipped');
-      }
-    } catch (error) {
-      console.error('Failed to load tasks:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load tasks. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
+  }>({
+    active: [],
+    completed: [],
+    skipped: [],
+    dayInfo: {
+      dayNumber: 1,
+      isCurrentDay: true,
+      isUnlocked: true,
+      canInteract: true
     }
-  };
+  });
+  const [activeTab, setActiveTab] = useState<'active' | 'completed' | 'skipped'>('active');
 
   useEffect(() => {
     loadTasks();
   }, [taskEngine]);
 
-  const handleComplete = async (taskId: string) => {
+  const loadTasks = async () => {
     if (!taskEngine) return;
     
-    // Use passed handler if available, otherwise use default logic
-    if (onTaskComplete) {
-      await onTaskComplete(taskId);
-      // Still reload tasks to update UI
-      await loadTasks();
-      return;
-    }
-    
     try {
-      const previousDay = taskEngine.getViewingDay();
-      await taskEngine.completeTask(taskId);
-      
-      // Reload tasks first to get updated state
-      await loadTasks();
-      
-      // Check if day advanced after completion
-      const currentDay = taskEngine.getViewingDay();
-      if (currentDay > previousDay) {
-        // Day advanced! Switch to todo tab of new day
-        setActiveTab('todo');
+      const currentDayTasks = await taskEngine.getCurrentDayTasks();
+      const dayInfo = {
+        dayNumber: taskEngine.getViewingDay(),
+        isCurrentDay: taskEngine.getViewingDay() === taskEngine.getActiveDay(),
+        isUnlocked: taskEngine.getViewingDay() <= taskEngine.getActiveDay(),
+        canInteract: taskEngine.getViewingDay() === taskEngine.getActiveDay()
+      };
+
+      setTasks({
+        active: currentDayTasks.active,
+        completed: currentDayTasks.completed,
+        skipped: currentDayTasks.skipped,
+        dayInfo
+      });
+    } catch (error) {
+      console.error('Failed to load tasks:', error);
+    }
+  };
+
+  const handleComplete = async (taskId: string) => {
+    try {
+      if (!isOnline) {
+        addPendingAction({
+          type: 'completeTask',
+          data: { taskId },
+          timestamp: new Date()
+        });
         toast({
-          title: "🎉 Day Complete!",
-          description: `Amazing! You've unlocked Day ${currentDay}. Keep the momentum going!`,
+          title: "Task queued",
+          description: "Task will be completed when back online",
+          variant: "default"
         });
       }
-      // No toast for individual task completion
+
+      if (onTaskComplete) {
+        await onTaskComplete(taskId);
+      }
+      
+      setTimeout(() => {
+        loadTasks();
+      }, 500);
     } catch (error) {
       console.error('Failed to complete task:', error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to complete task",
-        variant: "destructive"
+        description: "Failed to complete task. Please try again.",
+        variant: "error"
       });
     }
   };
 
   const handleSkip = async (taskId: string) => {
-    if (!taskEngine) return;
-    
-    // Use passed handler if available, otherwise use default logic
-    if (onTaskSkip) {
-      await onTaskSkip(taskId);
-      // Still reload tasks to update UI
-      await loadTasks();
-      return;
-    }
-    
     try {
-      const previousDay = taskEngine.getViewingDay();
-      await taskEngine.skipTask(taskId, "Skipped by user");
-      
-      // Reload tasks first to get updated state
-      await loadTasks();
-      
-      // Check if day advanced after skipping
-      const currentDay = taskEngine.getViewingDay();
-      if (currentDay > previousDay) {
-        // Day advanced! Switch to todo tab of new day
-        setActiveTab('todo');
+      if (!isOnline) {
+        addPendingAction({
+          type: 'skipTask',
+          data: { taskId },
+          timestamp: new Date()
+        });
         toast({
-          title: "🎉 Day Complete!",
-          description: `You've finished all tasks for Day ${previousDay}. Welcome to Day ${currentDay}!`,
+          title: "Task queued",
+          description: "Task will be skipped when back online",
+          variant: "default"
         });
       }
-      // No toast for individual task skip
+
+      if (onTaskSkip) {
+        await onTaskSkip(taskId);
+      }
+      
+      setTimeout(() => {
+        loadTasks();
+      }, 500);
     } catch (error) {
       console.error('Failed to skip task:', error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to skip task",
-        variant: "destructive"
+        description: "Failed to skip task. Please try again.",
+        variant: "error"
       });
     }
   };
 
   const handleUnSkip = async (taskId: string) => {
-    if (!unSkipTask) return;
-    
     try {
       await unSkipTask(taskId);
-      await loadTasks();
+      loadTasks();
       toast({
-        title: "🎉 Task Completed!",
-        description: "Great job completing this task!",
+        title: "Task unmarked",
+        description: "Task moved back to active list",
+        variant: "default"
       });
     } catch (error) {
-      console.error('Failed to complete skipped task:', error);
-      toast({
-        title: "Error",
-        description: "Failed to mark task as done",
-        variant: "destructive"
-      });
+      console.error('Failed to unskip task:', error);
     }
   };
 
   const handleNavigatePrevious = async () => {
-    if (!taskEngine) return;
-    
-    if (taskEngine.navigatePrevious()) {
-      await loadTasks();
+    if (taskEngine) {
+      taskEngine.navigatePrevious();
+      loadTasks();
     }
   };
 
   const handleNavigateNext = async () => {
-    if (!taskEngine) return;
-    
-    if (taskEngine.navigateNext()) {
-      await loadTasks();
+    if (taskEngine) {
+      taskEngine.navigateNext();
+      loadTasks();
     }
   };
 
   const handleGoToToday = async () => {
-    if (!taskEngine) return;
-    
-    if (taskEngine.goToToday()) {
-      setActiveTab('todo');
-      await loadTasks();
+    if (taskEngine) {
+      taskEngine.goToToday();
+      loadTasks();
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-6"></div>
-          <p className="text-gray-400 font-medium">Loading your program...</p>
-        </div>
-      </div>
-    );
-  }
+  const handleRefresh = async () => {
+    await loadTasks();
+  };
 
-  if (!tasks) {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <p className="text-gray-400 text-lg">No tasks available</p>
-      </div>
-    );
-  }
-
-  const { dayInfo } = tasks;
-
-  // Get current tab content
   const getCurrentTabTasks = () => {
     switch (activeTab) {
-      case 'todo':
-        return tasks.active;
-      case 'done':
-        return tasks.completed;
+      case 'active':
+        return tasks.active.map((task, index) => (
+          <TaskCard
+            key={task.id}
+            task={task}
+            status="active"
+            canInteract={tasks.dayInfo.canInteract}
+            onComplete={() => handleComplete(task.id)}
+            onSkip={() => handleSkip(task.id)}
+            index={index}
+          />
+        ));
+      case 'completed':
+        return tasks.completed.map((task, index) => (
+          <TaskCard
+            key={task.id}
+            task={task}
+            status="completed"
+            canInteract={false}
+            completedAt={task.completedAt}
+            index={index}
+          />
+        ));
       case 'skipped':
-        return tasks.skipped;
+        return tasks.skipped.map((task, index) => (
+          <TaskCard
+            key={task.id}
+            task={task}
+            status="skipped"
+            canInteract={tasks.dayInfo.canInteract}
+            skippedAt={task.skippedAt}
+            skipReason={task.skipReason}
+            onComplete={() => handleComplete(task.id)}
+            index={index}
+          />
+        ));
       default:
         return [];
     }
   };
 
-  const currentTabTasks = getCurrentTabTasks();
+  const getTabCount = (tab: 'active' | 'completed' | 'skipped') => {
+    return tasks[tab].length;
+  };
+
+  const totalTasks = tasks.active.length + tasks.completed.length + tasks.skipped.length;
+  const completionRate = totalTasks > 0 ? Math.round((tasks.completed.length / totalTasks) * 100) : 0;
 
   return (
-    <div className="min-h-screen text-white pb-24" style={{ backgroundColor: '#111827' }}>
-      {/* Compact Header with Day Navigation and Tabs */}
-      <div className="bg-gradient-to-br from-blue-900 via-purple-800 to-blue-800 px-6 pt-16 pb-6">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white px-4 pt-12 pb-6 border-b border-gray-100">
+        <motion.div 
+          className="text-center mb-6"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">
+            Day {tasks.dayInfo.dayNumber}
+          </h1>
+          <p className="text-gray-600">
+            Your wellness journey continues
+          </p>
+        </motion.div>
+
         {/* Day Navigation */}
-        <div className="flex items-center justify-center gap-6 mb-6">
-          <Button
-            variant="ghost"
-            size="lg"
+        <div className="flex items-center justify-between mb-4">
+          <button
             onClick={handleNavigatePrevious}
-            disabled={!taskEngine?.canNavigatePrevious()}
-            className="text-white hover:bg-white/10 disabled:opacity-30"
+            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
           >
-            <ChevronLeft className="w-6 h-6" />
-          </Button>
+            <ChevronLeft className="w-5 h-5 text-gray-600" />
+          </button>
           
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-white">
-              Day {dayInfo.dayNumber} / 63
-            </h2>
-          </div>
-          
-          <Button
-            variant="ghost"
-            size="lg"
-            onClick={handleNavigateNext}
-            disabled={!taskEngine?.canNavigateNext()}
-            className="text-white hover:bg-white/10 disabled:opacity-30"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </Button>
-        </div>
-
-        {/* Today Button - Show only when not on current active day */}
-        {dayInfo.dayNumber !== taskEngine?.getActiveDay() && (
-          <div className="flex justify-center mb-6">
-            <Button
-              onClick={handleGoToToday}
-              className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-6 py-2 rounded-full text-sm font-medium"
-            >
-              <Calendar className="w-4 h-4 mr-2" />
-              Go to Today (Day {taskEngine?.getActiveDay()})
-            </Button>
-          </div>
-        )}
-
-        {/* Tab Navigation */}
-        <div className="flex bg-black/20 rounded-2xl p-1 max-w-md mx-auto">
-          <button
-            onClick={() => setActiveTab('todo')}
-            className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
-              activeTab === 'todo'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-300 hover:text-white'
-            }`}
-          >
-            To-do ({tasks.active.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('done')}
-            className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
-              activeTab === 'done'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-300 hover:text-white'
-            }`}
-          >
-            Done ({tasks.completed.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('skipped')}
-            className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
-              activeTab === 'skipped'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-300 hover:text-white'
-            }`}
-          >
-            Skipped ({tasks.skipped.length})
-          </button>
-        </div>
-      </div>
-
-      {/* Task Content */}
-      <div className="px-6 py-6 space-y-4">
-        {currentTabTasks.length > 0 ? (
-          currentTabTasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              status={
-                activeTab === 'todo' ? 'active' :
-                activeTab === 'done' ? 'completed' : 'skipped'
-              }
-              canInteract={dayInfo.canInteract && activeTab === 'todo'}
-              completedAt={activeTab === 'done' ? (task as any).completedAt : undefined}
-              skippedAt={activeTab === 'skipped' ? (task as any).skippedAt : undefined}
-              skipReason={activeTab === 'skipped' ? (task as any).skipReason : undefined}
-              onComplete={() => activeTab === 'skipped' ? handleUnSkip(task.id) : handleComplete(task.id)}
-              onSkip={() => handleSkip(task.id)}
-            />
-          ))
-        ) : (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">
-              {activeTab === 'todo' ? '📋' :
-               activeTab === 'done' ? '✅' : '⏭️'}
+          <div className="flex-1 mx-4">
+            {/* Progress Overview */}
+            <div className="text-center mb-3">
+              <div className="text-lg font-semibold text-gray-900">
+                {tasks.completed.length} of {totalTasks} completed
+              </div>
+              <div className="text-sm text-gray-600">
+                {completionRate}% complete
+              </div>
             </div>
-            <h3 className="text-xl font-bold text-gray-300 mb-2">
-              {activeTab === 'todo' ? 'All tasks completed!' :
-               activeTab === 'done' ? 'No completed tasks yet' :
-               'No skipped tasks'}
-            </h3>
-            <p className="text-gray-500">
-              {activeTab === 'todo' ? 'Great job finishing your day!' :
-               activeTab === 'done' ? 'Complete some tasks to see them here' :
-               'Focus on completing your tasks'}
-            </p>
+            
+            {/* Progress Bar */}
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <motion.div 
+                className="bg-green-500 h-2 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${completionRate}%` }}
+                transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
+              />
+            </div>
           </div>
-        )}
+          
+          <button
+            onClick={handleNavigateNext}
+            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+          >
+            <ChevronRight className="w-5 h-5 text-gray-600" />
+          </button>
+        </div>
+
+        {/* Connection Status & Quick Actions */}
+        <div className="flex items-center justify-between">
+          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm ${
+            isOnline ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+          }`}>
+            {isOnline ? <Wifi className="w-4 h-4" /> : <WifiOff className="w-4 h-4" />}
+            <span className="font-medium">
+              {isOnline ? 'Online' : 'Offline'}
+            </span>
+            {hasPendingActions && !isOnline && (
+              <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+            )}
+          </div>
+
+          <button
+            onClick={handleGoToToday}
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium ${
+              tasks.dayInfo.isCurrentDay 
+                ? 'bg-gray-200 text-gray-600' 
+                : 'bg-blue-500 text-white'
+            }`}
+          >
+            <Calendar className="w-4 h-4" />
+            Today
+          </button>
+        </div>
       </div>
 
-      {/* Status Indicators */}
-      {dayInfo.canInteract && tasks.active.length === 0 && (
-        <div className="px-6 pb-6">
-          <div className="bg-green-800 border border-green-600 rounded-2xl p-4 text-center">
-            <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
-            <h3 className="font-bold text-green-300 mb-1">Day Complete!</h3>
-            <p className="text-green-400 text-sm">
-              Moving to next day automatically...
-            </p>
+      <PullToRefresh onRefresh={handleRefresh}>
+        <div className="px-4 py-4">
+          {/* Tab Navigation */}
+          <div className="flex bg-gray-100 rounded-xl p-1 mb-6">
+            {[
+              { id: 'active', label: 'Active', icon: Play },
+              { id: 'completed', label: 'Done', icon: CheckCircle },
+              { id: 'skipped', label: 'Skipped', icon: XCircle }
+            ].map((tab) => {
+              const Icon = tab.icon;
+              const count = getTabCount(tab.id as any);
+              const isActive = activeTab === tab.id;
+              
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`flex-1 py-2.5 px-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+                    isActive
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="text-sm">{tab.label}</span>
+                  {count > 0 && (
+                    <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                      isActive ? 'bg-gray-100 text-gray-600' : 'bg-gray-200 text-gray-500'
+                    }`}>
+                      {count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
-        </div>
-      )}
 
-      {!dayInfo.canInteract && (
-        <div className="px-6 pb-6">
-          <div className="bg-orange-900 border border-orange-600 rounded-2xl p-4 text-center">
-            <Lock className="w-8 h-8 text-orange-400 mx-auto mb-2" />
-            <h3 className="font-bold text-orange-300 mb-1">
-              {dayInfo.dayNumber < (taskEngine?.getActiveDay() || 1) ? 'Past Day' : 
-               dayInfo.isCurrentDay ? 'Current Day' : 'Future Day'}
+          {/* Task List */}
+          <div className="space-y-3">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.2 }}
+                className="space-y-3"
+              >
+                {getCurrentTabTasks()}
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Empty State */}
+            {getCurrentTabTasks().length === 0 && (
+              <motion.div 
+                className="text-center py-12"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                <div className="text-6xl mb-4">
+                  {activeTab === 'active' && '🎯'}
+                  {activeTab === 'completed' && '🎉'}
+                  {activeTab === 'skipped' && '⏭️'}
+        </div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                  {activeTab === 'active' && 'No active tasks'}
+                  {activeTab === 'completed' && 'No completed tasks yet'}
+                  {activeTab === 'skipped' && 'No skipped tasks'}
             </h3>
-            <p className="text-orange-400 text-sm">
-              {dayInfo.dayNumber < (taskEngine?.getActiveDay() || 1)
-                ? 'This day is in the past - view only'
-                : dayInfo.isCurrentDay
-                  ? 'Complete previous days to unlock tasks'
-                  : 'Browse only - complete current day first'}
+                <p className="text-gray-500 text-sm">
+                  {activeTab === 'active' && 'All tasks for today are complete!'}
+                  {activeTab === 'completed' && 'Complete some tasks to see them here'}
+                  {activeTab === 'skipped' && 'Skipped tasks will appear here'}
             </p>
+              </motion.div>
+            )}
           </div>
         </div>
-      )}
+      </PullToRefresh>
     </div>
   );
 }

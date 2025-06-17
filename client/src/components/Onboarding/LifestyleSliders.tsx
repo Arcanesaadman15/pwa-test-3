@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { LIFESTYLE_SLIDERS } from '@/data/onboardingData';
 import { Button } from '@/components/ui/button';
 
@@ -19,10 +19,26 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
   });
 
   const [currentSlider, setCurrentSlider] = useState(0);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleSliderChange = (sliderId: string, value: number) => {
     setValues(prev => ({ ...prev, [sliderId]: value }));
+    setHasInteracted(true);
   };
+
+  // Auto-advance after user interaction (delayed)
+  useEffect(() => {
+    if (hasInteracted && !isDragging) {
+      const timer = setTimeout(() => {
+        setHasInteracted(false);
+        // Optional: could auto-advance here
+        // goNext();
+      }, 2000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [hasInteracted, isDragging]);
 
   const goNext = () => {
     if (currentSlider < LIFESTYLE_SLIDERS.length - 1) {
@@ -77,94 +93,300 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
     return '';
   };
 
+  const getDescriptionColor = () => {
+    if (slider.id === 'stressLevel') {
+      if (currentValue <= 3) return 'text-green-400';
+      if (currentValue <= 6) return 'text-yellow-400';
+      return 'text-red-400';
+    }
+    
+    if (slider.id === 'waistCircumference') {
+      if (currentValue <= 32) return 'text-green-400';
+      if (currentValue <= 36) return 'text-blue-400';
+      if (currentValue <= 40) return 'text-yellow-400';
+      return 'text-red-400';
+    }
+    
+    if (slider.id === 'dailySteps') {
+      if (currentValue <= 3000) return 'text-red-400';
+      if (currentValue <= 7000) return 'text-yellow-400';
+      if (currentValue <= 10000) return 'text-blue-400';
+      return 'text-green-400';
+    }
+    
+    return 'text-gray-400';
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col">
+    <div className="h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col overflow-hidden relative">
+      {/* Background effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <motion.div
+          className="absolute top-1/4 right-10 w-40 h-40 bg-blue-500/5 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.3, 0.6, 0.3],
+            x: [0, 20, 0],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        <motion.div
+          className="absolute bottom-1/3 left-10 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl"
+          animate={{
+            scale: [0.8, 1.2, 0.8],
+            opacity: [0.2, 0.5, 0.2],
+            y: [0, -15, 0],
+          }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2.5
+          }}
+        />
+      </div>
+
       {/* Header */}
-      <div className="pt-8 px-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="text-sm text-gray-400">
+      <motion.div 
+        className="pt-4 px-4 pb-4 safe-area-top relative z-10"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <motion.div 
+            className="text-sm text-gray-400 font-medium"
+            key={`slider-${currentSlider}`}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+          >
             {currentSlider + 1} of {LIFESTYLE_SLIDERS.length}
-          </div>
-          <div className="text-sm text-gray-400">
+          </motion.div>
+          <motion.div 
+            className="text-sm text-gray-400 font-medium"
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ duration: 0.5 }}
+          >
             Baseline Assessment
-          </div>
+          </motion.div>
         </div>
         
         {/* Progress bar */}
-        <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+        <div className="w-full h-3 bg-gray-800/60 rounded-full overflow-hidden backdrop-blur-sm border border-gray-700/50 relative">
           <motion.div
-            className="h-full bg-gradient-to-r from-blue-500 to-purple-600"
+            className="h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          />
+          {/* Progress shine effect */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+            animate={{ x: [-100, 400] }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1
+            }}
           />
         </div>
-      </div>
+      </motion.div>
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col justify-center px-6 py-12">
-        <motion.div
-          key={currentSlider}
+      {/* Main content - scrollable with proper spacing */}
+      <div className="flex-1 overflow-y-auto px-4 py-2 relative z-10">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentSlider}
+            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -40, scale: 0.95 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="text-center mb-8"
+          >
+            {/* Icon with enhanced animation */}
+            <motion.div 
+              className={`w-24 h-24 rounded-full bg-gradient-to-br ${getSliderColor()} 
+                         flex items-center justify-center mx-auto mb-6 shadow-2xl relative overflow-hidden`}
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            >
+              {/* Inner glow */}
+              <div className="absolute inset-2 bg-gradient-to-br from-white/20 to-transparent rounded-full" />
+              
+              <motion.span 
+                className="text-4xl relative z-10"
+                animate={{ 
+                  rotate: [0, 5, -5, 0],
+                  scale: [1, 1.1, 1]
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 0.5
+                }}
+              >
+                {slider.icon}
+              </motion.span>
+              
+              {/* Outer glow effect */}
+              <motion.div
+                className={`absolute inset-0 bg-gradient-to-br ${getSliderColor()} rounded-full blur-xl opacity-50 -z-10 scale-110`}
+                animate={{
+                  scale: [1.1, 1.3, 1.1],
+                  opacity: [0.3, 0.6, 0.3],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              />
+            </motion.div>
+
+            {/* Title */}
+            <motion.h1 
+              className="text-2xl font-bold text-white mb-3"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.6 }}
+            >
+              <span className="bg-gradient-to-r from-white via-blue-50 to-white bg-clip-text text-transparent">
+                {slider.title}
+              </span>
+            </motion.h1>
+            
+            {/* Subtitle */}
+            <motion.p 
+              className="text-base text-gray-400 max-w-md mx-auto mb-6"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+            >
+              {slider.subtitle}
+            </motion.p>
+
+            {/* Current value display with enhanced styling */}
+            <motion.div 
+              className="mb-8"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+            >
+              <motion.div 
+                className="text-5xl font-bold text-white mb-2"
+                animate={{ scale: isDragging ? 1.1 : 1 }}
+                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              >
+                {currentValue}
+                <motion.span 
+                  className="text-2xl text-gray-400 ml-2"
+                  animate={{ opacity: [0.6, 1, 0.6] }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
+                  {slider.unit}
+                </motion.span>
+              </motion.div>
+              <motion.div 
+                className={`text-base font-medium ${getDescriptionColor()}`}
+                animate={{ opacity: [0.8, 1, 0.8] }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                {getValueDescription()}
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Enhanced Slider */}
+        <motion.div 
+          className="max-w-lg mx-auto w-full mb-8"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          transition={{ delay: 0.4, duration: 0.6 }}
         >
-          {/* Icon */}
-          <div className={`w-24 h-24 rounded-full bg-gradient-to-br ${getSliderColor()} 
-                         flex items-center justify-center mx-auto mb-8 shadow-2xl`}>
-            <span className="text-4xl">{slider.icon}</span>
-          </div>
-
-          {/* Title */}
-          <h1 className="text-3xl font-bold text-white mb-4">
-            {slider.title}
-          </h1>
-          
-          {/* Subtitle */}
-          <p className="text-lg text-gray-400 max-w-md mx-auto mb-8">
-            {slider.subtitle}
-          </p>
-
-          {/* Current value display */}
-          <div className="mb-12">
-            <div className="text-5xl font-bold text-white mb-2">
-              {currentValue}
-              <span className="text-2xl text-gray-400 ml-2">{slider.unit}</span>
-            </div>
-            <div className="text-lg text-gray-400">
-              {getValueDescription()}
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Slider */}
-        <div className="max-w-lg mx-auto w-full">
-          <div className="relative">
-            {/* Slider track */}
-            <div className="w-full h-3 bg-gray-700 rounded-full relative overflow-hidden">
-              {/* Active track */}
+          <div className="relative px-4">
+            {/* Slider track with enhanced styling */}
+            <div className="w-full h-6 bg-gray-700/60 rounded-full relative overflow-hidden backdrop-blur-sm border border-gray-600/50">
+              {/* Active track with gradient */}
               <motion.div
-                className={`h-full bg-gradient-to-r ${getSliderColor()} rounded-full`}
+                className={`h-full bg-gradient-to-r ${getSliderColor()} rounded-full shadow-lg relative`}
                 style={{ 
                   width: `${((currentValue - slider.min) / (slider.max - slider.min)) * 100}%` 
                 }}
-                transition={{ duration: 0.2 }}
-              />
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                {/* Inner shine effect */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                  animate={{ x: [-100, 200] }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 1
+                  }}
+                />
+              </motion.div>
             </div>
             
-            {/* Slider thumb with larger touch area */}
-            <div
-              className="absolute w-12 h-12 flex items-center justify-center cursor-pointer"
+            {/* Enhanced Slider thumb */}
+            <motion.div
+              className="absolute flex items-center justify-center cursor-pointer"
               style={{ 
                 left: `${((currentValue - slider.min) / (slider.max - slider.min)) * 100}%`,
-                marginLeft: '-24px',
+                marginLeft: '-20px',
                 top: '50%',
-                transform: 'translateY(-50%)'
+                transform: 'translateY(-50%)',
+                width: '40px',
+                height: '40px'
               }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onMouseDown={() => setIsDragging(true)}
+              onMouseUp={() => setIsDragging(false)}
+              onTouchStart={() => setIsDragging(true)}
+              onTouchEnd={() => setIsDragging(false)}
             >
-              <div className="w-7 h-7 bg-white rounded-full shadow-xl border-2 border-gray-800"></div>
-            </div>
+              <motion.div 
+                className="w-8 h-8 bg-white rounded-full shadow-xl border-4 border-gray-800 relative overflow-hidden"
+                animate={{
+                  boxShadow: isDragging 
+                    ? "0 0 0 8px rgba(59, 130, 246, 0.3)" 
+                    : "0 0 0 0px rgba(59, 130, 246, 0.3)"
+                }}
+                transition={{ duration: 0.2 }}
+              >
+                {/* Inner glow */}
+                <div className={`absolute inset-1 bg-gradient-to-br ${getSliderColor()} rounded-full opacity-20`} />
+                
+                {/* Center dot */}
+                <motion.div
+                  className={`absolute inset-0 m-auto w-2 h-2 bg-gradient-to-r ${getSliderColor()} rounded-full`}
+                  animate={{
+                    scale: isDragging ? [1, 1.5, 1] : 1
+                  }}
+                  transition={{
+                    duration: 0.3,
+                    repeat: isDragging ? Infinity : 0
+                  }}
+                />
+              </motion.div>
+            </motion.div>
             
             {/* Hidden input for accessibility */}
             <input
@@ -177,48 +399,117 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
             />
           </div>
           
-          {/* Min/Max labels */}
-          <div className="flex justify-between mt-4 text-sm text-gray-500">
-            <span>{slider.min}{slider.unit}</span>
-            <span>{slider.max}{slider.unit}</span>
-          </div>
-        </div>
-      </div>
+          {/* Min/Max labels with better styling */}
+          <motion.div 
+            className="flex justify-between mt-6 text-sm text-gray-500 px-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.4 }}
+          >
+            <motion.span
+              animate={{ opacity: [0.5, 0.8, 0.5] }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              {slider.min}{slider.unit}
+            </motion.span>
+            <motion.span
+              animate={{ opacity: [0.5, 0.8, 0.5] }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 1
+              }}
+            >
+              {slider.max}{slider.unit}
+            </motion.span>
+          </motion.div>
+        </motion.div>
 
-      {/* Navigation */}
-      <div className="px-6 pb-8">
-        <div className="flex justify-between items-center">
+        {/* Navigation buttons with enhanced styling */}
+        <motion.div 
+          className="flex justify-between items-center mt-8 px-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7, duration: 0.6 }}
+        >
           <Button
             onClick={goBack}
-            variant="outline"
             disabled={currentSlider === 0}
-            className="px-6 py-3"
+            variant="outline"
+            className="px-6 py-3 bg-gray-800/60 border-gray-600/70 hover:bg-gray-700/60 hover:border-gray-500 
+                     disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300
+                     backdrop-blur-sm shadow-lg hover:shadow-xl"
           >
-            Back
+            <motion.span
+              whileHover={{ x: -2 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            >
+              ← Back
+            </motion.span>
           </Button>
-          
-          <div className="flex space-x-2">
-            {LIFESTYLE_SLIDERS.map((_, index) => (
-              <div
-                key={index}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index < currentSlider
-                    ? 'bg-green-500'
-                    : index === currentSlider
-                    ? 'bg-blue-500 scale-125'
-                    : 'bg-gray-600'
-                }`}
-              />
-            ))}
-          </div>
 
-          <Button
-            onClick={goNext}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-6 py-3"
+          <motion.div
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
           >
-            {currentSlider === LIFESTYLE_SLIDERS.length - 1 ? 'Continue' : 'Next'}
-          </Button>
-        </div>
+            <Button
+              onClick={goNext}
+              className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 
+                       text-white font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 
+                       transition-all duration-300"
+            >
+              <motion.span
+                whileHover={{ x: 2 }}
+                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              >
+                {currentSlider === LIFESTYLE_SLIDERS.length - 1 ? 'Continue →' : 'Next →'}
+              </motion.span>
+            </Button>
+          </motion.div>
+        </motion.div>
+
+        {/* Step indicators */}
+        <motion.div 
+          className="flex justify-center space-x-3 mt-8 pb-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.6 }}
+        >
+          {LIFESTYLE_SLIDERS.map((_, index) => (
+            <motion.div
+              key={index}
+              className={`rounded-full transition-all duration-500 ${
+                index < currentSlider
+                  ? 'w-3 h-3 bg-gradient-to-r from-green-400 to-green-500 shadow-lg shadow-green-400/50'
+                  : index === currentSlider
+                  ? 'w-4 h-4 bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg shadow-blue-500/50'
+                  : 'w-2 h-2 bg-gray-600'
+              }`}
+              animate={index === currentSlider ? {
+                scale: [1, 1.2, 1],
+                boxShadow: [
+                  "0 0 0 0 rgba(59, 130, 246, 0.5)",
+                  "0 0 0 8px rgba(59, 130, 246, 0)",
+                  "0 0 0 0 rgba(59, 130, 246, 0)"
+                ]
+              } : {}}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+          ))}
+        </motion.div>
       </div>
     </div>
   );

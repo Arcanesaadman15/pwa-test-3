@@ -3,6 +3,7 @@ import { User as UserIcon, Settings, Trophy, Target, Calendar, Flame, Star, Shie
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { StreakSparkle } from "@/components/Rewards/StreakSparkle";
+import { motion } from "framer-motion";
 
 interface ProfileOverviewProps {
   user: User;
@@ -21,9 +22,9 @@ export function ProfileOverview({ user, onOpenSettings }: ProfileOverviewProps) 
 
   const getProgramBadge = (program: string) => {
     const badges = {
-      beginner: { color: 'bg-green-600', text: 'Beginner Explorer', icon: '🌱' },
-      intermediate: { color: 'bg-blue-600', text: 'Skilled Practitioner', icon: '⚡' },
-      advanced: { color: 'bg-purple-600', text: 'Master Achiever', icon: '🔥' }
+      beginner: { color: 'bg-green-500', text: 'Beginner Explorer', icon: '🌱' },
+      intermediate: { color: 'bg-blue-500', text: 'Skilled Practitioner', icon: '⚡' },
+      advanced: { color: 'bg-purple-500', text: 'Master Achiever', icon: '🔥' }
     };
     return badges[program as keyof typeof badges] || badges.beginner;
   };
@@ -33,10 +34,10 @@ export function ProfileOverview({ user, onOpenSettings }: ProfileOverviewProps) 
   const progressPercentage = Math.round((user.completedDays / 63) * 100);
 
   const quickStats = [
-    { label: 'Current Streak', value: user.currentStreak, icon: Flame, color: 'text-red-400' },
-    { label: 'Days Completed', value: user.completedDays, icon: Calendar, color: 'text-green-400' },
-    { label: 'Current Level', value: user.level || 1, icon: Star, color: 'text-yellow-400' },
-    { label: 'Achievements', value: user.achievements || 0, icon: Trophy, color: 'text-purple-400' }
+    { label: 'Current Streak', value: user.currentStreak, icon: Flame, color: 'text-red-500' },
+    { label: 'Days Completed', value: user.completedDays, icon: Calendar, color: 'text-green-500' },
+    { label: 'Current Level', value: user.level || 1, icon: Star, color: 'text-yellow-500' },
+    { label: 'Achievements', value: user.achievements || 0, icon: Trophy, color: 'text-purple-500' }
   ];
 
   const milestones = [
@@ -47,36 +48,42 @@ export function ProfileOverview({ user, onOpenSettings }: ProfileOverviewProps) 
   ];
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      {/* Header with Profile Info */}
-      <div className="bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-800 px-6 pt-12 pb-8">
-        <div className="text-center mb-8">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white px-4 pt-12 pb-6 border-b border-gray-100">
+        <motion.div 
+          className="text-center mb-6"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
           {/* Avatar */}
-          <div className="w-24 h-24 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white/20">
-            <UserIcon className="w-12 h-12 text-gray-300" />
+          <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-200">
+            <UserIcon className="w-10 h-10 text-gray-600" />
           </div>
           
-          {/* Name and Program */}
-          <h1 className="text-3xl font-bold text-white mb-2">
+          {/* Name */}
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
             {user.name}
           </h1>
           
           {/* Program Badge */}
-          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${badge.color} text-white text-sm font-medium`}>
-            <span className="text-lg">{badge.icon}</span>
+          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${badge.color} text-white text-sm font-medium`}>
+            <span>{badge.icon}</span>
             {badge.text}
           </div>
           
-          <p className="text-purple-200 mt-2">
+          <p className="text-gray-600 mt-2 text-sm">
             Journey started {formatDate(new Date(user.startDate))}
           </p>
-        </div>
+        </motion.div>
 
         {/* Settings Button */}
         <div className="text-center">
           <Button 
             onClick={onOpenSettings}
-            className="bg-white/10 hover:bg-white/20 text-white border border-white/20"
+            variant="outline"
+            className="border-gray-300 text-gray-700 hover:bg-gray-50"
           >
             <Settings className="w-4 h-4 mr-2" />
             Settings
@@ -84,164 +91,149 @@ export function ProfileOverview({ user, onOpenSettings }: ProfileOverviewProps) 
         </div>
       </div>
 
-      <div className="px-6 py-6 space-y-6">
+      <div className="px-4 py-4 space-y-4">
         {/* Progress Overview */}
-        <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
-          <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-            <Target className="w-5 h-5 text-blue-400" />
+        <motion.div 
+          className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.4 }}
+        >
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <Target className="w-5 h-5 text-blue-500" />
             Journey Progress
           </h3>
           
           <div className="space-y-4">
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-gray-400">Overall Progress</span>
-                <span className="text-white font-bold">{progressPercentage}%</span>
+                <span className="text-gray-600 text-sm">Overall Progress</span>
+                <span className="text-gray-900 font-semibold">{progressPercentage}%</span>
               </div>
-              <div className="w-full bg-gray-700 rounded-full h-3">
-                <div 
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-300"
-                  style={{ width: `${progressPercentage}%` }}
-                ></div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <motion.div 
+                  className="bg-blue-500 h-2 rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progressPercentage}%` }}
+                  transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
+                />
               </div>
-              <div className="text-xs text-gray-400 mt-1">
+              <div className="text-xs text-gray-500 mt-1">
                 Day {user.currentDay} of 63
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4 mt-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-400">{daysSinceStart}</div>
-                <div className="text-xs text-gray-400">Days Since Start</div>
+                <div className="text-xl font-bold text-blue-500">{daysSinceStart}</div>
+                <div className="text-xs text-gray-500">Days Since Start</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-400">{user.longestStreak}</div>
-                <div className="text-xs text-gray-400">Best Streak</div>
+                <div className="text-xl font-bold text-green-500">{user.longestStreak}</div>
+                <div className="text-xs text-gray-500">Best Streak</div>
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Quick Stats Grid */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           {quickStats.map((stat, index) => (
-            <div key={index} className="bg-gray-800 rounded-2xl p-5 border border-gray-700">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
-                  <stat.icon className={`w-5 h-5 ${stat.color}`} />
+            <motion.div 
+              key={index} 
+              className="bg-white rounded-2xl p-4 border border-gray-200 shadow-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 + index * 0.1, duration: 0.4 }}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                  <stat.icon className={`w-4 h-4 ${stat.color}`} />
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-white">{stat.value}</p>
-                </div>
+                <div className="text-xl font-bold text-gray-900">{stat.value}</div>
               </div>
-              <p className="text-gray-400 text-sm">{stat.label}</p>
-            </div>
+              <p className="text-gray-600 text-sm">{stat.label}</p>
+            </motion.div>
           ))}
         </div>
 
         {/* Milestones */}
-        <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
-          <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-            <Shield className="w-5 h-5 text-yellow-400" />
+        <motion.div 
+          className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.4 }}
+        >
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <Shield className="w-5 h-5 text-yellow-500" />
             Milestones
           </h3>
           
           <div className="space-y-3">
             {milestones.map((milestone, index) => (
-              <div 
+              <motion.div 
                 key={index}
-                className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${
+                className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
                   milestone.achieved 
-                    ? 'border-yellow-500/30 bg-yellow-900/20' 
-                    : 'border-gray-600 bg-gray-700/50'
+                    ? 'border-green-200 bg-green-50' 
+                    : 'border-gray-200 bg-gray-50'
                 }`}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5 + index * 0.1, duration: 0.4 }}
               >
-                <div className={`text-2xl ${milestone.achieved ? '' : 'grayscale opacity-50'}`}>
+                <div className={`text-xl ${milestone.achieved ? '' : 'grayscale opacity-50'}`}>
                   {milestone.icon}
                 </div>
                 <div className="flex-1">
-                  <h4 className={`font-medium ${milestone.achieved ? 'text-yellow-400' : 'text-gray-400'}`}>
+                  <h4 className={`font-medium text-sm ${milestone.achieved ? 'text-green-700' : 'text-gray-600'}`}>
                     {milestone.title}
                   </h4>
                   <p className="text-xs text-gray-500">{milestone.description}</p>
                 </div>
                 {milestone.achieved && (
-                  <div className="text-yellow-400 text-xs font-medium">
+                  <div className="text-green-600 text-xs font-medium">
                     ✓ Completed
                   </div>
                 )}
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* Activity Summary */}
-        <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
-          <h3 className="text-xl font-bold text-white mb-4">Activity Summary</h3>
+        <motion.div 
+          className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.4 }}
+        >
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Activity Summary</h3>
           
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-400">Total Days Active</span>
-              <span className="text-white font-bold">{daysSinceStart} days</span>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center py-2">
+              <span className="text-gray-600 text-sm">Total Days Active</span>
+              <span className="text-gray-900 font-semibold">{daysSinceStart} days</span>
             </div>
             
-            <div className="flex justify-between items-center">
-              <span className="text-gray-400">Completion Rate</span>
-              <span className="text-white font-bold">
+            <div className="flex justify-between items-center py-2">
+              <span className="text-gray-600 text-sm">Completion Rate</span>
+              <span className="text-gray-900 font-semibold">
                 {daysSinceStart > 0 ? Math.round((user.completedDays / daysSinceStart) * 100) : 0}%
               </span>
             </div>
             
-            <div className="flex justify-between items-center">
-              <span className="text-gray-400">Program Type</span>
-              <span className="text-white font-bold capitalize">{user.program}</span>
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <span className="text-gray-400">Started</span>
-              <span className="text-white font-bold">{formatDate(new Date(user.startDate))}</span>
+            <div className="flex justify-between items-center py-2">
+              <span className="text-gray-600 text-sm">Program Type</span>
+              <span className="text-gray-900 font-semibold capitalize">{user.program}</span>
             </div>
           </div>
-        </div>
-
-        {/* Motivational Section */}
-        <div className="bg-gradient-to-r from-purple-800/50 to-pink-800/50 rounded-2xl p-6 border border-purple-500/30">
-          <h3 className="text-xl font-bold text-white mb-2">Keep Going!</h3>
-          <p className="text-purple-200 text-sm mb-4">
-            {user.currentStreak > 0 
-              ? `You're on a ${user.currentStreak} day streak! Don't break the chain.`
-              : "Start your journey today and build momentum with your first task!"
-            }
-          </p>
-          <div className="flex items-center gap-2 text-purple-300 text-sm">
-            <Flame className="w-4 h-4" />
-            <span>
-              {63 - user.completedDays} days remaining to complete your transformation
-            </span>
-          </div>
-        </div>
-
-        {/* Debug Test Button */}
-        <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-2xl p-4">
-          <h4 className="text-yellow-300 font-bold mb-2">🧪 Test Sparkle System</h4>
-          <p className="text-yellow-200 text-sm mb-3">
-            Current streak: {user.currentStreak || 0} days • Test the celebration animation
-          </p>
-          <Button 
-            onClick={() => {
-              console.log("🎉 Testing sparkle celebration!");
-              setShowTestSparkle(true);
-            }}
-            className="w-full bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-300 border border-yellow-500/30"
-          >
-            ✨ Test Sparkle Celebration
-          </Button>
-        </div>
+        </motion.div>
       </div>
 
-      {/* Test Sparkle Component */}
+      {/* Test Sparkle */}
       <StreakSparkle
-        streakCount={Math.max(user.currentStreak || 7, 7)}
+        streakCount={user?.currentStreak || 0}
         isVisible={showTestSparkle}
         onComplete={() => setShowTestSparkle(false)}
       />

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { QUICK_QUIZ_QUESTIONS } from '@/data/onboardingData';
 import { Button } from '@/components/ui/button';
 
@@ -15,11 +16,15 @@ export function QuickQuiz({ onComplete }: QuickQuizProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [selectedOption, setSelectedOption] = useState<string>('');
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const handleOptionSelect = (value: string) => {
-    setSelectedOption(value);
+    if (isTransitioning) return; // Prevent double-clicks during transition
     
-    // Auto-advance after selection
+    setSelectedOption(value);
+    setIsTransitioning(true);
+    
+    // Auto-advance after selection with enhanced timing
     setTimeout(() => {
       const questionId = QUICK_QUIZ_QUESTIONS[currentQuestion].id;
       const newAnswers = { ...answers, [questionId]: value };
@@ -28,102 +33,273 @@ export function QuickQuiz({ onComplete }: QuickQuizProps) {
       if (currentQuestion < QUICK_QUIZ_QUESTIONS.length - 1) {
         setCurrentQuestion(prev => prev + 1);
         setSelectedOption('');
+        setIsTransitioning(false);
       } else {
         // Quiz completed
         onComplete(newAnswers as any);
       }
-    }, 300);
+    }, 600); // Slightly longer for better visual feedback
   };
 
   const progress = ((currentQuestion + 1) / QUICK_QUIZ_QUESTIONS.length) * 100;
   const question = QUICK_QUIZ_QUESTIONS[currentQuestion];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col">
-      {/* Header with progress */}
-      <div className="pt-8 px-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col relative overflow-hidden">
+      {/* Subtle background effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <motion.div
+          className="absolute top-20 right-10 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        <motion.div
+          className="absolute bottom-40 left-10 w-24 h-24 bg-purple-500/5 rounded-full blur-xl"
+          animate={{
+            scale: [0.8, 1.1, 0.8],
+            opacity: [0.2, 0.4, 0.2],
+          }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2
+          }}
+        />
+      </div>
+
+      {/* Header with enhanced progress */}
+      <motion.div 
+        className="pt-8 px-6 relative z-10"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
         <div className="flex items-center justify-between mb-6">
-          <div className="text-sm text-gray-400">
+          <motion.div 
+            className="text-sm text-gray-400 font-medium"
+            key={`question-${currentQuestion}`}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+          >
             Question {currentQuestion + 1} of {QUICK_QUIZ_QUESTIONS.length}
-          </div>
-          <div className="text-sm text-gray-400">
+          </motion.div>
+          <motion.div 
+            className="text-sm text-gray-400 font-medium"
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            key={`progress-${Math.round(progress)}`}
+          >
             {Math.round(progress)}% complete
-          </div>
+          </motion.div>
         </div>
         
-        {/* Progress bar */}
-        <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-blue-500 to-purple-600 transition-all duration-500"
-            style={{ width: `${progress}%` }}
+        {/* Enhanced Progress bar */}
+        <div className="w-full h-3 bg-gray-800/60 rounded-full overflow-hidden backdrop-blur-sm border border-gray-700/50">
+          <motion.div
+            className="h-full bg-gradient-to-r from-blue-500 via-blue-600 to-purple-600 rounded-full shadow-lg shadow-blue-500/30"
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          />
+          {/* Shine effect */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+            animate={{ x: [-100, 300] }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1
+            }}
           />
         </div>
-      </div>
+      </motion.div>
 
-      {/* Question content */}
-      <div className="flex-1 flex flex-col justify-center px-6 pb-20">
-        <div className="text-center mb-12">
-          {/* Question */}
-          <h1 className="text-3xl font-bold text-white mb-4 leading-tight">
-            {question.question}
-          </h1>
-          
-          {/* Subtitle */}
-          <p className="text-lg text-gray-400 max-w-md mx-auto">
-            {question.subtitle}
-          </p>
-        </div>
-
-        {/* Options */}
-        <div className="space-y-4 max-w-lg mx-auto w-full">
-          {question.options.map((option, index) => (
-            <Button
-              key={option.value}
-              onClick={() => handleOptionSelect(option.value)}
-              variant="outline"
-              className={`w-full p-6 text-left border-2 transition-all duration-200 ${
-                selectedOption === option.value
-                  ? 'border-blue-500 bg-blue-500/10 text-white scale-105'
-                  : 'border-gray-600 bg-gray-800/50 hover:border-gray-500 hover:bg-gray-700/50 text-gray-200'
-              }`}
+      {/* Question content with better transitions */}
+      <div className="flex-1 flex flex-col justify-center px-6 pb-20 relative z-10">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentQuestion}
+            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -30, scale: 0.95 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="text-center mb-12"
+          >
+            {/* Question with enhanced styling */}
+            <motion.h1 
+              className="text-3xl font-bold text-white mb-4 leading-tight relative"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.6 }}
             >
-              <div className="flex flex-col">
-                <span className="font-semibold text-lg mb-1">
-                  {option.label}
-                </span>
-                <span className="text-sm text-gray-400">
-                  {option.subtitle}
-                </span>
-              </div>
-            </Button>
-          ))}
-        </div>
+              <span className="bg-gradient-to-r from-white via-blue-50 to-white bg-clip-text text-transparent">
+                {question.question}
+              </span>
+            </motion.h1>
+            
+            {/* Subtitle with subtle animation */}
+            <motion.p 
+              className="text-lg text-gray-400 max-w-md mx-auto"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+            >
+              {question.subtitle}
+            </motion.p>
+          </motion.div>
+        </AnimatePresence>
 
-        {/* Help text */}
-        <div className="text-center mt-12">
-          <p className="text-sm text-gray-500">
+        {/* Enhanced Options */}
+        <motion.div 
+          className="space-y-4 max-w-lg mx-auto w-full"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+        >
+          <AnimatePresence mode="wait">
+            {question.options.map((option, index) => (
+              <motion.div
+                key={`${currentQuestion}-${option.value}`}
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                transition={{ 
+                  delay: index * 0.1, 
+                  duration: 0.4,
+                  ease: "easeOut"
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Button
+                  onClick={() => handleOptionSelect(option.value)}
+                  variant="outline"
+                  disabled={isTransitioning}
+                  className={`w-full p-6 text-left border-2 transition-all duration-300 min-h-[80px] flex items-start relative overflow-hidden group ${
+                    selectedOption === option.value
+                      ? 'border-blue-500 bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white scale-105 shadow-lg shadow-blue-500/25'
+                      : 'border-gray-600/70 bg-gray-800/50 hover:border-gray-500 hover:bg-gray-700/60 text-gray-200 hover:shadow-lg hover:shadow-gray-500/10'
+                  }`}
+                >
+                  {/* Background shimmer effect */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100"
+                    animate={{ x: [-100, 300] }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
+                  
+                  <div className="flex flex-col text-left w-full relative z-10">
+                    <motion.span 
+                      className="font-semibold text-lg mb-2 leading-tight text-left"
+                      animate={selectedOption === option.value ? { x: [0, 5, 0] } : {}}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {option.label}
+                    </motion.span>
+                    {option.subtitle && (
+                      <motion.span 
+                        className="text-sm text-gray-400 leading-relaxed text-left"
+                        animate={selectedOption === option.value ? { opacity: [0.7, 1, 0.7] } : {}}
+                        transition={{ duration: 0.5 }}
+                      >
+                        {option.subtitle}
+                      </motion.span>
+                    )}
+                  </div>
+                  
+                  {/* Selection indicator */}
+                  {selectedOption === option.value && (
+                    <motion.div
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2"
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                    >
+                      <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                        <motion.div
+                          className="w-2 h-2 bg-white rounded-full"
+                          animate={{ scale: [0, 1.2, 1] }}
+                          transition={{ duration: 0.3 }}
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </Button>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
+
+        {/* Enhanced help text */}
+        <motion.div 
+          className="text-center mt-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.6 }}
+        >
+          <motion.p 
+            className="text-sm text-gray-500 font-medium"
+            animate={{ opacity: [0.5, 0.8, 0.5] }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
             Choose the option that best describes you
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
       </div>
 
-      {/* Question indicators */}
-      <div className="pb-8 px-6">
-        <div className="flex justify-center space-x-2">
+      {/* Enhanced Question indicators */}
+      <motion.div 
+        className="pb-8 px-6 relative z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4, duration: 0.6 }}
+      >
+        <div className="flex justify-center space-x-3">
           {QUICK_QUIZ_QUESTIONS.map((_, index) => (
-            <div
+            <motion.div
               key={index}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              className={`rounded-full transition-all duration-500 ${
                 index < currentQuestion
-                  ? 'bg-green-500'
+                  ? 'w-3 h-3 bg-gradient-to-r from-green-400 to-green-500 shadow-lg shadow-green-400/50'
                   : index === currentQuestion
-                  ? 'bg-blue-500 scale-125'
-                  : 'bg-gray-600'
+                  ? 'w-4 h-4 bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg shadow-blue-500/50'
+                  : 'w-2 h-2 bg-gray-600'
               }`}
+              animate={index === currentQuestion ? {
+                scale: [1, 1.2, 1],
+                boxShadow: [
+                  "0 0 0 0 rgba(59, 130, 246, 0.5)",
+                  "0 0 0 8px rgba(59, 130, 246, 0)",
+                  "0 0 0 0 rgba(59, 130, 246, 0)"
+                ]
+              } : {}}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
             />
           ))}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
