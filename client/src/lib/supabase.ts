@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import type { User, SubscriptionPlan, UserSubscription } from '../../../shared/schema';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://vkczvtgtbzcqempgampj.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrY3p2dGd0YnpjcWVtcGdhbXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgyOTMzNjksImV4cCI6MjA2Mzg2OTM2OX0.OZR5e7iqKnM0RTDkpMVQZZR8oJWJ6tP5F8GBqLMZrg8';
 
 // Create a mock client for development when Supabase isn't configured yet
 const createMockClient = () => ({
