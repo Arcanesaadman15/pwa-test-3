@@ -153,4 +153,8 @@ The app uses localStorage for:
 - Achievement unlocks
 - User progress and streaks
 
-This data remains on the device and doesn't sync to the cloud, ensuring privacy and offline functionality. 
+This data remains on the device and doesn't sync to the cloud, ensuring privacy and offline functionality.
+
+## Deployment
+
+This app is ready for deployment to Vercel and includes full LemonSqueezy integration for subscription management. 
