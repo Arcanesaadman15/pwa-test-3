@@ -28,8 +28,8 @@ if (LEMONSQUEEZY_API_KEY) {
 
 // Initialize Supabase with service role key
 const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY
 );
 
 // Middleware to verify LemonSqueezy webhook signature
