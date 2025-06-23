@@ -1,13 +1,10 @@
-import express from 'express';
 import { lemonSqueezySetup, createCheckout, getSubscription, updateSubscription, cancelSubscription } from '@lemonsqueezy/lemonsqueezy.js';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
-const router = express.Router();
-
-// Initialize LemonSqueezy
-const LEMONSQUEEZY_API_KEY = process.env.LEMONSQUEEZY_API_KEY;
-const LEMONSQUEEZY_STORE_ID = process.env.LEMONSQUEEZY_STORE_ID;
+// Initialize LemonSqueezy - Try both naming conventions
+const LEMONSQUEEZY_API_KEY = process.env.LEMONSQUEEZY_API_KEY || process.env.VITE_LEMONSQUEEZY_API_KEY;
+const LEMONSQUEEZY_STORE_ID = process.env.LEMONSQUEEZY_STORE_ID || process.env.VITE_LEMONSQUEEZY_STORE_ID;
 const LEMONSQUEEZY_WEBHOOK_SECRET = process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
 
 // Debug logging
@@ -67,256 +64,48 @@ const verifyWebhookSignature = (req, res, next) => {
   next();
 };
 
-// POST /api/lemonsqueezy/checkout - Create a checkout session
-router.post('/checkout', async (req, res) => {
-  try {
-    const { variantId, userId, userEmail, userName, successUrl, cancelUrl } = req.body;
 
-    console.log('🛒 Checkout request received:');
-    console.log('  Variant ID:', variantId);
-    console.log('  User ID:', userId);
-    console.log('  User Email:', userEmail);
-    console.log('  Store ID for checkout:', LEMONSQUEEZY_STORE_ID);
-
-    if (!variantId || !userId || !userEmail) {
-      console.error('❌ Missing required fields:', { variantId: !!variantId, userId: !!userId, userEmail: !!userEmail });
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
-
-    if (!LEMONSQUEEZY_STORE_ID) {
-      console.error('❌ LEMONSQUEEZY_STORE_ID not configured');
-      return res.status(500).json({ error: 'Store ID not configured' });
-    }
-
-    if (!LEMONSQUEEZY_API_KEY) {
-      console.error('❌ LEMONSQUEEZY_API_KEY not configured');
-      return res.status(500).json({ error: 'API Key not configured' });
-    }
-
-    console.log('🍋 Creating LemonSqueezy checkout...');
-
-    // Prepare redirect URLs
-    const baseUrl = process.env.VITE_APP_URL || 'http://localhost:3000';
-    const redirectSuccessUrl = successUrl || `${baseUrl}/subscription/success`;
-    const redirectCancelUrl = cancelUrl || `${baseUrl}/subscription/cancel`;
-
-    console.log('🔗 Redirect URLs:', { success: redirectSuccessUrl, cancel: redirectCancelUrl });
-
-    const checkout = await createCheckout(LEMONSQUEEZY_STORE_ID, variantId, {
-      productOptions: {
-        name: 'PeakForge Pro Subscription',
-        description: 'Premium wellness program with all features unlocked',
-      },
-      checkoutOptions: {
-        embed: false,
-        media: false,
-        logo: true,
-        dark: true,
-      },
-      checkoutData: {
-        email: userEmail,
-        name: userName || 'PeakForge User',
-        custom: {
-          user_id: userId,
-          redirect_url: redirectSuccessUrl,
-        },
-      },
-      redirectUrl: redirectSuccessUrl,
-      expiresAt: null,
-      preview: false,
-      testMode: process.env.NODE_ENV === 'development',
-    });
-
-    console.log('🍋 LemonSqueezy response:', checkout);
-
-    if (checkout.error) {
-      console.error('❌ Checkout creation error:', checkout.error);
-      return res.status(400).json({ error: checkout.error.message || 'Failed to create checkout' });
-    }
-
-    console.log('✅ Checkout created successfully:', checkout.data?.data?.id);
-
-    res.json({
-      checkoutUrl: checkout.data?.data?.attributes?.url,
-      checkoutId: checkout.data?.data?.id,
-    });
-  } catch (error) {
-    console.error('❌ Checkout endpoint error:', error);
-    console.error('Error stack:', error.stack);
-    res.status(500).json({ error: 'Internal server error: ' + error.message });
-  }
-});
-
-// GET /api/lemonsqueezy/subscription/:userId - Get user's subscription status
-router.get('/subscription/:userId', async (req, res) => {
-  try {
-    const { userId } = req.params;
-
-    // Get subscription from Supabase
-    const { data: subscription, error } = await supabase
-      .from('user_subscriptions')
-      .select(`
-        *,
-        subscription_plans (
-          name,
-          price,
-          interval
-        )
-      `)
-      .eq('user_id', userId)
-      .eq('status', 'active')
-      .single();
-
-    if (error && error.code !== 'PGRST116') {
-      console.error('Database error:', error);
-      return res.status(500).json({ error: 'Database error' });
-    }
-
-    if (!subscription) {
-      return res.status(404).json({ error: 'No active subscription found' });
-    }
-
-    res.json({ subscription });
-  } catch (error) {
-    console.error('Subscription status error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// POST /api/lemonsqueezy/subscription/:subscriptionId/cancel - Cancel a subscription
-router.post('/subscription/:subscriptionId/cancel', async (req, res) => {
-  try {
-    const { subscriptionId } = req.params;
-
-    // Cancel subscription in LemonSqueezy
-    const result = await cancelSubscription(subscriptionId);
-
-    if (result.error) {
-      console.error('Subscription cancellation error:', result.error);
-      return res.status(400).json({ error: result.error.message || 'Failed to cancel subscription' });
-    }
-
-    // Update subscription status in Supabase
-    const { error: updateError } = await supabase
-      .from('user_subscriptions')
-      .update({
-        status: 'canceled',
-        cancel_at_period_end: true,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('stripe_subscription_id', subscriptionId);
-
-    if (updateError) {
-      console.error('Database update error:', updateError);
-      // Don't fail the request if DB update fails, as LemonSqueezy cancellation succeeded
-    }
-
-    res.json({ success: true });
-  } catch (error) {
-    console.error('Cancel subscription error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// POST /api/lemonsqueezy/webhooks - Handle LemonSqueezy webhooks
-router.post('/webhooks', verifyWebhookSignature, async (req, res) => {
-  try {
-    // Parse JSON from raw body since we're using express.raw() for this endpoint
-    let payload;
-    if (Buffer.isBuffer(req.body)) {
-      payload = JSON.parse(req.body.toString('utf8'));
-    } else {
-      payload = req.body;
-    }
-    
-    console.log('🔔 Raw webhook payload received:');
-    console.log(JSON.stringify(payload, null, 2));
-    
-    // LemonSqueezy webhook structure: { meta: { event_name }, data: { ... } }
-    const eventName = payload.meta?.event_name;
-    const eventData = payload.data;
-
-    console.log('🔔 Extracted event:', eventName, 'data ID:', eventData?.id);
-
-    if (!eventName) {
-      console.error('❌ No event_name found in webhook payload');
-      console.log('Available keys:', Object.keys(payload));
-      console.log('Meta keys:', payload.meta ? Object.keys(payload.meta) : 'No meta object');
-      return res.status(400).json({ error: 'Invalid webhook payload - missing event_name' });
-    }
-
-    if (!eventData) {
-      console.error('❌ No data found in webhook payload');
-      return res.status(400).json({ error: 'Invalid webhook payload - missing data' });
-    }
-
-    switch (eventName) {
-      case 'subscription_created':
-        await handleSubscriptionCreated(eventData);
-        break;
-      case 'subscription_updated':
-        await handleSubscriptionUpdated(eventData);
-        break;
-      case 'subscription_cancelled':
-        await handleSubscriptionCancelled(eventData);
-        break;
-      case 'subscription_resumed':
-        await handleSubscriptionResumed(eventData);
-        break;
-      case 'subscription_expired':
-        await handleSubscriptionExpired(eventData);
-        break;
-      case 'subscription_paused':
-        await handleSubscriptionPaused(eventData);
-        break;
-      case 'subscription_unpaused':
-        await handleSubscriptionUnpaused(eventData);
-        break;
-      default:
-        console.log('❓ Unhandled webhook event:', eventName);
-    }
-
-    res.status(200).json({ received: true });
-  } catch (error) {
-    console.error('❌ Webhook processing error:', error);
-    res.status(500).json({ error: 'Webhook processing failed' });
-  }
-});
 
 // Webhook handler functions
-async function handleSubscriptionCreated(data) {
+async function handleSubscriptionCreated(data, meta) {
   try {
     console.log('🔍 Processing subscription_created webhook...');
     console.log('  Data received:', JSON.stringify(data, null, 2));
+    console.log('  Meta received:', JSON.stringify(meta, null, 2));
     
     // LemonSqueezy structure: data.attributes contains subscription info
     const attributes = data.attributes;
     const userEmail = attributes.user_email;
     const variantId = attributes.variant_id?.toString();
     
-    if (!userEmail) {
-      console.error('❌ No user_email in subscription created webhook');
+    // Try to get user_id from custom_data first, fallback to email lookup
+    let userId = meta?.custom_data?.user_id;
+    
+    if (userId) {
+      console.log('✅ User ID found in custom_data:', userId);
+    } else if (userEmail) {
+      console.log('🔍 No user_id in custom_data, looking up by email:', userEmail);
+      
+      // Find user by email in our database (case-insensitive)
+      const { data: user, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .ilike('email', userEmail) // Case-insensitive email lookup
+        .single();
+
+      if (userError || !user) {
+        console.error('❌ Failed to find user with email:', userEmail, userError);
+        return;
+      }
+
+      userId = user.id;
+      console.log('✅ User found with ID:', userId);
+    } else {
+      console.error('❌ No user_id in custom_data and no user_email in subscription webhook');
       return;
     }
 
-    console.log('✅ User email found:', userEmail);
     console.log('🔍 Variant ID:', variantId);
-
-    // Find user by email in our database (case-insensitive)
-    console.log('🔍 Looking up user by email:', userEmail);
-    const { data: user, error: userError } = await supabase
-      .from('users')
-      .select('id')
-      .ilike('email', userEmail) // Case-insensitive email lookup
-      .single();
-
-    if (userError || !user) {
-      console.error('❌ Failed to find user with email:', userEmail, userError);
-      return;
-    }
-
-    const userId = user.id;
-    console.log('✅ User found with ID:', userId);
 
     // Map variant ID to plan name
     let planName = 'Basic'; // Default fallback
@@ -361,10 +150,10 @@ async function handleSubscriptionCreated(data) {
       user_id: userId,
       plan_id: plan.id,
       status: attributes.status,
-      stripe_subscription_id: data.id,
+      stripe_subscription_id: data.id, // Using stripe field names for compatibility
       stripe_customer_id: attributes.customer_id?.toString(),
-      current_period_start: new Date(attributes.renews_at || attributes.created_at),
-      current_period_end: new Date(attributes.ends_at || attributes.renews_at),
+      current_period_start: new Date(attributes.created_at),
+      current_period_end: new Date(attributes.renews_at),
       cancel_at_period_end: attributes.cancelled || false,
     };
     
@@ -509,4 +298,76 @@ async function handleSubscriptionUnpaused(data) {
   }
 }
 
-export default router; 
+// Vercel serverless function handler
+export default async function handler(req, res) {
+  console.log('🔔 Webhook request received:', req.method, req.url);
+  
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    // Parse JSON from raw body
+    let payload;
+    if (typeof req.body === 'string') {
+      payload = JSON.parse(req.body);
+    } else if (Buffer.isBuffer(req.body)) {
+      payload = JSON.parse(req.body.toString('utf8'));
+    } else {
+      payload = req.body;
+    }
+    
+    console.log('🔔 Raw webhook payload received:');
+    console.log(JSON.stringify(payload, null, 2));
+    
+    // LemonSqueezy webhook structure: { meta: { event_name }, data: { ... } }
+    const eventName = payload.meta?.event_name;
+    const eventData = payload.data;
+
+    console.log('🔔 Extracted event:', eventName, 'data ID:', eventData?.id);
+
+    if (!eventName) {
+      console.error('❌ No event_name found in webhook payload');
+      console.log('Available keys:', Object.keys(payload));
+      console.log('Meta keys:', payload.meta ? Object.keys(payload.meta) : 'No meta object');
+      return res.status(400).json({ error: 'Invalid webhook payload - missing event_name' });
+    }
+
+    if (!eventData) {
+      console.error('❌ No data found in webhook payload');
+      return res.status(400).json({ error: 'Invalid webhook payload - missing data' });
+    }
+
+    switch (eventName) {
+      case 'subscription_created':
+        await handleSubscriptionCreated(eventData, payload.meta);
+        break;
+      case 'subscription_updated':
+        await handleSubscriptionUpdated(eventData);
+        break;
+      case 'subscription_cancelled':
+        await handleSubscriptionCancelled(eventData);
+        break;
+      case 'subscription_resumed':
+        await handleSubscriptionResumed(eventData);
+        break;
+      case 'subscription_expired':
+        await handleSubscriptionExpired(eventData);
+        break;
+      case 'subscription_paused':
+        await handleSubscriptionPaused(eventData);
+        break;
+      case 'subscription_unpaused':
+        await handleSubscriptionUnpaused(eventData);
+        break;
+      default:
+        console.log('❓ Unhandled webhook event:', eventName);
+    }
+
+    res.status(200).json({ received: true });
+  } catch (error) {
+    console.error('❌ Webhook processing error:', error);
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ error: 'Webhook processing failed: ' + error.message });
+  }
+} 
