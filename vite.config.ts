@@ -10,7 +10,7 @@ export default defineConfig({
     react(),
     // runtimeErrorOverlay(),
   ],
-  envDir: "./",
+  envDir: path.resolve(import.meta.dirname, "client"),
   envPrefix: "VITE_",
   server: {
     host: true, // Allow external hosts
