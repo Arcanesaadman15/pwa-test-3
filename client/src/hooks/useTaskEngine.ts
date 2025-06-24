@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { TaskEngine } from "@/lib/taskEngine";
 import { Task } from "@/types";
 
@@ -13,24 +13,38 @@ export function useTaskEngine() {
     completed: [],
     skipped: []
   });
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const refreshTasks = async () => {
+  const refreshTasks = useCallback(async () => {
     const tasks = await taskEngine.getCurrentDayTasks();
     setCurrentDayTasks(tasks);
-  };
+  }, [taskEngine]);
 
+  // Force refresh when refreshTrigger changes
   useEffect(() => {
     refreshTasks();
-  }, []);
+  }, [refreshTasks, refreshTrigger]);
+
+  const triggerRefresh = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
 
   const completeTask = async (taskId: string) => {
     await taskEngine.completeTask(taskId);
-    refreshTasks();
+    // Immediate refresh to sync day advancement
+    await refreshTasks();
+    // Additional refresh after short delay to ensure UI is fully updated
+    setTimeout(() => {
+      setRefreshTrigger(prev => prev + 1);
+    }, 100);
   };
 
   const skipTask = async (taskId: string) => {
     await taskEngine.skipTask(taskId);
-    refreshTasks();
+    await refreshTasks();
+    setTimeout(() => {
+      setRefreshTrigger(prev => prev + 1);
+    }, 100);
   };
 
   const getDayProgress = () => {
@@ -38,14 +52,16 @@ export function useTaskEngine() {
   };
 
   const switchProgram = async (program: 'beginner' | 'intermediate' | 'advanced') => {
-    
     await taskEngine.switchProgram(program);
+    // Force complete refresh after program switch
     await refreshTasks();
+    triggerRefresh();
   };
 
   const unSkipTask = async (taskId: string) => {
     await taskEngine.unSkipTask(taskId);
-    refreshTasks();
+    await refreshTasks();
+    triggerRefresh();
   };
 
   return {
@@ -56,6 +72,7 @@ export function useTaskEngine() {
     unSkipTask,
     getDayProgress,
     switchProgram,
-    refreshTasks
+    refreshTasks,
+    triggerRefresh
   };
 }

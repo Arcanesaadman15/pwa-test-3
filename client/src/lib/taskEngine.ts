@@ -114,10 +114,10 @@ export class TaskEngine {
     
     const currentActiveDay = this.getCurrentActiveDay();
     
-    // Auto-sync viewing day to active day if there's a mismatch
-    if (this.viewingDay !== currentActiveDay) {
+    // CRITICAL FIX: Auto-sync viewing day to active day BEFORE task completion
+    // This ensures UI consistency between day display and task content
+    if (this.viewingDay !== currentActiveDay && !this.manualNavigation) {
       this.viewingDay = currentActiveDay;
-      this.manualNavigation = false;
     }
 
     // Validate previous days are complete
@@ -147,7 +147,13 @@ export class TaskEngine {
     await storage.saveTaskCompletion(completion);
     
     // Check for day advancement
-    await this.checkDayAdvancement();
+    const didAdvance = await this.checkDayAdvancement();
+    
+    // CRITICAL FIX: Ensure viewing day stays in sync after day advancement
+    if (didAdvance) {
+      this.viewingDay = this.getCurrentActiveDay();
+      this.manualNavigation = false;
+    }
     
     return true;
   }

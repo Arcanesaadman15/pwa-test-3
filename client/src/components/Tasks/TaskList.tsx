@@ -248,7 +248,7 @@ export interface TaskListProps {
 }
 
 function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
-  const { taskEngine, unSkipTask } = useTaskEngine();
+  const { taskEngine, unSkipTask, triggerRefresh } = useTaskEngine();
   const { isOnline, addPendingAction, hasPendingActions } = useOffline();
   const { toast } = useToast();
   const [tasks, setTasks] = useState<{
@@ -273,6 +273,7 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
     }
   });
   const [activeTab, setActiveTab] = useState<'active' | 'completed' | 'skipped'>('active');
+  const [lastDayNumber, setLastDayNumber] = useState(1);
 
   useEffect(() => {
     loadTasks();
@@ -289,6 +290,11 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
         isUnlocked: taskEngine.getViewingDay() <= taskEngine.getActiveDay(),
         canInteract: taskEngine.getViewingDay() === taskEngine.getActiveDay()
       };
+
+      if (dayInfo.dayNumber !== lastDayNumber) {
+        setActiveTab('active');
+        setLastDayNumber(dayInfo.dayNumber);
+      }
 
       setTasks({
         active: currentDayTasks.active,
@@ -320,9 +326,8 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
         await onTaskComplete(taskId);
       }
       
-      setTimeout(() => {
-        loadTasks();
-      }, 500);
+      await loadTasks();
+      triggerRefresh();
     } catch (error) {
       console.error('Failed to complete task:', error);
       toast({
@@ -352,9 +357,8 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
         await onTaskSkip(taskId);
       }
       
-      setTimeout(() => {
-        loadTasks();
-      }, 500);
+      await loadTasks();
+      triggerRefresh();
     } catch (error) {
       console.error('Failed to skip task:', error);
       toast({

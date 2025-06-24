@@ -95,7 +95,7 @@ export default function Home() {
       const previousStreak = user?.current_streak || 0;
       const result = await completeTask(taskId);
       
-      await loadUserData(); // Refresh user data to get updated streak
+      await loadUserData();
       
       // Check if day was completed and show streak celebration
       setTimeout(async () => {
@@ -124,7 +124,7 @@ export default function Home() {
             });
           }
         }
-      }, 1500);
+      }, 1000);
       
       // Check for skill unlocks after task completion using new comprehensive system
       const skillResult = await skillUnlockSystem.checkForNewUnlocks();
@@ -133,7 +133,7 @@ export default function Home() {
         setIsNewSkillUnlock(true);
         setTimeout(() => {
           setShowSkillModal(true);
-        }, 1500);
+        }, 1200);
         // Note: No longer setting achievementToShare for skills since the modal handles sharing internally
       }
       
@@ -149,6 +149,7 @@ export default function Home() {
   const handleTaskSkip = async (taskId: string) => {
     try {
       await skipTask(taskId);
+      await loadUserData();
     } catch (error) {
       // Task skip failed - could show user-friendly error message
     }
