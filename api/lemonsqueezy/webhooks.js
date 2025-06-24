@@ -7,23 +7,13 @@ const LEMONSQUEEZY_API_KEY = process.env.LEMONSQUEEZY_API_KEY || process.env.VIT
 const LEMONSQUEEZY_STORE_ID = process.env.LEMONSQUEEZY_STORE_ID || process.env.VITE_LEMONSQUEEZY_STORE_ID;
 const LEMONSQUEEZY_WEBHOOK_SECRET = process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
 
-// Debug logging
-console.log('🍋 LemonSqueezy Configuration:');
-console.log('  Store ID:', LEMONSQUEEZY_STORE_ID);
-console.log('  Has API Key:', !!LEMONSQUEEZY_API_KEY);
-console.log('  API Key prefix:', LEMONSQUEEZY_API_KEY?.substring(0, 20));
-
 if (LEMONSQUEEZY_API_KEY) {
-  console.log('🍋 Setting up LemonSqueezy...');
   lemonSqueezySetup({
     apiKey: LEMONSQUEEZY_API_KEY,
     onError: (error) => {
       console.error('LemonSqueezy Setup Error:', error);
     },
   });
-  console.log('🍋 LemonSqueezy setup complete');
-} else {
-  console.error('❌ LemonSqueezy API key not found!');
 }
 
 // Initialize Supabase with service role key

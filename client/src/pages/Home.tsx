@@ -44,10 +44,7 @@ export default function Home() {
     loadUserData
   } = useUserProgress();
 
-  // Debug logging for user state
-  useEffect(() => {
-    console.log('🏠 Home Debug - user changed:', user);
-  }, [user]);
+
   
   const {
     taskEngine,
@@ -68,7 +65,6 @@ export default function Home() {
   // If user is null, force reload user data (since onboarding check is now at App level)
   useEffect(() => {
     if (!user) {
-      console.log('🏠 No user - forcing reload');
       loadUserData();
     }
   }, [user, loadUserData]);
@@ -91,22 +87,13 @@ export default function Home() {
   );
 
   const handleTaskComplete = async (taskId: string) => {
-    console.log(`🔥 [CRITICAL] handleTaskComplete called for task: ${taskId}`);
-    console.log(`🔥 [CRITICAL] User exists: ${!!user}, TaskEngine exists: ${!!taskEngine}`);
-    
     if (!taskEngine || !user) {
-      console.error(`❌ [CRITICAL] Missing dependencies - taskEngine: ${!!taskEngine}, user: ${!!user}`);
       return;
     }
     
     try {
-      console.log(`🔥 [CRITICAL] Current day: ${taskEngine.getActiveDay()}, Viewing day: ${taskEngine.getViewingDay()}`);
-      
       const previousStreak = user?.current_streak || 0;
-      console.log(`🔥 [CRITICAL] Calling completeTask...`);
-      
       const result = await completeTask(taskId);
-      console.log(`🔥 [CRITICAL] completeTask result: ${result}`);
       
       await loadUserData(); // Refresh user data to get updated streak
       
@@ -115,9 +102,6 @@ export default function Home() {
         const freshUser = await storage.getUser();
         const newStreak = freshUser?.currentStreak || 0;
         
-        console.log(`🎯 DEBUG: Previous streak=${previousStreak}, New streak=${newStreak}`);
-        console.log(`🎯 DEBUG: Streak increased? ${newStreak > previousStreak}`);
-        
         // Show sparkles for actual streak milestones when streak increased
         if (newStreak > previousStreak) {
           const isStreakMilestone = (
@@ -125,10 +109,7 @@ export default function Home() {
             newStreak === 21 || newStreak === 30 || (newStreak % 10 === 0 && newStreak > 30)
           );
           
-          console.log(`🎯 DEBUG: Is milestone (${newStreak})? ${isStreakMilestone}`);
-          
           if (isStreakMilestone) {
-            console.log(`🎉 TRIGGERING SPARKLE for ${newStreak} day streak milestone!`);
             setShowStreakSparkle(true);
             
             // Show achievement share for streak milestones
@@ -142,12 +123,6 @@ export default function Home() {
               type: 'streak'
             });
           }
-        }
-        
-        // TEMPORARY: Force show sparkle for testing any streak increase
-        if (newStreak > previousStreak && newStreak >= 1) {
-          console.log(`🧪 TEST: Forcing sparkle for ANY streak increase: ${newStreak}`);
-          setShowStreakSparkle(true);
         }
       }, 1500);
       
@@ -167,7 +142,7 @@ export default function Home() {
         navigator.vibrate([100, 50, 100]);
       }
     } catch (error) {
-      console.error('Failed to complete task:', error);
+      // Task completion failed - could show user-friendly error message
     }
   };
 
@@ -175,7 +150,7 @@ export default function Home() {
     try {
       await skipTask(taskId);
     } catch (error) {
-      console.error('Failed to skip task:', error);
+      // Task skip failed - could show user-friendly error message
     }
   };
 
@@ -198,7 +173,7 @@ export default function Home() {
       icon: defaultQuickActions[0].icon,
       action: () => {
         // Get current active task and complete it
-        console.log('Complete current task');
+        // TODO: Implement quick task completion
       },
       color: defaultQuickActions[0].color,
       gradient: defaultQuickActions[0].gradient
@@ -226,10 +201,6 @@ export default function Home() {
   };
 
   const renderTabContent = () => {
-    // Debug logging
-    console.log('🏠 Home renderTabContent - user:', user);
-    console.log('🏠 Home renderTabContent - taskEngine:', !!taskEngine);
-    
     // Show loading state if user is still loading
     if (!user) {
       return (

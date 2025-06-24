@@ -37,8 +37,6 @@ export class TaskEngine {
   private getCurrentActiveDay(): number {
     if (!this.user) return 1;
     
-    console.log(`🎯 [ACTIVE DAY CALC] Starting calculation...`);
-    
     // Find the furthest day that can be unlocked based on sequential completion
     let activeDay = 1;
     
@@ -47,19 +45,15 @@ export class TaskEngine {
       if (day === 1) {
         // Day 1 is always unlocked
         activeDay = day;
-        console.log(`🎯 [ACTIVE DAY CALC] Day 1 always unlocked`);
       } else if (this.isDayCompleted(day - 1)) {
         // If previous day is complete, this day becomes active
         activeDay = day;
-        console.log(`🎯 [ACTIVE DAY CALC] Day ${day - 1} complete, unlocking Day ${day}`);
       } else {
         // Previous day not complete, so this is as far as we can go
-        console.log(`🎯 [ACTIVE DAY CALC] Day ${day - 1} NOT complete, stopping at Day ${activeDay}`);
         break;
       }
     }
     
-    console.log(`🎯 [ACTIVE DAY CALC] Final active day: ${activeDay}`);
     return activeDay;
   }
 
@@ -68,23 +62,9 @@ export class TaskEngine {
     const taskIds = this.getTaskIdsForDay(day);
     const dayCompletions = this.taskCompletions.filter(c => c.day === day);
     
-    console.log(`🔍 [DAY COMPLETION CHECK] Day ${day}:`);
-    console.log(`🔍 [DAY COMPLETION CHECK] Expected tasks:`, taskIds);
-    console.log(`🔍 [DAY COMPLETION CHECK] Actual completions:`, dayCompletions);
-    
-    const isComplete = taskIds.every(taskId => 
+    return taskIds.every(taskId => 
       dayCompletions.some(c => c.taskId === taskId)
     );
-    
-    console.log(`🔍 [DAY COMPLETION CHECK] Day ${day} is complete: ${isComplete}`);
-    
-    // Check each task individually for debugging
-    taskIds.forEach(taskId => {
-      const hasCompletion = dayCompletions.some(c => c.taskId === taskId);
-      console.log(`🔍 [TASK CHECK] Task ${taskId}: ${hasCompletion ? '✅ Complete' : '❌ Missing'}`);
-    });
-    
-    return isComplete;
   }
 
   // Get the furthest unlocked day (same as current active day)
@@ -133,11 +113,9 @@ export class TaskEngine {
     await this.initialize();
     
     const currentActiveDay = this.getCurrentActiveDay();
-    console.log(`🔥 [TASK ENGINE] completeTask called - Task: ${taskId}, Active Day: ${currentActiveDay}, Viewing Day: ${this.viewingDay}`);
     
     // Auto-sync viewing day to active day if there's a mismatch
     if (this.viewingDay !== currentActiveDay) {
-      console.log(`🔄 [AUTO-SYNC] Syncing viewing day from ${this.viewingDay} to active day ${currentActiveDay}`);
       this.viewingDay = currentActiveDay;
       this.manualNavigation = false;
     }
@@ -146,14 +124,8 @@ export class TaskEngine {
     if (currentActiveDay > 1) {
       const previousDay = currentActiveDay - 1;
       const isPreviousDayComplete = this.isDayCompleted(previousDay);
-      console.log(`🔥 [TASK ENGINE] Checking Day ${previousDay} completion: ${isPreviousDayComplete}`);
       
       if (!isPreviousDayComplete) {
-        console.error(`❌ [TASK ENGINE] Day ${previousDay} is not complete - cannot proceed with Day ${currentActiveDay}`);
-        const previousDayTasks = this.getTaskIdsForDay(previousDay);
-        const previousDayCompletions = this.taskCompletions.filter(c => c.day === previousDay);
-        console.log(`🔥 [TASK ENGINE] Day ${previousDay} tasks:`, previousDayTasks);
-        console.log(`🔥 [TASK ENGINE] Day ${previousDay} completions:`, previousDayCompletions);
         throw new Error("You need to complete or skip all tasks from previous days first");
       }
     }
@@ -265,10 +237,8 @@ export class TaskEngine {
         
         // Update streak: reset if any tasks were skipped, otherwise increment
         if (dayHasSkippedTasks) {
-          console.log(`🔄 Day ${currentActiveDay} had skipped tasks - resetting streak`);
           this.user.currentStreak = 0;
         } else {
-          console.log(`✅ Day ${currentActiveDay} completed with no skips - incrementing streak`);
           this.user.currentStreak = (this.user.currentStreak || 0) + 1;
           
           // Update longest streak if current streak is higher
@@ -280,8 +250,6 @@ export class TaskEngine {
         await storage.saveUser(this.user);
         await storage.setCurrentDay(newDay);
         
-        console.log(`📊 Streak update: Current=${this.user.currentStreak}, Longest=${this.user.longestStreak}`);
-        
         // Check for streak milestone celebration
         if (!dayHasSkippedTasks && this.user.currentStreak > 0) {
           const streakCount = this.user.currentStreak;
@@ -291,7 +259,6 @@ export class TaskEngine {
           );
           
           if (isStreakMilestone) {
-            console.log(`🎉 STREAK MILESTONE REACHED: ${streakCount} days!`);
             // Trigger celebration via custom event
             window.dispatchEvent(new CustomEvent('streakMilestone', { 
               detail: { streak: streakCount } 
@@ -426,8 +393,6 @@ export class TaskEngine {
   }
 
   async switchProgram(program: 'beginner' | 'intermediate' | 'advanced'): Promise<void> {
-    console.log(`🔄 Starting program switch from ${this.currentProgram} to ${program}`);
-    
     // Reset all progress when switching programs
     await this.resetProgress();
     
@@ -441,7 +406,6 @@ export class TaskEngine {
       this.user.completedDays = 0;
       this.user.currentStreak = 0;
       await storage.saveUser(this.user);
-      console.log(`✅ User updated: program=${this.user.program}, day=${this.user.currentDay}`);
     }
     
     // Reset viewing day to 1
@@ -450,8 +414,6 @@ export class TaskEngine {
     
     // Re-initialize to ensure everything is loaded properly
     await this.initialize();
-    
-    console.log(`🎯 Program switch complete - now on ${this.currentProgram} program, viewing day ${this.viewingDay}`);
   }
 
   async resetProgress(): Promise<void> {

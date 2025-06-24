@@ -26,17 +26,17 @@ export function useUserProgress() {
 
   const completeOnboarding = async () => {
     try {
-      console.log('🎯 completeOnboarding called');
+      // Completing onboarding
       await storage.setOnboardingComplete();
       setIsOnboardingComplete(true);
       
       // If we have a user profile, update it to mark onboarding as complete
       if (updateProfile && userProfile) {
-        console.log('🎯 Updating profile to mark onboarding complete');
+        // Updating profile to mark onboarding complete
         await updateProfile({ onboarding_complete: true });
       }
       
-      console.log('🎯 Onboarding completed successfully');
+              // Onboarding completed successfully
     } catch (error) {
       console.error('Failed to complete onboarding:', error);
     }

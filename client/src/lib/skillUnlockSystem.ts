@@ -149,7 +149,7 @@ export class SkillUnlockSystem {
       isRecentlyUnlocked: true
     };
 
-    console.log(`🎉 SKILL UNLOCKED: ${skill.title} (${skill.category})`);
+          // Skill unlocked
     
     return unlockedSkill;
   }
@@ -298,7 +298,7 @@ export class SkillUnlockSystem {
       }
     });
 
-    console.log('🔄 Skill progress reset while preserving unlocked skills');
+    // Skill progress reset while preserving unlocked skills
   }
 }
 

@@ -85,20 +85,17 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       await storage.setOnboardingComplete();
       
       // Most importantly: Update the user profile to mark onboarding as complete
-      console.log('🎯 Onboarding completed, updating user profile...');
       await updateProfile({ onboarding_complete: true });
       
       onComplete(cleanData);
     } catch (error) {
-      console.error('Error completing onboarding:', error);
+      // Handle onboarding completion error
     } finally {
       setIsLoading(false);
     }
   };
 
   const handlePaywallSuccess = () => {
-    console.log('🎉 Paywall success triggered!');
-    console.log('📊 Current onboarding data:', onboardingData);
     handleComplete();
   };
 

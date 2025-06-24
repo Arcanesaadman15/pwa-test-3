@@ -38,7 +38,7 @@ export function useTaskEngine() {
   };
 
   const switchProgram = async (program: 'beginner' | 'intermediate' | 'advanced') => {
-    console.log(`🔄 useTaskEngine: Switching to ${program} program`);
+    
     await taskEngine.switchProgram(program);
     await refreshTasks();
   };

@@ -6,7 +6,7 @@ export default function PricingPage() {
   const { subscription } = useAuth();
 
   const handlePlanSelect = (plan: SubscriptionPlan) => {
-    console.log('Plan selected:', plan);
+    // Plan selected
     // Additional logic can be added here if needed
   };
 

@@ -84,13 +84,13 @@ export function usePWA() {
     const engagementTimer = setInterval(trackEngagementTime, 5000);
 
     const handleBeforeInstallPrompt = (e: Event) => {
-      console.log('🎉 beforeinstallprompt event fired - App can be installed!');
+      // App can be installed
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       
       // Show install prompt based on engagement criteria
       if (!installDismissed && !standalone && pageViews >= 2) {
-        console.log('Setting installable to true');
+        // Setting installable to true
         setIsInstallable(true);
         
         // Show banner after user has engaged for a bit
@@ -103,7 +103,7 @@ export function usePWA() {
     };
 
     const handleAppInstalled = () => {
-      console.log('App installed successfully! 🎉');
+              // App installed successfully
       setIsInstallable(false);
       setDeferredPrompt(null);
       setIsStandalone(true);
@@ -125,7 +125,7 @@ export function usePWA() {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js')
           .then((registration) => {
-            console.log('SW registered: ', registration);
+            // Service worker registered
             
             // Check for updates
             registration.addEventListener('updatefound', () => {
@@ -133,7 +133,7 @@ export function usePWA() {
               if (newWorker) {
                 newWorker.addEventListener('statechange', () => {
                   if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    console.log('🔄 New app version available!');
+                    // New app version available
                     setUpdateInfo({
                       isUpdateAvailable: true,
                       updateServiceWorker: async () => {
@@ -155,12 +155,12 @@ export function usePWA() {
 
             // Listen for controlling service worker change
             navigator.serviceWorker.addEventListener('controllerchange', () => {
-              console.log('🔄 App updated! Reloading...');
+              // App updated, reloading
               window.location.reload();
             });
           })
           .catch((registrationError) => {
-            console.log('SW registration failed: ', registrationError);
+            // Service worker registration failed
           });
       }
     };
@@ -191,19 +191,17 @@ export function usePWA() {
   }, []);
 
   const promptInstall = async () => {
-    console.log('Install button clicked. iOS:', isIOS, 'DeferredPrompt:', !!deferredPrompt);
+          // Install button clicked
     
     // For Android/Desktop with deferred prompt
     if (deferredPrompt) {
       try {
-        console.log('Triggering install prompt...');
+        // Triggering install prompt
         await deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         
-        console.log('Install prompt result:', outcome);
-        
-        if (outcome === 'accepted') {
-          console.log('User accepted the install prompt');
+                  if (outcome === 'accepted') {
+            // User accepted the install prompt
           setIsStandalone(true);
           
           // Track successful install
@@ -213,8 +211,8 @@ export function usePWA() {
               event_label: 'Install Accepted'
             });
           }
-        } else {
-          console.log('User dismissed the install prompt');
+                  } else {
+            // User dismissed the install prompt
           
           // Track dismissal
           if ('gtag' in window) {

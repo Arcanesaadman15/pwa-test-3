@@ -4,15 +4,7 @@ import type { User, SubscriptionPlan, UserSubscription } from '../../../shared/s
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://vkczvtgtbzcqempgampj.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrY3p2dGd0YnpjcWVtcGdhbXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgyOTMzNjksImV4cCI6MjA2Mzg2OTM2OX0.isSm2oZeGUZEtoxUWQQMdSoT5t7pAQwvvtgBbNETh8Q';
 
-// Debug logging for environment variables
-console.log('🔧 Supabase Environment Debug:', {
-  hasViteSupabaseUrl: !!import.meta.env.VITE_SUPABASE_URL,
-  hasViteSupabaseKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
-  actualUrl: import.meta.env.VITE_SUPABASE_URL,
-  keyLength: import.meta.env.VITE_SUPABASE_ANON_KEY?.length,
-  nodeEnv: import.meta.env.NODE_ENV,
-  mode: import.meta.env.MODE
-});
+
 
 // Create a mock client for development when Supabase isn't configured yet
 const createMockClient = () => ({
@@ -43,12 +35,6 @@ export const supabase = (!supabaseUrl || !supabaseAnonKey)
     });
 
 export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
-
-console.log('🔧 Supabase Client Status:', {
-  configured: isSupabaseConfigured,
-  url: supabaseUrl?.substring(0, 30) + '...',
-  keyExists: !!supabaseAnonKey
-});
 
 // Export types for use in components
 export type { User, SubscriptionPlan, UserSubscription }; 
