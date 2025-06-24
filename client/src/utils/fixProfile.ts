@@ -126,7 +126,17 @@ window.debugAuth = () => {
   console.log('  - Auth-related localStorage keys:', keys);
 };
 
-console.log('🔧 Profile fix utilities loaded! Available commands:');
-console.log('  - fixProfile() - Create missing profile');
-console.log('  - resetOnboarding() - Reset onboarding status to see flow again');
-console.log('  - debugAuth() - Show current auth state'); 
+// Wait for DOM to be ready before announcing utilities
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('🔧 Profile fix utilities loaded! Available commands:');
+    console.log('  - fixProfile() - Create missing profile');
+    console.log('  - resetOnboarding() - Reset onboarding status to see flow again');
+    console.log('  - debugAuth() - Show current auth state');
+  });
+} else {
+  console.log('🔧 Profile fix utilities loaded! Available commands:');
+  console.log('  - fixProfile() - Create missing profile');
+  console.log('  - resetOnboarding() - Reset onboarding status to see flow again');
+  console.log('  - debugAuth() - Show current auth state');
+} 

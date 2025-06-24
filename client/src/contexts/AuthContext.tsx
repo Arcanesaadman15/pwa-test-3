@@ -305,6 +305,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log('🎯 Creating user profile in Supabase:', userData);
       
+      // First try the RPC function
       const { data, error } = await supabase.rpc('create_user_profile', {
         user_id: supabaseUserId,
         user_name: userData.name,
@@ -317,7 +318,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw error;
       }
 
-      console.log('🎯 User profile created successfully:', data);
+      console.log('🎯 User profile created via RPC:', data);
+      
+      // CRITICAL: Ensure onboarding_complete is false for new users
+      if (data && data.onboarding_complete !== false) {
+        console.log('🔧 Fixing onboarding_complete to false for new user');
+        const { data: updatedData, error: updateError } = await supabase
+          .from('users')
+          .update({ onboarding_complete: false })
+          .eq('id', supabaseUserId)
+          .select()
+          .single();
+        
+        if (updateError) {
+          console.error('🚨 Error updating onboarding status:', updateError);
+        } else {
+          console.log('✅ Onboarding status fixed to false');
+          setUserProfile(updatedData);
+          return;
+        }
+      }
+
       setUserProfile(data);
       return;
     } catch (error) {
