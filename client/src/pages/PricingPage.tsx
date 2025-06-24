@@ -11,11 +11,9 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
-      <PricingPlans 
-        onPlanSelect={handlePlanSelect}
-        currentPlan={subscription.plan || undefined}
-      />
-    </div>
+    <PricingPlans 
+      onPlanSelect={handlePlanSelect}
+      currentPlan={subscription.plan || undefined}
+    />
   );
 } 
