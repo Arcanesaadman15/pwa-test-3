@@ -52,10 +52,6 @@ export default async function handler(req, res) {
     console.log('🔗 Redirect URLs:', { success: redirectSuccessUrl, cancel: redirectCancelUrl });
 
     const checkout = await createCheckout(LEMONSQUEEZY_STORE_ID, variantId, {
-      productOptions: {
-        name: 'PeakForge Pro Subscription',
-        description: 'Premium wellness program with all features unlocked',
-      },
       checkoutOptions: {
         embed: false,
         media: false,
@@ -67,10 +63,16 @@ export default async function handler(req, res) {
         name: userName || 'PeakForge User',
         custom: {
           user_id: userId,
-          redirect_url: redirectSuccessUrl,
         },
       },
-      redirectUrl: redirectSuccessUrl,
+      productOptions: {
+        name: 'PeakForge Pro Subscription',
+        description: 'Premium wellness program with all features unlocked',
+        redirectUrl: redirectSuccessUrl,
+        receiptButtonText: 'Go to PeakForge',
+        receiptThankYouNote: 'Thank you for subscribing to PeakForge Pro! Click the button below to return to your dashboard.',
+        enabledVariants: [variantId],
+      },
       expiresAt: null,
       preview: false,
       testMode: process.env.NODE_ENV === 'development',
