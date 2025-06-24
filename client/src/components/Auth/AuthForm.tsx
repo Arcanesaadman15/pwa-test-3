@@ -146,7 +146,7 @@ export function AuthForm({ onComplete, initialData }: AuthFormProps) {
                       placeholder="Enter your name"
                       value={formData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
-                      className="pl-10 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      className="pl-10 h-12 bg-white text-gray-900 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                       disabled={loading}
                     />
                   </div>
@@ -165,7 +165,7 @@ export function AuthForm({ onComplete, initialData }: AuthFormProps) {
                     placeholder="Enter your email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="pl-10 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    className="pl-10 h-12 bg-white text-gray-900 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                     disabled={loading}
                   />
                 </div>
@@ -183,7 +183,7 @@ export function AuthForm({ onComplete, initialData }: AuthFormProps) {
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={(e) => handleInputChange('password', e.target.value)}
-                    className="pl-10 pr-10 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    className="pl-10 pr-10 h-12 bg-white text-gray-900 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                     disabled={loading}
                   />
                   <button
@@ -211,11 +211,11 @@ export function AuthForm({ onComplete, initialData }: AuthFormProps) {
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <Input
                       id="confirmPassword"
-                      type="password"
+                      type={showPassword ? 'text' : 'password'}
                       placeholder="Confirm your password"
                       value={formData.confirmPassword}
                       onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                      className="pl-10 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      className="pl-10 pr-10 h-12 bg-white text-gray-900 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                       disabled={loading}
                     />
                   </div>

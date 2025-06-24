@@ -19,7 +19,7 @@ import SubscriptionSuccessPage from "@/pages/SubscriptionSuccessPage";
 import SubscriptionCancelPage from "@/pages/SubscriptionCancelPage";
 import LemonSqueezySetup from "@/pages/LemonSqueezySetup";
 import Onboarding from "@/pages/Onboarding";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 function Router() {
   return (
@@ -37,7 +37,6 @@ function Router() {
 
 function AuthenticatedApp() {
   const { user, userProfile, subscription, loading, signOut } = useAuth();
-  const [showOnboarding, setShowOnboarding] = useState(false);
   const { 
     isInstallable, 
     promptInstall, 
@@ -91,12 +90,12 @@ function AuthenticatedApp() {
   // STEP 2: User is authenticated, check if onboarding is complete
   // For existing users logging in: userProfile.onboarding_complete should be true -> skip onboarding
   // For new users signing up: userProfile.onboarding_complete should be false -> show onboarding
-  if (!userProfile?.onboarding_complete && !showOnboarding) {
+  if (!userProfile?.onboarding_complete) {
     console.log('🎯 App: User authenticated but onboarding not complete, showing onboarding');
-    return <Onboarding onComplete={async () => {
-      console.log('🎯 App: Onboarding completed, hiding onboarding flow');
-      setShowOnboarding(false);
-      // The onboarding component handles updating the profile with onboarding_complete: true
+    return <Onboarding onComplete={async (data) => {
+      console.log('🎯 App: Onboarding completed successfully');
+      // The onboarding component already handles updating the profile with onboarding_complete: true
+      // React will re-render this component when userProfile updates
     }} />;
   }
 
