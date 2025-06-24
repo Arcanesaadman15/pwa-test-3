@@ -54,31 +54,31 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
   const testosteroneScore = calculateTestosteroneScore();
   const getScoreColor = (score: number) => {
     if (score >= 80) return "text-green-400";
-    if (score >= 60) return "text-yellow-400";
+    if (score >= 60) return "text-orange-400";
     return "text-red-400";
   };
 
   const getScoreGradient = (score: number) => {
     if (score >= 80) return "from-green-400 to-green-500";
-    if (score >= 60) return "from-yellow-400 to-orange-500";
+    if (score >= 60) return "from-orange-400 to-orange-500";
     return "from-red-400 to-red-500";
   };
 
   const getScoreStatus = (score: number) => {
-    if (score >= 80) return { icon: CheckCircle, text: "Excellent", color: "text-green-400", bgGradient: "from-green-500/20 to-emerald-600/20" };
-    if (score >= 60) return { icon: TrendingUp, text: "Good", color: "text-yellow-400", bgGradient: "from-yellow-500/20 to-orange-600/20" };
-    return { icon: AlertTriangle, text: "Needs Improvement", color: "text-red-400", bgGradient: "from-red-500/20 to-orange-600/20" };
+    if (score >= 80) return { icon: CheckCircle, text: "Excellent", color: "text-green-400", bgGradient: "from-green-500/20 to-green-600/20" };
+    if (score >= 60) return { icon: TrendingUp, text: "Good", color: "text-orange-400", bgGradient: "from-orange-500/20 to-orange-600/20" };
+    return { icon: AlertTriangle, text: "Needs Improvement", color: "text-red-400", bgGradient: "from-red-500/20 to-red-600/20" };
   };
 
   const status = getScoreStatus(testosteroneScore);
   const StatusIcon = status.icon;
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white overflow-y-auto">
+    <div className="fixed inset-0 bg-black text-white overflow-y-auto">
       {/* Enhanced background effects */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
-          className="absolute top-20 right-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"
+          className="absolute top-20 right-10 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.3, 1],
             opacity: [0.3, 0.6, 0.3],
@@ -91,7 +91,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
           }}
         />
         <motion.div
-          className="absolute bottom-20 left-10 w-48 h-48 bg-purple-500/10 rounded-full blur-2xl"
+          className="absolute bottom-20 left-10 w-48 h-48 bg-orange-500/5 rounded-full blur-2xl"
           animate={{
             scale: [0.8, 1.2, 0.8],
             opacity: [0.2, 0.5, 0.2],
@@ -105,7 +105,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
           }}
         />
         <motion.div
-          className="absolute top-1/2 left-1/2 w-32 h-32 bg-cyan-500/5 rounded-full blur-xl"
+          className="absolute top-1/2 left-1/2 w-32 h-32 bg-gray-500/5 rounded-full blur-xl"
           animate={{
             scale: [0.5, 1, 0.5],
             opacity: [0.1, 0.3, 0.1],
@@ -138,7 +138,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2, duration: 0.6 }}
               >
-                <span className="bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent">
+                <span className="text-white">
                   Your Wake-Up Call
                 </span>
               </motion.h1>
@@ -156,7 +156,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
-              className={`bg-gradient-to-br ${status.bgGradient} rounded-2xl md:rounded-3xl p-6 md:p-8 mb-6 md:mb-8 backdrop-blur-lg border-2 border-white/20 relative overflow-hidden shadow-2xl`}
+              className={`bg-gray-900 border border-gray-700 rounded-2xl md:rounded-3xl p-6 md:p-8 mb-6 md:mb-8 relative overflow-hidden shadow-2xl`}
             >
               {/* Enhanced background shimmer */}
               <motion.div
@@ -444,7 +444,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                   </motion.div>
 
                   <motion.div 
-                    className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl p-3 md:p-4 border border-blue-400/30 backdrop-blur-sm relative overflow-hidden"
+                    className="bg-gray-800 rounded-xl p-3 md:p-4 border border-orange-500/30 relative overflow-hidden"
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 3.0, duration: 0.6 }}
@@ -452,7 +452,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                   >
                     {/* Background glow */}
                     <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-purple-400/10 blur-xl"
+                      className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-orange-500/10 blur-xl"
                       animate={{ opacity: [0.3, 0.6, 0.3] }}
                       transition={{
                         duration: 3,
@@ -462,7 +462,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                     />
 
                     <motion.h3 
-                      className="font-semibold mb-1 md:mb-2 flex items-center relative z-10 text-sm md:text-base"
+                      className="font-semibold mb-1 md:mb-2 flex items-center relative z-10 text-sm md:text-base text-white"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 3.2, duration: 0.5 }}
@@ -481,7 +481,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                       Recommended Program:
                     </motion.h3>
                     <motion.p 
-                      className="text-base md:text-lg font-bold text-blue-300 relative z-10"
+                      className="text-base md:text-lg font-bold text-orange-400 relative z-10"
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 3.4, duration: 0.5 }}
@@ -515,9 +515,8 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                 <Button
                   onClick={onComplete}
                   size="lg"
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 
-                           text-white font-semibold py-3 md:py-4 text-base md:text-lg rounded-xl shadow-xl hover:shadow-2xl 
-                           transform transition-all duration-300 relative overflow-hidden min-h-[56px] touch-manipulation"
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 md:py-4 text-base md:text-lg rounded-xl shadow-xl hover:shadow-2xl 
+                           transform transition-all duration-300 hover:scale-105 relative overflow-hidden min-h-[56px] touch-manipulation"
                 >
                   {/* Button background shimmer */}
                   <motion.div

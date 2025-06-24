@@ -45,11 +45,11 @@ export function QuickQuiz({ onComplete }: QuickQuizProps) {
   const question = QUICK_QUIZ_QUESTIONS[currentQuestion];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-black flex flex-col relative overflow-hidden">
       {/* Subtle background effects */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
-          className="absolute top-20 right-10 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl"
+          className="absolute top-20 right-10 w-32 h-32 bg-orange-500/5 rounded-full blur-2xl"
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.5, 0.3],
@@ -61,7 +61,7 @@ export function QuickQuiz({ onComplete }: QuickQuizProps) {
           }}
         />
         <motion.div
-          className="absolute bottom-40 left-10 w-24 h-24 bg-purple-500/5 rounded-full blur-xl"
+          className="absolute bottom-40 left-10 w-24 h-24 bg-orange-500/3 rounded-full blur-xl"
           animate={{
             scale: [0.8, 1.1, 0.8],
             opacity: [0.2, 0.4, 0.2],
@@ -105,7 +105,7 @@ export function QuickQuiz({ onComplete }: QuickQuizProps) {
         {/* Enhanced Progress bar */}
         <div className="w-full h-3 bg-gray-800/60 rounded-full overflow-hidden backdrop-blur-sm border border-gray-700/50">
           <motion.div
-            className="h-full bg-gradient-to-r from-blue-500 via-blue-600 to-purple-600 rounded-full shadow-lg shadow-blue-500/30"
+            className="h-full bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 rounded-full shadow-lg shadow-orange-500/30"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.8, ease: "easeOut" }}
@@ -142,14 +142,12 @@ export function QuickQuiz({ onComplete }: QuickQuizProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.6 }}
             >
-              <span className="bg-gradient-to-r from-white via-blue-50 to-white bg-clip-text text-transparent">
-                {question.question}
-              </span>
+              {question.question}
             </motion.h1>
             
             {/* Subtitle with subtle animation */}
             <motion.p 
-              className="text-lg text-gray-400 max-w-md mx-auto"
+              className="text-lg text-gray-300 max-w-md mx-auto"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
@@ -187,8 +185,8 @@ export function QuickQuiz({ onComplete }: QuickQuizProps) {
                   disabled={isTransitioning}
                   className={`w-full p-6 text-left border-2 transition-all duration-300 min-h-[80px] flex items-start relative overflow-hidden group ${
                     selectedOption === option.value
-                      ? 'border-blue-500 bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white scale-105 shadow-lg shadow-blue-500/25'
-                      : 'border-gray-600/70 bg-gray-800/50 hover:border-gray-500 hover:bg-gray-700/60 text-gray-200 hover:shadow-lg hover:shadow-gray-500/10'
+                      ? 'border-orange-500 bg-orange-500/20 text-white scale-105 shadow-lg shadow-orange-500/25'
+                      : 'border-gray-600/70 bg-gray-900/50 hover:border-gray-500 hover:bg-gray-800/60 text-gray-200 hover:shadow-lg hover:shadow-gray-500/10'
                   }`}
                 >
                   {/* Background shimmer effect */}
@@ -229,7 +227,7 @@ export function QuickQuiz({ onComplete }: QuickQuizProps) {
                       animate={{ scale: 1, rotate: 0 }}
                       transition={{ type: "spring", stiffness: 300, damping: 25 }}
                     >
-                      <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                      <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
                         <motion.div
                           className="w-2 h-2 bg-white rounded-full"
                           animate={{ scale: [0, 1.2, 1] }}
@@ -278,17 +276,17 @@ export function QuickQuiz({ onComplete }: QuickQuizProps) {
               key={index}
               className={`rounded-full transition-all duration-500 ${
                 index < currentQuestion
-                  ? 'w-3 h-3 bg-gradient-to-r from-green-400 to-green-500 shadow-lg shadow-green-400/50'
+                  ? 'w-3 h-3 bg-green-500 shadow-lg shadow-green-400/50'
                   : index === currentQuestion
-                  ? 'w-4 h-4 bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg shadow-blue-500/50'
+                  ? 'w-4 h-4 bg-orange-500 shadow-lg shadow-orange-500/50'
                   : 'w-2 h-2 bg-gray-600'
               }`}
               animate={index === currentQuestion ? {
                 scale: [1, 1.2, 1],
                 boxShadow: [
-                  "0 0 0 0 rgba(59, 130, 246, 0.5)",
-                  "0 0 0 8px rgba(59, 130, 246, 0)",
-                  "0 0 0 0 rgba(59, 130, 246, 0)"
+                  "0 0 0 0 rgba(249, 115, 22, 0.5)",
+                  "0 0 0 8px rgba(249, 115, 22, 0)",
+                  "0 0 0 0 rgba(249, 115, 22, 0)"
                 ]
               } : {}}
               transition={{
