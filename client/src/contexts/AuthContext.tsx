@@ -305,42 +305,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log('🎯 Creating user profile in Supabase:', userData);
       
-      // First try the RPC function
-      const { data, error } = await supabase.rpc('create_user_profile', {
-        user_id: supabaseUserId,
-        user_name: userData.name,
-        user_email: userData.email,
-        user_program: userData.program
-      });
+      // Create profile directly with correct onboarding status
+      const profileData = {
+        id: supabaseUserId,
+        name: userData.name,
+        email: userData.email,
+        program: userData.program,
+        current_day: 1,
+        current_streak: 0,
+        longest_streak: 0,
+        completed_days: 0,
+        start_date: new Date().toISOString(),
+        achievements: 0,
+        level: 1,
+        onboarding_complete: false, // CRITICAL: New users must see onboarding
+        preferences: {},
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      const { data, error } = await supabase
+        .from('users')
+        .insert(profileData)
+        .select()
+        .single();
 
       if (error) {
         console.error('🚨 Error creating user profile:', error);
         throw error;
       }
 
-      console.log('🎯 User profile created via RPC:', data);
-      
-      // CRITICAL: Ensure onboarding_complete is false for new users
-      if (data && data.onboarding_complete !== false) {
-        console.log('🔧 Fixing onboarding_complete to false for new user');
-        const { data: updatedData, error: updateError } = await supabase
-          .from('users')
-          .update({ onboarding_complete: false })
-          .eq('id', supabaseUserId)
-          .select()
-          .single();
-        
-        if (updateError) {
-          console.error('🚨 Error updating onboarding status:', updateError);
-          // Still set the profile with the original data, but log the issue
-          setUserProfile(data);
-        } else {
-          console.log('✅ Onboarding status fixed to false');
-          setUserProfile(updatedData);
-          return;
-        }
-      }
-
+      console.log('🎯 User profile created successfully with onboarding_complete:', data.onboarding_complete);
       setUserProfile(data);
       return;
     } catch (error) {
