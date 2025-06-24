@@ -10,7 +10,6 @@ import { InstallPrompt } from "@/components/Modals/InstallPrompt";
 import { UpdateNotification } from "@/components/Modals/UpdateNotification";
 import { Button } from "@/components/ui/button";
 import "@/utils/fixProfile"; // Import to make fixProfile available globally
-import "@/utils/testLemonSqueezy"; // Import to make testLemonSqueezy available globally
 import Home from "@/pages/Home";
 import NotFound from "@/pages/not-found";
 import PricingPage from "@/pages/PricingPage";
