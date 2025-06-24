@@ -124,16 +124,16 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
       {/* Scrollable content container with proper mobile-first spacing */}
       <div className="relative z-10 min-h-full">
         {/* Mobile-first padding with safe areas */}
-        <div className="px-4 py-6 sm:py-8 md:py-12">
+        <div className="px-4 py-8 sm:py-10 md:py-12">
           <div className="container mx-auto max-w-md">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="text-center mb-6 md:mb-8"
+              className="text-center mb-8 md:mb-10"
             >
               <motion.h1 
-                className="text-2xl md:text-3xl font-bold mb-3 md:mb-4"
+                className="text-3xl md:text-4xl font-bold mb-4 md:mb-5"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2, duration: 0.6 }}
@@ -143,7 +143,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                 </span>
               </motion.h1>
               <motion.p 
-                className="text-gray-300 text-base md:text-lg leading-relaxed px-2"
+                className="text-gray-300 text-lg md:text-xl leading-relaxed px-4"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}

@@ -128,15 +128,15 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white overflow-hidden">
+    <div className="min-h-screen bg-black text-white overflow-hidden">
       {/* Header with Progress */}
-      <div className="sticky top-0 z-40 bg-gray-900/80 backdrop-blur-xl border-b border-gray-700/50">
+      <div className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl border-b border-gray-800">
         <div className="max-w-md mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-4">
             {safeCurrentQuestion > 0 && (
               <button
                 onClick={handleBack}
-                className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                className="p-2 rounded-full bg-gray-900 hover:bg-gray-800 transition-colors"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
@@ -150,9 +150,9 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
           </div>
           
           {/* Progress Bar */}
-          <div className="w-full bg-gray-700/30 rounded-full h-2">
+          <div className="w-full bg-gray-900 rounded-full h-2">
             <motion.div
-              className="h-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"
+              className="h-2 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${((safeCurrentQuestion + 1) / COMMITMENT_QUESTIONS.length) * 100}%` }}
               transition={{ duration: 0.5, ease: "easeOut" }}
@@ -174,7 +174,7 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
             {/* Question Header */}
             <div className="text-center mb-8">
               <motion.h1
-                className="text-2xl font-bold mb-3 leading-tight"
+                className="text-3xl md:text-4xl font-bold mb-4 leading-tight"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
@@ -182,7 +182,7 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
                 {question.question}
               </motion.h1>
               <motion.p
-                className="text-gray-400 text-sm leading-relaxed"
+                className="text-lg text-gray-300 leading-relaxed"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
@@ -197,7 +197,11 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
                 <motion.button
                   key={option.value}
                   onClick={() => handleOptionSelect(option.value)}
-                  className={`w-full p-4 rounded-xl text-left ${getOptionStyle(option)}`}
+                  className={`w-full p-6 rounded-xl text-left relative ${
+                    selectedOption === option.value 
+                      ? 'bg-orange-500/20 border-2 border-orange-500 text-white'
+                      : 'bg-gray-900 border-2 border-gray-800 hover:border-gray-700 text-gray-200'
+                  }`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + index * 0.1 }}
@@ -205,10 +209,10 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <p className="font-medium text-white mb-1 leading-snug">
+                      <p className="font-medium text-lg text-white mb-2 leading-snug">
                         {option.label}
                       </p>
-                      <p className="text-sm text-gray-400 leading-relaxed">
+                      <p className="text-sm text-gray-300 leading-relaxed">
                         {option.subtitle}
                       </p>
                     </div>
@@ -216,12 +220,12 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
                     {/* Selection Indicator */}
                     <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ml-3 transition-all duration-200 ${
                       selectedOption === option.value 
-                        ? 'border-white bg-white' 
-                        : 'border-gray-400'
+                        ? 'border-orange-500 bg-orange-500' 
+                        : 'border-gray-600'
                     }`}>
                       {selectedOption === option.value && (
                         <motion.div
-                          className="w-2 h-2 bg-gray-900 rounded-full"
+                          className="w-2 h-2 bg-white rounded-full"
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
                           transition={{ duration: 0.2 }}
@@ -229,9 +233,6 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
                       )}
                     </div>
                   </div>
-                  
-                  {/* Hover Gradient Effect */}
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 hover:opacity-100 transition-opacity duration-300" />
                 </motion.button>
               ))}
             </div>

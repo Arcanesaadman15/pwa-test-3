@@ -65,21 +65,21 @@ export function PersonalizationToggles({ onComplete }: PersonalizationTogglesPro
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
           {/* Title */}
-          <h1 className="text-3xl font-bold text-white mb-4">
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white">
             {toggle.title}
           </h1>
           
           {/* Description */}
-          <p className="text-lg text-gray-400 max-w-md mx-auto mb-12">
+          <p className="text-lg text-gray-300 max-w-md mx-auto mb-12">
             {toggle.description}
           </p>
         </motion.div>
 
         {/* Toggle Options */}
-        <div className="space-y-4 max-w-lg mx-auto w-full">
+        <div className="space-y-6 max-w-lg mx-auto w-full">
           {/* Left option */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -91,8 +91,8 @@ export function PersonalizationToggles({ onComplete }: PersonalizationTogglesPro
               variant="outline"
               className={`w-full p-6 text-left border-2 transition-all duration-300 ${
                 selectedValue === toggle.leftValue
-                  ? 'border-blue-500 bg-blue-500/20 text-white scale-105 shadow-lg'
-                  : 'border-gray-600 bg-gray-800/50 hover:border-gray-500 hover:bg-gray-700/50 text-gray-200'
+                  ? 'border-orange-500 bg-orange-500/20 text-white scale-105 shadow-lg'
+                  : 'border-gray-700 bg-gray-900/50 hover:border-gray-600 hover:bg-gray-800/50 text-gray-200'
               }`}
             >
               <div className="flex items-center space-x-4">
@@ -121,8 +121,8 @@ export function PersonalizationToggles({ onComplete }: PersonalizationTogglesPro
               variant="outline"
               className={`w-full p-6 text-left border-2 transition-all duration-300 ${
                 selectedValue === toggle.rightValue
-                  ? 'border-purple-500 bg-purple-500/20 text-white scale-105 shadow-lg'
-                  : 'border-gray-600 bg-gray-800/50 hover:border-gray-500 hover:bg-gray-700/50 text-gray-200'
+                  ? 'border-orange-500 bg-orange-500/20 text-white scale-105 shadow-lg'
+                  : 'border-gray-700 bg-gray-900/50 hover:border-gray-600 hover:bg-gray-800/50 text-gray-200'
               }`}
             >
               <div className="flex items-center space-x-4">
@@ -143,7 +143,7 @@ export function PersonalizationToggles({ onComplete }: PersonalizationTogglesPro
           transition={{ delay: 0.8 }}
           className="text-center mt-12"
         >
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-400">
             Select the approach that feels right for you
           </p>
         </motion.div>

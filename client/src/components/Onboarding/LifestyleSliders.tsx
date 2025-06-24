@@ -157,7 +157,7 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-6">
           <motion.div 
             className="text-sm text-gray-400 font-medium"
             key={`slider-${currentSlider}`}
@@ -177,9 +177,9 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
         </div>
         
         {/* Progress bar */}
-        <div className="w-full h-3 bg-gray-800/60 rounded-full overflow-hidden backdrop-blur-sm border border-gray-700/50 relative">
+        <div className="w-full h-3 bg-gray-900/60 rounded-full overflow-hidden backdrop-blur-sm border border-gray-700/50 relative">
           <motion.div
-            className="h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"
+            className="h-full bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.8, ease: "easeOut" }}
@@ -199,240 +199,190 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
       </motion.div>
 
       {/* Main content - scrollable with proper spacing */}
-      <div className="flex-1 overflow-y-auto px-4 py-2 relative z-10">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentSlider}
-            initial={{ opacity: 0, y: 40, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -40, scale: 0.95 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-center mb-8"
+      <div className="flex-1 overflow-y-auto px-4 py-8">
+        <div className="max-w-md mx-auto">
+          {/* Title */}
+          <motion.h1 
+            className="text-3xl md:text-4xl font-bold text-white mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.6 }}
           >
-            {/* Icon with enhanced animation */}
+            <span className="text-white">
+              {slider.title}
+            </span>
+          </motion.h1>
+          
+          {/* Subtitle */}
+          <motion.p 
+            className="text-lg text-gray-300 max-w-md mx-auto mb-8"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+          >
+            {slider.subtitle}
+          </motion.p>
+
+          {/* Current value display with enhanced styling */}
+          <motion.div 
+            className="mb-8"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+          >
             <motion.div 
-              className={`w-24 h-24 rounded-full bg-gradient-to-br ${getSliderColor()} 
-                         flex items-center justify-center mx-auto mb-6 shadow-2xl relative overflow-hidden`}
-              whileHover={{ scale: 1.05 }}
+              className="text-5xl font-bold text-white mb-2"
+              animate={{ scale: isDragging ? 1.1 : 1 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
             >
-              {/* Inner glow */}
-              <div className="absolute inset-2 bg-gradient-to-br from-white/20 to-transparent rounded-full" />
-              
+              {currentValue}
               <motion.span 
-                className="text-4xl relative z-10"
-                animate={{ 
-                  rotate: [0, 5, -5, 0],
-                  scale: [1, 1.1, 1]
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 0.5
-                }}
-              >
-                {slider.icon}
-              </motion.span>
-              
-              {/* Outer glow effect */}
-              <motion.div
-                className={`absolute inset-0 bg-gradient-to-br ${getSliderColor()} rounded-full blur-xl opacity-50 -z-10 scale-110`}
-                animate={{
-                  scale: [1.1, 1.3, 1.1],
-                  opacity: [0.3, 0.6, 0.3],
-                }}
+                className="text-2xl text-gray-400 ml-2"
+                animate={{ opacity: [0.6, 1, 0.6] }}
                 transition={{
                   duration: 2,
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
-              />
+              >
+                {slider.unit}
+              </motion.span>
             </motion.div>
-
-            {/* Title */}
-            <motion.h1 
-              className="text-2xl font-bold text-white mb-3"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: 0.6 }}
-            >
-              <span className="bg-gradient-to-r from-white via-blue-50 to-white bg-clip-text text-transparent">
-                {slider.title}
-              </span>
-            </motion.h1>
-            
-            {/* Subtitle */}
-            <motion.p 
-              className="text-base text-gray-400 max-w-md mx-auto mb-6"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-            >
-              {slider.subtitle}
-            </motion.p>
-
-            {/* Current value display with enhanced styling */}
             <motion.div 
-              className="mb-8"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-            >
-              <motion.div 
-                className="text-5xl font-bold text-white mb-2"
-                animate={{ scale: isDragging ? 1.1 : 1 }}
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              >
-                {currentValue}
-                <motion.span 
-                  className="text-2xl text-gray-400 ml-2"
-                  animate={{ opacity: [0.6, 1, 0.6] }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  {slider.unit}
-                </motion.span>
-              </motion.div>
-              <motion.div 
-                className={`text-base font-medium ${getDescriptionColor()}`}
-                animate={{ opacity: [0.8, 1, 0.8] }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
-                {getValueDescription()}
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Enhanced Slider */}
-        <motion.div 
-          className="max-w-lg mx-auto w-full mb-8"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-        >
-          <div className="relative px-4">
-            {/* Slider track with enhanced styling */}
-            <div className="w-full h-6 bg-gray-700/60 rounded-full relative overflow-hidden backdrop-blur-sm border border-gray-600/50">
-              {/* Active track with gradient */}
-              <motion.div
-                className={`h-full bg-gradient-to-r ${getSliderColor()} rounded-full shadow-lg relative`}
-                style={{ 
-                  width: `${((currentValue - slider.min) / (slider.max - slider.min)) * 100}%` 
-                }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-              >
-                {/* Inner shine effect */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-                  animate={{ x: [-100, 200] }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 1
-                  }}
-                />
-              </motion.div>
-            </div>
-            
-            {/* Enhanced Slider thumb */}
-            <motion.div
-              className="absolute flex items-center justify-center cursor-pointer"
-              style={{ 
-                left: `${((currentValue - slider.min) / (slider.max - slider.min)) * 100}%`,
-                marginLeft: '-20px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: '40px',
-                height: '40px'
-              }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              onMouseDown={() => setIsDragging(true)}
-              onMouseUp={() => setIsDragging(false)}
-              onTouchStart={() => setIsDragging(true)}
-              onTouchEnd={() => setIsDragging(false)}
-            >
-              <motion.div 
-                className="w-8 h-8 bg-white rounded-full shadow-xl border-4 border-gray-800 relative overflow-hidden"
-                animate={{
-                  boxShadow: isDragging 
-                    ? "0 0 0 8px rgba(59, 130, 246, 0.3)" 
-                    : "0 0 0 0px rgba(59, 130, 246, 0.3)"
-                }}
-                transition={{ duration: 0.2 }}
-              >
-                {/* Inner glow */}
-                <div className={`absolute inset-1 bg-gradient-to-br ${getSliderColor()} rounded-full opacity-20`} />
-                
-                {/* Center dot */}
-                <motion.div
-                  className={`absolute inset-0 m-auto w-2 h-2 bg-gradient-to-r ${getSliderColor()} rounded-full`}
-                  animate={{
-                    scale: isDragging ? [1, 1.5, 1] : 1
-                  }}
-                  transition={{
-                    duration: 0.3,
-                    repeat: isDragging ? Infinity : 0
-                  }}
-                />
-              </motion.div>
-            </motion.div>
-            
-            {/* Hidden input for accessibility */}
-            <input
-              type="range"
-              min={slider.min}
-              max={slider.max}
-              value={currentValue}
-              onChange={(e) => handleSliderChange(slider.id, parseInt(e.target.value))}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-            />
-          </div>
-          
-          {/* Min/Max labels with better styling */}
-          <motion.div 
-            className="flex justify-between mt-6 text-sm text-gray-500 px-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.4 }}
-          >
-            <motion.span
-              animate={{ opacity: [0.5, 0.8, 0.5] }}
+              className={`text-base font-medium ${getDescriptionColor()}`}
+              animate={{ opacity: [0.8, 1, 0.8] }}
               transition={{
-                duration: 2,
+                duration: 1.5,
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
             >
-              {slider.min}{slider.unit}
-            </motion.span>
-            <motion.span
-              animate={{ opacity: [0.5, 0.8, 0.5] }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 1
-              }}
-            >
-              {slider.max}{slider.unit}
-            </motion.span>
+              {getValueDescription()}
+            </motion.div>
           </motion.div>
-        </motion.div>
 
-        {/* Navigation buttons with enhanced styling */}
+          {/* Enhanced Slider */}
+          <motion.div 
+            className="max-w-lg mx-auto w-full mb-8"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
+            <div className="relative px-4">
+              {/* Slider track with enhanced styling */}
+              <div className="w-full h-6 bg-gray-700/60 rounded-full relative overflow-hidden backdrop-blur-sm border border-gray-600/50">
+                {/* Active track with gradient */}
+                <motion.div
+                  className={`h-full bg-gradient-to-r ${getSliderColor()} rounded-full shadow-lg relative`}
+                  style={{ 
+                    width: `${((currentValue - slider.min) / (slider.max - slider.min)) * 100}%` 
+                  }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                >
+                  {/* Inner shine effect */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                    animate={{ x: [-100, 200] }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 1
+                    }}
+                  />
+                </motion.div>
+              </div>
+              
+              {/* Enhanced Slider thumb */}
+              <motion.div
+                className="absolute flex items-center justify-center cursor-pointer"
+                style={{ 
+                  left: `${((currentValue - slider.min) / (slider.max - slider.min)) * 100}%`,
+                  marginLeft: '-20px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: '40px',
+                  height: '40px'
+                }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onMouseDown={() => setIsDragging(true)}
+                onMouseUp={() => setIsDragging(false)}
+                onTouchStart={() => setIsDragging(true)}
+                onTouchEnd={() => setIsDragging(false)}
+              >
+                <motion.div 
+                  className="w-8 h-8 bg-white rounded-full shadow-xl border-4 border-gray-800 relative overflow-hidden"
+                  animate={{
+                    boxShadow: isDragging 
+                      ? "0 0 0 8px rgba(59, 130, 246, 0.3)" 
+                      : "0 0 0 0px rgba(59, 130, 246, 0.3)"
+                  }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {/* Inner glow */}
+                  <div className={`absolute inset-1 bg-gradient-to-br ${getSliderColor()} rounded-full opacity-20`} />
+                  
+                  {/* Center dot */}
+                  <motion.div
+                    className={`absolute inset-0 m-auto w-2 h-2 bg-gradient-to-r ${getSliderColor()} rounded-full`}
+                    animate={{
+                      scale: isDragging ? [1, 1.5, 1] : 1
+                    }}
+                    transition={{
+                      duration: 0.3,
+                      repeat: isDragging ? Infinity : 0
+                    }}
+                  />
+                </motion.div>
+              </motion.div>
+              
+              {/* Hidden input for accessibility */}
+              <input
+                type="range"
+                min={slider.min}
+                max={slider.max}
+                value={currentValue}
+                onChange={(e) => handleSliderChange(slider.id, parseInt(e.target.value))}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+              />
+            </div>
+            
+            {/* Min/Max labels with better styling */}
+            <motion.div 
+              className="flex justify-between mt-6 text-sm text-gray-500 px-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.4 }}
+            >
+              <motion.span
+                animate={{ opacity: [0.5, 0.8, 0.5] }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                {slider.min}{slider.unit}
+              </motion.span>
+              <motion.span
+                animate={{ opacity: [0.5, 0.8, 0.5] }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 1
+                }}
+              >
+                {slider.max}{slider.unit}
+              </motion.span>
+            </motion.div>
+          </motion.div>
+        </div>
+
+        {/* Navigation buttons */}
         <motion.div 
-          className="flex justify-between items-center mt-8 px-4"
+          className="flex justify-between items-center mt-12 px-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7, duration: 0.6 }}
@@ -441,7 +391,7 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
             onClick={goBack}
             disabled={currentSlider === 0}
             variant="outline"
-            className="px-6 py-3 bg-gray-800/60 border-gray-600/70 hover:bg-gray-700/60 hover:border-gray-500 
+            className="px-6 py-3 bg-gray-900/60 border-gray-700 hover:bg-gray-800/60 hover:border-gray-600 
                      disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300
                      backdrop-blur-sm shadow-lg hover:shadow-xl"
           >
@@ -463,7 +413,7 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
           >
             <Button
               onClick={goNext}
-              className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 
+              className="px-8 py-3 bg-orange-500 hover:bg-orange-600 
                        text-white font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 
                        transition-all duration-300"
             >
