@@ -335,8 +335,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw error;
       }
 
-      console.log('🎯 User profile created successfully with onboarding_complete:', data.onboarding_complete);
-      setUserProfile(data);
+      console.log('🎯 User profile created successfully:');
+      console.log('   - onboarding_complete:', data.onboarding_complete);
+      console.log('   - Full profile data:', data);
+      
+      // CRITICAL CHECK: If onboarding_complete is still true, something is wrong
+      if (data.onboarding_complete === true) {
+        console.error('🚨 CRITICAL: Profile created with onboarding_complete=true despite setting false!');
+        console.error('🚨 This indicates a database trigger or constraint is overriding our value');
+        
+        // Force it to false immediately
+        console.log('🔧 Force-fixing onboarding_complete to false...');
+        const { data: fixedData, error: fixError } = await supabase
+          .from('users')
+          .update({ onboarding_complete: false })
+          .eq('id', supabaseUserId)
+          .select()
+          .single();
+          
+        if (fixError) {
+          console.error('🚨 Failed to force-fix onboarding_complete:', fixError);
+          setUserProfile(data); // Use original data even if fix failed
+        } else {
+          console.log('✅ Successfully force-fixed onboarding_complete to:', fixedData.onboarding_complete);
+          setUserProfile(fixedData);
+        }
+      } else {
+        console.log('✅ onboarding_complete correctly set to false');
+        setUserProfile(data);
+      }
       return;
     } catch (error) {
       console.error('🚨 Exception in createUserProfile:', error);
