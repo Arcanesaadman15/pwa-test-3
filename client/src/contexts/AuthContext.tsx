@@ -332,6 +332,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         if (updateError) {
           console.error('🚨 Error updating onboarding status:', updateError);
+          // Still set the profile with the original data, but log the issue
+          setUserProfile(data);
         } else {
           console.log('✅ Onboarding status fixed to false');
           setUserProfile(updatedData);
