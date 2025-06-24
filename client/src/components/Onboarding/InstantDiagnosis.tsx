@@ -74,7 +74,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
   const StatusIcon = status.icon;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white overflow-x-hidden relative">
+    <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white overflow-y-auto">
       {/* Enhanced background effects */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
@@ -121,10 +121,10 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
         />
       </div>
 
-      {/* Main content with proper mobile spacing */}
-      <div className="relative z-10 px-4 pt-safe-top pb-safe-bottom">
-        {/* Mobile-safe top padding */}
-        <div className="pt-6 md:pt-8">
+      {/* Scrollable content container with proper mobile-first spacing */}
+      <div className="relative z-10 min-h-full">
+        {/* Mobile-first padding with safe areas */}
+        <div className="px-4 py-6 sm:py-8 md:py-12">
           <div className="container mx-auto max-w-md">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -505,7 +505,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 3.8, duration: 0.6 }}
-              className="pb-8 md:pb-12"
+              className="mb-8 md:mb-12"
             >
               <motion.div
                 whileHover={{ scale: 1.02 }}
@@ -538,8 +538,8 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
               </motion.div>
             </motion.div>
 
-            {/* Extra padding for mobile safe area */}
-            <div className="h-8 md:h-0" />
+            {/* Bottom spacing for mobile safe area and desktop comfort */}
+            <div className="h-12 sm:h-16 md:h-20" />
           </div>
         </div>
       </div>
