@@ -27,9 +27,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     
     <!-- Cache control headers to prevent excessive caching of pricing page -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
+    <meta name="cache-version" content="critical-fix-20241224" />
     
     <title>PeakForge - Wellness Journey</title>
   </head>
@@ -80,7 +81,7 @@
       // Also force it after a delay to override any CSS that loads later
       setTimeout(forceAndroidNavBarColor, 1000);
     </script>
-    <script type="module" src="/src/main.tsx?v=20241224_urgent"></script>
+    <script type="module" src="/src/main.tsx?v=20241224_critical_fix_2"></script>
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
     <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
   </body>

@@ -1,7 +1,7 @@
-const CACHE_NAME = 'peakforge-v4';
-const STATIC_CACHE = 'peakforge-static-v4';
-const DYNAMIC_CACHE = 'peakforge-dynamic-v4';
-const OFFLINE_CACHE = 'peakforge-offline-v4';
+const CACHE_NAME = 'peakforge-v5-critical';
+const STATIC_CACHE = 'peakforge-static-v5-critical';
+const DYNAMIC_CACHE = 'peakforge-dynamic-v5-critical';
+const OFFLINE_CACHE = 'peakforge-offline-v5-critical';
 
 const STATIC_ASSETS = [
   '/',
@@ -88,7 +88,7 @@ self.addEventListener('activate', event => {
         return Promise.all(
           cacheNames.map(cacheName => {
             if (!cacheName.includes('peakforge-') || 
-                (!cacheName.includes('-v4') && cacheName.includes('peakforge-'))) {
+                (!cacheName.includes('-v5-critical') && cacheName.includes('peakforge-'))) {
               console.log('🗑️ Deleting old cache:', cacheName);
               return caches.delete(cacheName);
             }

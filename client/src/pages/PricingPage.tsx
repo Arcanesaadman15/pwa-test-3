@@ -12,6 +12,7 @@ export default function PricingPage() {
 
   return (
     <PricingPlans 
+      key={`pricing-${Date.now()}`} // Force remount
       onPlanSelect={handlePlanSelect}
       currentPlan={subscription.plan || undefined}
     />

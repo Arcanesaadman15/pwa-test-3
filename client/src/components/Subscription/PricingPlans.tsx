@@ -13,6 +13,9 @@ export function PricingPlans({ onPlanSelect }: PricingPlansProps) {
   const { user, userProfile } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Force component refresh timestamp
+  console.log('🎨 PricingPlans component rendered at:', new Date().toISOString());
 
   const proplan = SUBSCRIPTION_PLANS.find(p => p.id === 'pro');
 
