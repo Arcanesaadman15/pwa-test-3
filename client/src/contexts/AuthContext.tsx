@@ -220,7 +220,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           data: {
             name: userData.name,
             program: userData.program,
-            onboarding_complete: 'false' // New users need onboarding
+            onboarding_complete: false // New users need onboarding
           }
         }
       });

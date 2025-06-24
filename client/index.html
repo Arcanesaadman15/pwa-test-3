@@ -21,6 +21,16 @@
     <meta name="theme-color" content="#111827" media="(prefers-color-scheme: light)" />
     <meta name="msapplication-navbutton-color" content="#111827" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Cache control headers to prevent excessive caching of pricing page -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    
     <title>PeakForge - Wellness Journey</title>
   </head>
   <body>
@@ -70,7 +80,7 @@
       // Also force it after a delay to override any CSS that loads later
       setTimeout(forceAndroidNavBarColor, 1000);
     </script>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="/src/main.tsx?v=20241224"></script>
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
     <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
   </body>
