@@ -158,3 +158,22 @@ This data remains on the device and doesn't sync to the cloud, ensuring privacy 
 ## Deployment
 
 This app is ready for deployment to Vercel and includes full LemonSqueezy integration for subscription management. 
+## Deployment
+
+### Vercel Deployment Requirements
+
+To deploy this app on Vercel, ensure you have the following environment variables set in your Vercel project settings:
+
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_LEMONSQUEEZY_STORE_ID=your_store_id
+VITE_LEMONSQUEEZY_API_KEY=your_api_key
+VITE_APP_URL=your_vercel_deployment_url
+```
+
+The app uses Vite for building and requires:
+- Build Command: `npm run vercel-build`
+- Output Directory: `dist/public`
+
+Make sure all environment variables are properly set before deploying to avoid build failures.
