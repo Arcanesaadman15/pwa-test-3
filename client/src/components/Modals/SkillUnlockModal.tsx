@@ -429,8 +429,8 @@ export function SkillUnlockModal({ isOpen, onClose, skill, isNewUnlock = false, 
             <Button 
               onClick={onClose}
               variant="outline"
-                    className="w-full border-gray-200 text-gray-700 hover:bg-gray-50 py-3"
-                  >
+              className="w-full bg-white text-gray-900 hover:bg-gray-100 border-gray-200 py-3"
+            >
                     {isNewUnlock ? 'Continue Journey' : 'Close'}
                   </Button>
                 </>

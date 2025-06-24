@@ -142,7 +142,7 @@ export function SettingsPanel({ onBack, onDataReset, onProgramChange }: Settings
         <div className="flex items-center gap-4 mb-8">
           <Button
             onClick={onBack}
-            className="bg-white/10 hover:bg-white/20 text-white border border-white/20 p-2"
+            className="bg-white/20 hover:bg-white/30 text-white border border-white/30 p-2"
             size="sm"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -173,7 +173,7 @@ export function SettingsPanel({ onBack, onDataReset, onProgramChange }: Settings
                       ? 'border-gray-600 bg-gray-700/50 opacity-50 cursor-not-allowed'
                       : item.destructive
                         ? 'border-red-500/30 bg-red-900/20 hover:bg-red-900/30 cursor-pointer'
-                        : 'border-gray-600 bg-gray-700/50 hover:bg-gray-700 cursor-pointer'
+                        : 'border-gray-600 bg-gray-700/50 hover:bg-gray-600/80 cursor-pointer'
                   }`}
                   onClick={!item.disabled ? item.action : undefined}
                 >
