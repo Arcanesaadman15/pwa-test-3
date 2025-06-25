@@ -197,42 +197,64 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
                 <motion.button
                   key={option.value}
                   onClick={() => handleOptionSelect(option.value)}
-                  className={`w-full p-6 rounded-xl text-left relative ${
+                  className={`w-full p-6 rounded-xl text-left border-2 transition-all duration-300 min-h-[80px] flex items-start relative overflow-hidden group ${
                     selectedOption === option.value 
-                      ? 'bg-orange-500/20 border-2 border-orange-500 text-white'
-                      : 'bg-gray-900 border-2 border-gray-800 hover:border-gray-700 text-gray-200'
+                      ? 'border-orange-500 bg-orange-500/20 text-white scale-105 shadow-lg shadow-orange-500/25'
+                      : 'border-gray-600/70 bg-gray-900/50 hover:border-gray-500 hover:bg-gray-800/60 text-gray-200 hover:shadow-lg hover:shadow-gray-500/10'
                   }`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + index * 0.1 }}
+                  whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <p className="font-medium text-lg text-white mb-2 leading-snug">
-                        {option.label}
-                      </p>
-                      <p className="text-sm text-gray-300 leading-relaxed">
+                  {/* Background shimmer effect */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100"
+                    animate={{ x: [-100, 300] }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
+                  
+                  <div className="flex flex-col text-left w-full relative z-10">
+                    <motion.span 
+                      className="font-semibold text-lg mb-2 leading-tight text-left"
+                      animate={selectedOption === option.value ? { x: [0, 5, 0] } : {}}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {option.label}
+                    </motion.span>
+                    {option.subtitle && (
+                      <motion.span 
+                        className="text-sm text-gray-400 leading-relaxed text-left"
+                        animate={selectedOption === option.value ? { opacity: [0.7, 1, 0.7] } : {}}
+                        transition={{ duration: 0.5 }}
+                      >
                         {option.subtitle}
-                      </p>
-                    </div>
-                    
-                    {/* Selection Indicator */}
-                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ml-3 transition-all duration-200 ${
-                      selectedOption === option.value 
-                        ? 'border-orange-500 bg-orange-500' 
-                        : 'border-gray-600'
-                    }`}>
-                      {selectedOption === option.value && (
+                      </motion.span>
+                    )}
+                  </div>
+                  
+                  {/* Selection indicator */}
+                  {selectedOption === option.value && (
+                    <motion.div
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2"
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                    >
+                      <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
                         <motion.div
                           className="w-2 h-2 bg-white rounded-full"
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{ duration: 0.2 }}
+                          animate={{ scale: [0, 1.2, 1] }}
+                          transition={{ duration: 0.3 }}
                         />
-                      )}
-                    </div>
-                  </div>
+                      </div>
+                    </motion.div>
+                  )}
                 </motion.button>
               ))}
             </div>

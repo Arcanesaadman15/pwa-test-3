@@ -131,7 +131,7 @@ export function ProblemSpotlight({ onComplete }: ProblemSpotlightProps) {
 
         {/* Fixed bottom area for last slide button */}
         {isLastSlide && (
-          <div className="px-4 py-4 bg-gray-900/95 backdrop-blur-sm safe-area-bottom">
+          <div className="absolute bottom-0 left-0 right-0 px-6 py-6 bg-black/95 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -147,6 +147,8 @@ export function ProblemSpotlight({ onComplete }: ProblemSpotlightProps) {
                 I'm done being weak →
               </Button>
             </motion.div>
+            {/* Safe area padding for mobile */}
+            <div className="h-safe-bottom" />
           </div>
         )}
 
