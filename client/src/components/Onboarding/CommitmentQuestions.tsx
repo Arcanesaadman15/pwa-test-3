@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { COMMITMENT_QUESTIONS } from "@/data/onboardingData";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 
 interface CommitmentQuestionsProps {
   onComplete: (data: { [key: string]: string }) => void;
@@ -107,26 +107,6 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
     }
   };
 
-  const getOptionStyle = (option: any) => {
-    const isSelected = selectedOption === option.value;
-    const isPositive = option.scoreModifier > 0;
-    const isNegative = option.scoreModifier < 0;
-    
-    let baseStyle = "relative overflow-hidden bg-white/5 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300 ease-out transform hover:scale-[1.02] active:scale-[0.98]";
-    
-    if (isSelected) {
-      if (isPositive) {
-        baseStyle += " border-green-400/50 bg-green-500/10 shadow-lg shadow-green-500/20";
-      } else if (isNegative) {
-        baseStyle += " border-red-400/50 bg-red-500/10 shadow-lg shadow-red-500/20";
-      } else {
-        baseStyle += " border-blue-400/50 bg-blue-500/10 shadow-lg shadow-blue-500/20";
-      }
-    }
-    
-    return baseStyle;
-  };
-
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
       {/* Header with Progress */}
@@ -194,68 +174,72 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
             {/* Options */}
             <div className="space-y-4">
               {question.options.map((option, index) => (
-                <motion.button
+                <motion.div
                   key={option.value}
-                  onClick={() => handleOptionSelect(option.value)}
-                  className={`w-full p-6 rounded-xl text-left border-2 transition-all duration-300 min-h-[80px] flex items-start relative overflow-hidden group ${
-                    selectedOption === option.value 
-                      ? 'border-orange-500 bg-orange-500/20 text-white scale-105 shadow-lg shadow-orange-500/25'
-                      : 'border-gray-600/70 bg-gray-900/50 hover:border-gray-500 hover:bg-gray-800/60 text-gray-200 hover:shadow-lg hover:shadow-gray-500/10'
-                  }`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + index * 0.1 }}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  {/* Background shimmer effect */}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100"
-                    animate={{ x: [-100, 300] }}
-                    transition={{
-                      duration: 1.5,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  />
-                  
-                  <div className="flex flex-col text-left w-full relative z-10">
-                    <motion.span 
-                      className="font-semibold text-lg mb-2 leading-tight text-left"
-                      animate={selectedOption === option.value ? { x: [0, 5, 0] } : {}}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {option.label}
-                    </motion.span>
-                    {option.subtitle && (
-                      <motion.span 
-                        className="text-sm text-gray-400 leading-relaxed text-left"
-                        animate={selectedOption === option.value ? { opacity: [0.7, 1, 0.7] } : {}}
-                        transition={{ duration: 0.5 }}
-                      >
-                        {option.subtitle}
-                      </motion.span>
-                    )}
-                  </div>
-                  
-                  {/* Selection indicator */}
-                  {selectedOption === option.value && (
+                  <Button
+                    onClick={() => handleOptionSelect(option.value)}
+                    variant="outline"
+                    className={`w-full p-6 text-left border-2 transition-all duration-300 min-h-[80px] flex items-start relative overflow-hidden group ${
+                      selectedOption === option.value
+                        ? 'border-orange-500 bg-orange-500/20 text-white scale-105 shadow-lg shadow-orange-500/25'
+                        : 'border-gray-600/70 bg-gray-900/50 hover:border-gray-500 hover:bg-gray-800/60 text-gray-200 hover:shadow-lg hover:shadow-gray-500/10'
+                    }`}
+                  >
+                    {/* Background shimmer effect */}
                     <motion.div
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2"
-                      initial={{ scale: 0, rotate: -180 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                    >
-                      <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
-                        <motion.div
-                          className="w-2 h-2 bg-white rounded-full"
-                          animate={{ scale: [0, 1.2, 1] }}
-                          transition={{ duration: 0.3 }}
-                        />
-                      </div>
-                    </motion.div>
-                  )}
-                </motion.button>
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100"
+                      animate={{ x: [-100, 300] }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                    
+                    <div className="flex flex-col text-left w-full relative z-10">
+                      <motion.span 
+                        className="font-semibold text-lg mb-2 leading-tight text-left"
+                        animate={selectedOption === option.value ? { x: [0, 5, 0] } : {}}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {option.label}
+                      </motion.span>
+                      {option.subtitle && (
+                        <motion.span 
+                          className="text-sm text-gray-400 leading-relaxed text-left"
+                          animate={selectedOption === option.value ? { opacity: [0.7, 1, 0.7] } : {}}
+                          transition={{ duration: 0.5 }}
+                        >
+                          {option.subtitle}
+                        </motion.span>
+                      )}
+                    </div>
+                    
+                    {/* Selection indicator */}
+                    {selectedOption === option.value && (
+                      <motion.div
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2"
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                      >
+                        <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                          <motion.div
+                            className="w-2 h-2 bg-white rounded-full"
+                            animate={{ scale: [0, 1.2, 1] }}
+                            transition={{ duration: 0.3 }}
+                          />
+                        </div>
+                      </motion.div>
+                    )}
+                  </Button>
+                </motion.div>
               ))}
             </div>
           </motion.div>
