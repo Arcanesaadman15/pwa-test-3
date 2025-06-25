@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, Clock, Users, Zap, ArrowLeft, Star, Shield, Award } from "lucide-react";
+import { CheckCircle, Clock, Users, Zap, ArrowLeft, Star, Shield, Award, Flame, Target } from "lucide-react";
 import { AuthForm } from "@/components/Auth/AuthForm";
 import { PricingPlans } from "@/components/Subscription/PricingPlans";
 import { useAuth } from "@/contexts/AuthContext";
@@ -29,7 +29,7 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
   const handleGetStarted = () => {
     if (!user) {
       // If not authenticated, show auth form first
-    setShowAuthForm(true);
+      setShowAuthForm(true);
     } else {
       // If authenticated, go directly to pricing
       setShowPricing(true);
@@ -50,9 +50,9 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
   // Show authentication form if user needs to sign up/in
   if (showAuthForm) {
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white">
+      <div className="fixed inset-0 bg-black text-white">
         <motion.div 
-          className="absolute top-4 left-4"
+          className="absolute top-4 left-4 z-10"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3 }}
@@ -66,13 +66,13 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
             <ArrowLeft className="w-5 h-5" />
           </motion.button>
         </motion.div>
-      <AuthForm 
-        onComplete={handleAuthComplete}
-        initialData={{
-          name: onboardingData?.name || 'Wellness Warrior',
-          program: determineProgramType(onboardingData)
-        }}
-      />
+        <AuthForm 
+          onComplete={handleAuthComplete}
+          initialData={{
+            name: onboardingData?.name || 'Wellness Warrior',
+            program: determineProgramType(onboardingData)
+          }}
+        />
       </div>
     );
   }
@@ -80,7 +80,7 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
   // Show pricing plans after authentication
   if (showPricing) {
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white overflow-y-auto">
+      <div className="fixed inset-0 bg-black text-white overflow-y-auto">
         <motion.div 
           className="absolute top-4 left-4 z-10"
           initial={{ opacity: 0, x: -20 }}
@@ -116,447 +116,181 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white overflow-y-auto relative">
-      {/* Enhanced background effects */}
-      <div className="absolute inset-0 pointer-events-none">
-        <motion.div
-          className="absolute top-20 right-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.4, 1],
-            opacity: [0.3, 0.7, 0.3],
-            rotate: [0, 180, 360],
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        <motion.div
-          className="absolute bottom-20 left-10 w-80 h-80 bg-purple-500/10 rounded-full blur-2xl"
-          animate={{
-            scale: [0.8, 1.3, 0.8],
-            opacity: [0.2, 0.6, 0.2],
-            y: [0, -30, 0],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 4
-          }}
-        />
-        <motion.div
-          className="absolute top-1/2 left-1/2 w-64 h-64 bg-cyan-500/5 rounded-full blur-xl"
-          animate={{
-            scale: [0.5, 1.2, 0.5],
-            opacity: [0.1, 0.4, 0.1],
-            x: [-80, 80, -80],
-            y: [-40, 40, -40],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 2
-          }}
-        />
-      </div>
-
-      <div className="min-h-screen px-4 py-8 relative z-10">
-        <div className="container mx-auto max-w-md">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-center mb-8"
-        >
+    <div className="min-h-screen bg-black text-white overflow-y-auto">
+      <div className="max-w-2xl mx-auto px-4 py-16">
+        
+        {/* Hero Section */}
+        <div className="text-center mb-16">
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center">
+              <Flame className="w-8 h-8 text-white" />
+            </div>
+          </div>
+          
           <motion.h1 
-            className="text-3xl font-bold mb-4"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-          >
-            <span className="bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent">
-              Ready to Transform Your Life?
-            </span>
-          </motion.h1>
-          <motion.p 
-            className="text-gray-300 text-lg leading-relaxed"
+            className="text-4xl md:text-6xl font-bold mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
+          >
+            Ready to Transform
+            <br />
+            <span className="text-orange-500">Your Life?</span>
+          </motion.h1>
+          
+          <motion.p 
+            className="text-xl text-gray-300 mb-8 leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
           >
             You've seen the problem. You know the solution. Time to take action.
           </motion.p>
-        </motion.div>
+        </div>
 
-        {/* Enhanced Value Proposition Card */}
+        {/* Features Grid */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
-          className="bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-3xl p-8 mb-8 backdrop-blur-lg border-2 border-blue-400/30 relative overflow-hidden shadow-2xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-gray-900 border border-gray-700 rounded-2xl p-8 mb-16"
         >
-          {/* Enhanced Background Effects */}
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0"
-            animate={{ 
-              opacity: [0, 0.6, 0],
-              x: [-100, 500]
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 1
-            }}
-          />
-
-          {/* Floating decorative elements */}
-          <div className="absolute inset-0 pointer-events-none opacity-10">
-            <motion.div
-              className="absolute top-4 left-4"
-              animate={{ rotate: [0, 360], scale: [0.8, 1.2, 0.8] }}
-              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <Star className="w-6 h-6" />
-            </motion.div>
-            <motion.div
-              className="absolute top-4 right-4"
-              animate={{ rotate: [360, 0], scale: [1.2, 0.8, 1.2] }}
-              transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <Award className="w-6 h-6" />
-            </motion.div>
-            <motion.div
-              className="absolute bottom-4 left-4"
-              animate={{ y: [-10, 10, -10], rotate: [0, 180, 360] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <Shield className="w-6 h-6" />
-            </motion.div>
-          </div>
-
-          {/* Popular Badge */}
-          <motion.div 
-            className="absolute -top-3 -right-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs font-bold px-4 py-2 rounded-bl-xl rounded-tr-3xl shadow-lg"
-            initial={{ scale: 0, rotate: -180 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ delay: 0.6, type: "spring", stiffness: 200, damping: 15 }}
-          >
-            <motion.span
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            >
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center bg-orange-500/20 px-4 py-2 rounded-full text-orange-400 text-sm font-medium mb-4">
+              <Star className="w-4 h-4 mr-2" />
               TRANSFORMATION SYSTEM
-            </motion.span>
-          </motion.div>
-
-          <div className="text-center mb-6 relative z-10">
-            <motion.h2 
-              className="text-2xl font-bold mb-2"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.6 }}
-            >
-              <span className="bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent">
-                The Masculine Revival System
-              </span>
-            </motion.h2>
-            <motion.div 
-              className="text-gray-300 mb-4"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9, duration: 0.6 }}
-            >
-              Everything you need to reclaim your masculine power
-            </motion.div>
+            </div>
+            <h2 className="text-2xl font-bold mb-2">The Masculine Revival System</h2>
+            <p className="text-gray-300">Everything you need to reclaim your masculine power</p>
           </div>
 
-          {/* Enhanced Features List */}
-          <motion.div 
-            className="space-y-3 mb-6 relative z-10"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.0, duration: 0.6 }}
-          >
+          <div className="space-y-4">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, x: -30 }}
+                initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.2 + index * 0.1, duration: 0.5 }}
-                className="flex items-center space-x-3 group"
-                whileHover={{ x: 5 }}
+                transition={{ delay: 0.4 + index * 0.05 }}
+                className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-800/50 transition-colors"
               >
-                <motion.div
-                  className="flex-shrink-0"
-                  animate={{ rotate: [0, 360] }}
-                  transition={{
-                    duration: 8 + index,
-                    repeat: Infinity,
-                    ease: "linear"
-                  }}
-                >
-                  <CheckCircle className="w-5 h-5 text-green-400 group-hover:text-green-300 transition-colors" />
-                </motion.div>
-                <motion.span 
-                  className="text-sm group-hover:text-white transition-colors"
-                  animate={{ opacity: [0.9, 1, 0.9] }}
-                  transition={{
-                    duration: 3 + index * 0.5,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  {feature}
-                </motion.span>
+                <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
+                <span className="text-gray-300">{feature}</span>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
+        </motion.div>
 
-          {/* Enhanced Social Proof */}
-          <motion.div 
-            className="bg-white/10 rounded-xl p-4 mb-6 backdrop-blur-sm border border-white/20 relative overflow-hidden"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 2.0, duration: 0.6 }}
+        {/* Stats Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="grid grid-cols-3 gap-6 mb-16"
+        >
+          <div className="text-center">
+            <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <Target className="w-6 h-6 text-blue-400" />
+            </div>
+            <div className="text-2xl font-bold text-blue-400 mb-1">50K+</div>
+            <div className="text-sm text-gray-300">Men Transformed</div>
+          </div>
+          <div className="text-center">
+            <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <Zap className="w-6 h-6 text-green-400" />
+            </div>
+            <div className="text-2xl font-bold text-green-400 mb-1">63</div>
+            <div className="text-sm text-gray-300">Days to Peak</div>
+          </div>
+          <div className="text-center">
+            <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <Users className="w-6 h-6 text-purple-400" />
+            </div>
+            <div className="text-2xl font-bold text-purple-400 mb-1">94%</div>
+            <div className="text-sm text-gray-300">Success Rate</div>
+          </div>
+        </motion.div>
+
+        {/* Social Proof */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="bg-gray-900 border border-gray-700 rounded-2xl p-6 mb-16 text-center"
+        >
+          <div className="flex justify-center items-center space-x-4 mb-4">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="w-8 h-8 bg-gray-700 rounded-full"></div>
+            ))}
+          </div>
+          <p className="text-gray-300 text-sm italic mb-2">
+            "Increased my energy by 300% in 30 days"
+          </p>
+          <p className="text-gray-400 text-xs">- Jake, 32</p>
+        </motion.div>
+
+        {/* CTA Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="text-center"
+        >
+          <motion.button
+            onClick={handleGetStarted}
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 text-lg rounded-xl transition-all duration-200 hover:scale-105 shadow-xl hover:shadow-2xl relative overflow-hidden"
             whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            {/* Background pattern */}
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-purple-400/5"
-              animate={{ opacity: [0.3, 0.6, 0.3] }}
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0"
+              animate={{ 
+                opacity: [0, 0.5, 0],
+                x: [-100, 300]
+              }}
               transition={{
-                duration: 4,
+                duration: 2,
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
             />
-
-            <div className="flex items-center justify-center space-x-6 text-center relative z-10">
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              >
-                <motion.div
-                  animate={{ rotate: [0, 360] }}
-                  transition={{
-                    duration: 10,
-                    repeat: Infinity,
-                    ease: "linear"
-                  }}
-                >
-                  <Users className="w-6 h-6 text-blue-400 mx-auto mb-1" />
-                </motion.div>
-                <motion.div 
-                  className="text-sm font-bold"
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  50,000+
-                </motion.div>
-                <div className="text-xs text-gray-400">Active Users</div>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              >
-                <motion.div
-                  animate={{ scale: [1, 1.2, 1], rotate: [0, 15, -15, 0] }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  <Zap className="w-6 h-6 text-yellow-400 mx-auto mb-1" />
-                </motion.div>
-                <motion.div 
-                  className="text-sm font-bold"
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 1
-                  }}
-                >
-                  40%
-                </motion.div>
-                <div className="text-xs text-gray-400">Avg T-Boost</div>
-              </motion.div>
-            </div>
-          </motion.div>
-        </motion.div>
-
-        {/* Enhanced CTA Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2.2, duration: 0.6 }}
-          className="space-y-4"
-        >
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-          >
-            <motion.button
-              onClick={handleGetStarted}
-              className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 
-                       text-white font-bold py-4 text-lg rounded-xl shadow-xl hover:shadow-2xl 
-                       transform transition-all duration-300 relative overflow-hidden group"
-              animate={{ 
-                boxShadow: [
-                  "0 10px 30px rgba(34, 197, 94, 0.3)",
-                  "0 15px 40px rgba(59, 130, 246, 0.4)", 
-                  "0 10px 30px rgba(34, 197, 94, 0.3)"
-                ]
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            >
-              {/* Button background effects */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100"
-                animate={{ x: [-100, 400] }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              />
-              
-              {/* Pulsing background */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-blue-400/20 rounded-xl"
-                animate={{ opacity: [0, 0.5, 0] }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              />
-
-              <span className="relative z-10 flex items-center justify-center">
-                <motion.span
-                  animate={{ rotate: [0, 360] }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "linear"
-                  }}
-                  className="mr-2"
-                >
-                  🚀
-                </motion.span>
-                Get Started Now
-              </span>
-            </motion.button>
-          </motion.div>
-          
-          {/* Enhanced guarantee section */}
-          <motion.div 
-            className="text-center"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.4, duration: 0.6 }}
-          >
-            <motion.p 
-              className="text-xs text-gray-400 mb-2 flex items-center justify-center"
-              animate={{ opacity: [0.7, 1, 0.7] }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            >
-              <motion.span
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-                className="mr-1"
-              >
-                ✅
-              </motion.span>
-              30-day money-back guarantee
-            </motion.p>
-            <motion.p 
-              className="text-xs text-gray-400 flex items-center justify-center"
-              animate={{ opacity: [0.7, 1, 0.7] }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 1
-              }}
-            >
+            <span className="relative z-10 flex items-center justify-center">
               <motion.span
                 animate={{ rotate: [0, 360] }}
                 transition={{
-                  duration: 4,
+                  duration: 3,
                   repeat: Infinity,
                   ease: "linear"
                 }}
-                className="mr-1"
+                className="mr-2"
               >
-                🔒
+                🚀
               </motion.span>
-              Secure payment • Cancel anytime
-            </motion.p>
-          </motion.div>
-        </motion.div>
-
-        {/* Enhanced Urgency Elements */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2.6, duration: 0.6 }}
-          className="text-center mt-6"
-        >
+              Get Started Now
+            </span>
+          </motion.button>
+          
           <motion.p 
-            className="text-sm text-yellow-300 flex items-center justify-center"
-            animate={{ 
-              scale: [1, 1.05, 1],
-              opacity: [0.8, 1, 0.8]
-            }}
+            className="text-xs text-gray-400 mt-4 flex items-center justify-center"
+            animate={{ opacity: [0.7, 1, 0.7] }}
             transition={{
-              duration: 2.5,
+              duration: 2,
               repeat: Infinity,
               ease: "easeInOut"
             }}
           >
             <motion.span
-              animate={{ scale: [1, 1.3, 1] }}
+              animate={{ scale: [1, 1.2, 1] }}
               transition={{
-                duration: 1.5,
+                duration: 2,
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
-              className="mr-2"
+              className="mr-1"
             >
-              ⚡
+              ✅
             </motion.span>
-            Join thousands transforming their lives
+            30-day money-back guarantee
           </motion.p>
         </motion.div>
-        </div>
       </div>
     </div>
   );

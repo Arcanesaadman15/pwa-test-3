@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { AlertCircle, Eye, EyeOff, Mail, Lock, User, Flame } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface AuthFormProps {
@@ -98,177 +98,193 @@ export function AuthForm({ onComplete, initialData }: AuthFormProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
-      >
-        <Card className="bg-white/95 backdrop-blur-sm shadow-2xl border-0">
-          <CardHeader className="text-center pb-8">
-            <motion.div
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4"
-            >
-              <span className="text-2xl">🏔️</span>
-            </motion.div>
-            <CardTitle className="text-2xl font-bold text-gray-900">
-              {isSignUp ? 'Create Your Account' : 'Welcome Back'}
-            </CardTitle>
-            <CardDescription className="text-gray-600">
-              {isSignUp 
-                ? 'Start your transformation journey with PeakForge'
-                : 'Continue your wellness journey'
-              }
-            </CardDescription>
-          </CardHeader>
+    <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        
+        {/* Hero Section */}
+        <motion.div 
+          className="text-center mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center">
+              <Flame className="w-8 h-8 text-white" />
+            </div>
+          </div>
+          <h1 className="text-3xl font-bold mb-2">
+            {isSignUp ? 'Join the Brotherhood' : 'Welcome Back, Warrior'}
+          </h1>
+          <p className="text-gray-300">
+            {isSignUp 
+              ? 'Start your transformation journey today'
+              : 'Continue your path to peak performance'
+            }
+          </p>
+        </motion.div>
 
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {isSignUp && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="space-y-2"
-                >
-                  <Label htmlFor="name" className="text-sm font-medium text-gray-700">
-                    Full Name
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <Card className="bg-gray-900 border border-gray-700 shadow-2xl">
+            <CardContent className="p-8">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {isSignUp && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="space-y-2"
+                  >
+                    <Label htmlFor="name" className="text-sm font-medium text-white">
+                      Full Name
+                    </Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Input
+                        id="name"
+                        type="text"
+                        placeholder="Enter your name"
+                        value={formData.name}
+                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        className="pl-10 h-12 bg-gray-800 text-white border-gray-600 focus:border-orange-500 focus:ring-orange-500 placeholder:text-gray-400"
+                        disabled={loading}
+                      />
+                    </div>
+                  </motion.div>
+                )}
+
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-sm font-medium text-white">
+                    Email Address
                   </Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <Input
-                      id="name"
-                      type="text"
-                      placeholder="Enter your name"
-                      value={formData.name}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
-                      className="pl-10 h-12 bg-white text-gray-900 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      id="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      className="pl-10 h-12 bg-gray-800 text-white border-gray-600 focus:border-orange-500 focus:ring-orange-500 placeholder:text-gray-400"
                       disabled={loading}
                     />
                   </div>
-                </motion.div>
-              )}
-
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium text-gray-700">
-                  Email Address
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="pl-10 h-12 bg-white text-gray-900 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                    disabled={loading}
-                  />
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium text-gray-700">
-                  Password
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter your password"
-                    value={formData.password}
-                    onChange={(e) => handleInputChange('password', e.target.value)}
-                    className="pl-10 pr-10 h-12 bg-white text-gray-900 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                    disabled={loading}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    disabled={loading}
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              {isSignUp && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="space-y-2"
-                >
-                  <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
-                    Confirm Password
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-sm font-medium text-white">
+                    Password
                   </Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <Input
-                      id="confirmPassword"
+                      id="password"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="Confirm your password"
-                      value={formData.confirmPassword}
-                      onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                      className="pl-10 pr-10 h-12 bg-white text-gray-900 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      placeholder="Enter your password"
+                      value={formData.password}
+                      onChange={(e) => handleInputChange('password', e.target.value)}
+                      className="pl-10 pr-10 h-12 bg-gray-800 text-white border-gray-600 focus:border-orange-500 focus:ring-orange-500 placeholder:text-gray-400"
                       disabled={loading}
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                      disabled={loading}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
                   </div>
-                </motion.div>
-              )}
+                </div>
 
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg"
-                >
-                  <AlertCircle className="w-4 h-4" />
-                  <span className="text-sm">{error}</span>
-                </motion.div>
-              )}
-
-              <Button
-                type="submit"
-                className="w-full h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
-                disabled={loading}
-              >
-                {loading ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span>{isSignUp ? 'Creating Account...' : 'Signing In...'}</span>
-                  </div>
-                ) : (
-                  isSignUp ? 'Create Account' : 'Sign In'
+                {isSignUp && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="space-y-2"
+                  >
+                    <Label htmlFor="confirmPassword" className="text-sm font-medium text-white">
+                      Confirm Password
+                    </Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Input
+                        id="confirmPassword"
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Confirm your password"
+                        value={formData.confirmPassword}
+                        onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                        className="pl-10 pr-10 h-12 bg-gray-800 text-white border-gray-600 focus:border-orange-500 focus:ring-orange-500 placeholder:text-gray-400"
+                        disabled={loading}
+                      />
+                    </div>
+                  </motion.div>
                 )}
-              </Button>
-            </form>
 
-            <div className="mt-6 text-center">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsSignUp(!isSignUp);
-                  setError(null);
-                  setFormData(prev => ({ ...prev, confirmPassword: '' }));
-                }}
-                className="text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors"
-                disabled={loading}
-              >
-                {isSignUp 
-                  ? 'Already have an account? Sign in' 
-                  : "Don't have an account? Sign up"
-                }
-              </button>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center space-x-2 text-red-400 bg-red-900/20 border border-red-500/30 p-3 rounded-lg"
+                  >
+                    <AlertCircle className="w-4 h-4" />
+                    <span className="text-sm">{error}</span>
+                  </motion.div>
+                )}
+
+                <Button
+                  type="submit"
+                  className="w-full h-12 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>{isSignUp ? 'Creating Account...' : 'Signing In...'}</span>
+                    </div>
+                  ) : (
+                    isSignUp ? 'Join the Brotherhood' : 'Continue Journey'
+                  )}
+                </Button>
+              </form>
+
+              <div className="mt-6 text-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSignUp(!isSignUp);
+                    setError(null);
+                    setFormData(prev => ({ ...prev, confirmPassword: '' }));
+                  }}
+                  className="text-orange-400 hover:text-orange-300 font-medium text-sm transition-colors"
+                  disabled={loading}
+                >
+                  {isSignUp 
+                    ? 'Already a member? Sign in' 
+                    : "New here? Join the brotherhood"
+                  }
+                </button>
+              </div>
+
+              {/* Trust Indicators */}
+              <div className="mt-6 text-center">
+                <div className="flex justify-center items-center space-x-4 mb-2">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="w-6 h-6 bg-gray-700 rounded-full"></div>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-400">
+                  Join 50,000+ men who've transformed their lives
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
     </div>
   );
 } 
