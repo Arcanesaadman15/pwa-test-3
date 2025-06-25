@@ -1,3 +1,6 @@
+import { Icon, getCategoryIcon } from '@/lib/iconUtils';
+import { CheckCircle, Lock } from 'lucide-react';
+
 interface SkillCategoryProps {
   category: {
     id: string;
@@ -67,7 +70,11 @@ export function SkillCategory({ category }: SkillCategoryProps) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-3">
           <div className={`w-12 h-12 ${colors.accent} rounded-xl flex items-center justify-center`}>
-            <i className={`${category.icon} text-white text-xl`}></i>
+            <Icon 
+              name={getCategoryIcon(category.name)} 
+              size={24} 
+              className="text-white" 
+            />
           </div>
           <div>
             <h3 className={`font-bold ${colors.text}`}>{category.name}</h3>
@@ -107,9 +114,9 @@ export function SkillCategory({ category }: SkillCategoryProps) {
               }`}
             >
               {skill.unlocked ? (
-                <i className="fas fa-check"></i>
+                <CheckCircle size={16} />
               ) : (
-                <i className="fas fa-lock text-gray-500"></i>
+                <Lock size={16} className="text-gray-500" />
               )}
             </div>
             

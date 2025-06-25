@@ -20,13 +20,13 @@ export interface UnlockedSkill extends SkillDefinition {
   isRecentlyUnlocked?: boolean;
 }
 
-// Skill category configuration
+// Skill category configuration with lucide-react icons
 export const SKILL_CATEGORIES = {
-  Physical: { color: '#D13639', icon: '💪', name: 'Physical' },
-  Nutrition: { color: '#4BA651', icon: '🥗', name: 'Nutrition' },
-  Sleep: { color: '#3679D1', icon: '😴', name: 'Sleep' },
-  Mental: { color: '#9B59B6', icon: '🧠', name: 'Mental' },
-  Recovery: { color: '#E67E22', icon: '🔄', name: 'Recovery' }
+  Physical: { color: '#D13639', icon: 'Dumbbell', name: 'Physical' },
+  Nutrition: { color: '#4BA651', icon: 'Apple', name: 'Nutrition' },
+  Sleep: { color: '#3679D1', icon: 'Moon', name: 'Sleep' },
+  Mental: { color: '#9B59B6', icon: 'Brain', name: 'Mental' },
+  Recovery: { color: '#E67E22', icon: 'RotateCcw', name: 'Recovery' }
 } as const;
 
 // Complete skill definitions based on PRD

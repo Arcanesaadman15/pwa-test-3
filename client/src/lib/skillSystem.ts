@@ -292,14 +292,14 @@ export class SkillSystem {
 
   private getCategoryIcon(category: string): string {
     const icons: { [key: string]: string } = {
-      sleep: 'fas fa-bed',
-      movement: 'fas fa-running',
-      nutrition: 'fas fa-apple-alt',
-      recovery: 'fas fa-sun',
-      mindfulness: 'fas fa-brain'
+      sleep: 'Moon',
+      movement: 'Dumbbell',
+      nutrition: 'Apple',
+      recovery: 'RotateCcw',
+      mindfulness: 'Brain'
     };
     
-    return icons[category] || 'fas fa-star';
+    return icons[category] || 'Star';
   }
 
   async unlockSkill(skillId: string, category: string): Promise<void> {

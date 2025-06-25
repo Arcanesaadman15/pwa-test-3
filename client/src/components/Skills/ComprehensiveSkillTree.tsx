@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SKILL_CATEGORIES, SKILL_DEFINITIONS, UnlockedSkill } from "@/data/skillDefinitions";
 import { skillUnlockSystem } from "@/lib/skillUnlockSystem";
 import { SkillConnectionVisualization } from "./SkillConnectionVisualization";
-import { Search, Filter, ArrowUp, Star, Zap } from "lucide-react";
+import { Search, Filter, ArrowUp, Star, Zap, TreePine, Network } from "lucide-react";
+import { Icon, getCategoryIcon } from '@/lib/iconUtils';
 
 interface SkillTreeProps {
   onSkillClick?: (skill: UnlockedSkill) => void;
@@ -18,81 +19,93 @@ interface SkillNodeProps {
 }
 
 function SkillNode({ skill, isUnlocked, isRecentlyUnlocked, onClick, index = 0 }: SkillNodeProps) {
-  const category = SKILL_CATEGORIES[skill.category as keyof typeof SKILL_CATEGORIES];
-  
+  const getBorderColor = () => {
+    if (isRecentlyUnlocked) return 'border-yellow-400 shadow-yellow-200';
+    if (isUnlocked) return 'border-green-400 shadow-green-200';
+    return 'border-gray-300';
+  };
+
+  const getBackgroundGradient = () => {
+    if (isRecentlyUnlocked) return 'from-yellow-50 to-yellow-100';
+    if (isUnlocked) return 'from-green-50 to-green-100';
+    return 'from-gray-50 to-gray-100';
+  };
+
+  const getIconColor = () => {
+    if (isRecentlyUnlocked) return '#f59e0b';
+    if (isUnlocked) return '#10b981';
+    return '#6b7280';
+  };
+
   return (
     <motion.div
-      className="group relative"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.3 }}
-    >
-    <motion.div
       className={`
-          relative w-20 h-20 rounded-2xl cursor-pointer transition-all duration-300 border
-        ${isUnlocked 
-            ? 'bg-white border-gray-200 shadow-sm hover:shadow-md' 
-            : 'bg-gray-50 border-gray-200 opacity-60'
-        }
-          ${isRecentlyUnlocked ? 'ring-2 ring-blue-200' : ''}
+        skill-node relative p-4 rounded-2xl border-2 cursor-pointer
+        transition-all duration-300 hover:scale-105 hover:shadow-lg
+        bg-gradient-to-br ${getBackgroundGradient()}
+        ${getBorderColor()}
+        ${isUnlocked ? 'shadow-md' : 'shadow-sm'}
       `}
-        whileHover={isUnlocked ? { 
-          scale: 1.05,
-          transition: { duration: 0.2 }
-        } : {}}
-        whileTap={isUnlocked ? { scale: 0.95 } : {}}
-        onClick={isUnlocked ? onClick : undefined}
+      onClick={onClick}
+      initial={{ opacity: 0, scale: 0.8, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ 
+        delay: index * 0.05, 
+        duration: 0.3,
+        type: "spring",
+        stiffness: 150
+      }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.98 }}
     >
-      {/* Skill Icon */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-2xl transform transition-transform group-hover:scale-110">
-        {isUnlocked ? category.icon : '🔒'}
-          </div>
-      </div>
-      
-      {/* Level Badge */}
-        <div 
-          className={`absolute -top-2 -right-2 w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center text-white shadow-sm ${
-            isUnlocked ? 'bg-blue-500' : 'bg-gray-400'
-          }`}
-        >
-          {skill.level}
-        </div>
-      
-        {/* Recently Unlocked Animation */}
+      {/* Unlock glow effect */}
       {isRecentlyUnlocked && (
-        <motion.div
-            className="absolute -top-1 -right-1 text-blue-500"
-          animate={{ 
-              scale: [1, 1.2, 1]
-          }}
-          transition={{ 
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        >
-          ✨
-        </motion.div>
+        <div className="absolute inset-0 rounded-2xl bg-yellow-400 opacity-20 animate-pulse" />
       )}
-    </motion.div>
       
-      {/* Skill Title */}
-      <motion.div 
-        className="mt-3 text-center max-w-20"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: index * 0.05 + 0.2 }}
-      >
-        <div className={`text-xs font-medium leading-tight ${isUnlocked ? 'text-gray-900' : 'text-gray-400'}`}>
-          {isUnlocked ? skill.title : '???'}
+      {/* Level badge */}
+      <div className={`absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+        isUnlocked ? 'bg-green-500 text-white' : 'bg-gray-400 text-gray-600'
+      }`}>
+        {skill.level}
+      </div>
+
+      {/* Skill content */}
+      <div className="text-center">
+        {/* Category icon */}
+        <div className="mb-3 flex justify-center">
+          <Icon 
+            name={getCategoryIcon(skill.category)} 
+            size={28} 
+            color={getIconColor()}
+          />
         </div>
-        {isUnlocked && (
-          <div className="text-xs text-gray-500 mt-1">
-            Level {skill.level}
-          </div>
-        )}
-      </motion.div>
+        
+        {/* Skill title */}
+        <h3 className={`font-bold text-sm mb-2 ${
+          isUnlocked ? 'text-gray-900' : 'text-gray-500'
+        }`}>
+          {skill.title}
+        </h3>
+        
+        {/* Skill description */}
+        <p className={`text-xs leading-tight ${
+          isUnlocked ? 'text-gray-600' : 'text-gray-400'
+        }`}>
+          {skill.description}
+        </p>
+        
+        {/* Status indicator */}
+        <div className="mt-3 flex justify-center">
+          {isRecentlyUnlocked ? (
+            <Zap size={16} className="text-yellow-500" />
+          ) : isUnlocked ? (
+            <Star size={16} className="text-green-500" />
+          ) : (
+            <div className="w-4 h-4 rounded-full bg-gray-300" />
+          )}
+        </div>
+      </div>
     </motion.div>
   );
 }
@@ -115,7 +128,13 @@ function CategoryProgress({ category, progress, total, isSelected, onClick }: an
       whileTap={{ scale: 0.99 }}
     >
       <div className="flex items-center space-x-3">
-        <div className="text-2xl">{categoryData.icon}</div>
+        <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
+          <Icon 
+            name={getCategoryIcon(category)} 
+            size={20} 
+            color={categoryData.color}
+          />
+        </div>
         <div className="flex-1">
           <div className={`font-semibold ${isSelected ? 'text-blue-900' : 'text-gray-900'}`}>
             {categoryData.name}
@@ -292,17 +311,17 @@ export function ComprehensiveSkillTree({ onSkillClick }: SkillTreeProps) {
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            🌳 <span className="text-sm">Skill Tree</span>
+            <TreePine size={16} /> <span className="text-sm">Skill Tree</span>
           </button>
           <button
             onClick={() => setViewMode('connections')}
             className={`flex-1 py-2.5 px-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
-              viewMode === 'tree' 
+              viewMode === 'connections' 
                 ? 'bg-white text-gray-900 shadow-sm' 
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            🔗 <span className="text-sm">Connections</span>
+            <Network size={16} /> <span className="text-sm">Connections</span>
           </button>
         </div>
 
@@ -364,13 +383,16 @@ export function ComprehensiveSkillTree({ onSkillClick }: SkillTreeProps) {
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-                className={`px-3 py-2 rounded-xl font-medium transition-all text-sm ${
+                className={`px-3 py-2 rounded-xl font-medium transition-all text-sm flex items-center gap-2 ${
                   isSelected 
                     ? 'bg-blue-500 text-white shadow-sm' 
                     : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
                 }`}
             >
-              {categoryData?.icon} {category}
+              {categoryData && (
+                <Icon name={getCategoryIcon(category)} size={14} />
+              )}
+              {category}
             </button>
           );
         })}
@@ -428,7 +450,9 @@ export function ComprehensiveSkillTree({ onSkillClick }: SkillTreeProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            <div className="text-6xl mb-4">🔍</div>
+            <div className="mb-4 flex justify-center">
+              <Search size={48} className="text-gray-400" />
+            </div>
             <h3 className="text-lg font-semibold text-gray-700 mb-2">No skills found</h3>
             <p className="text-gray-500 text-sm">Try adjusting your search or filters</p>
           </motion.div>

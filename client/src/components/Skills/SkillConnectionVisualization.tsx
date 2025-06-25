@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SKILL_DEFINITIONS, SKILL_CATEGORIES, UnlockedSkill } from "@/data/skillDefinitions";
 import { skillUnlockSystem } from "@/lib/skillUnlockSystem";
 import { ArrowLeft, Filter, Info, Zap, Users, TrendingUp } from "lucide-react";
+import { Icon, getCategoryIcon } from '@/lib/iconUtils';
 
 interface SkillNode {
   id: string;
@@ -301,7 +302,7 @@ export function SkillConnectionVisualization({ onSkillClick, onBackToTree }: Ski
             >
               {Object.entries(SKILL_CATEGORIES).map(([key, category]) => (
                 <option key={key} value={key}>
-                  {category?.icon} {key}
+                  {key}
                 </option>
               ))}
             </select>
@@ -396,18 +397,24 @@ export function SkillConnectionVisualization({ onSkillClick, onBackToTree }: Ski
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
                 />
-                    <motion.text
-                  x={node.x}
-                      y={node.y + 6}
-                  textAnchor="middle"
-                      fontSize="16"
-                  className="pointer-events-none select-none"
+                    <motion.foreignObject
+                      x={node.x - 12}
+                      y={node.y - 8}
+                      width="24"
+                      height="16"
+                      className="pointer-events-none"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: index * 0.02 + 0.2, duration: 0.3 }}
                     >
-                      {category?.icon || '📋'}
-                    </motion.text>
+                      <div className="flex justify-center">
+                        <Icon 
+                          name={getCategoryIcon(node.category)} 
+                          size={16} 
+                          color={node.isUnlocked ? getCategoryColor(node.category) : "#9ca3af"}
+                        />
+                      </div>
+                    </motion.foreignObject>
               </g>
             );
           })}
@@ -426,10 +433,12 @@ export function SkillConnectionVisualization({ onSkillClick, onBackToTree }: Ski
             >
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                  <span className="text-2xl">
-                    {SKILL_CATEGORIES[selectedNode.category as keyof typeof SKILL_CATEGORIES]?.icon || '📋'}
-                          </span>
-                    </div>
+                  <Icon 
+                    name={getCategoryIcon(selectedNode.category)} 
+                    size={24} 
+                    color={getCategoryColor(selectedNode.category)}
+                  />
+                </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-900 mb-1">
                     {selectedNode.skill.title}

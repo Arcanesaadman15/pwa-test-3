@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Share2, Download, Trophy, Flame, Target, Instagram, MessageCircle, Twitter, Facebook, Link, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Icon, getAchievementIcon } from '@/lib/iconUtils';
 
 interface Achievement {
   id: string;
@@ -197,21 +198,6 @@ export function AchievementShare({ achievement, userStats, onClose }: Achievemen
     }
   };
 
-  const getAchievementIcon = () => {
-    switch (achievement.type) {
-      case 'streak':
-        return <Flame className="w-6 h-6 text-orange-400" />;
-      case 'completion':
-        return <Target className="w-6 h-6 text-green-400" />;
-      case 'milestone':
-        return <Trophy className="w-6 h-6 text-yellow-400" />;
-      case 'skill':
-        return <Trophy className="w-6 h-6 text-purple-400" />;
-      default:
-        return <Trophy className="w-6 h-6 text-blue-400" />;
-    }
-  };
-
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl p-6 max-w-md w-full border border-gray-200 shadow-2xl">
@@ -224,11 +210,15 @@ export function AchievementShare({ achievement, userStats, onClose }: Achievemen
 
         {/* Achievement Details */}
         <div className="bg-gray-50 rounded-xl p-4 mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center space-x-2">
-              {getAchievementIcon()}
-              <span className="text-gray-900 font-medium">Achievement Details</span>
-            </div>
+                      <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center space-x-2">
+                <Icon 
+                  name={getAchievementIcon(achievement.type)} 
+                  size={24} 
+                  className="text-blue-500" 
+                />
+                <span className="text-gray-900 font-medium">Achievement Details</span>
+              </div>
             <Badge variant="outline" className="text-gray-600 border-gray-300">
               {achievement.type}
             </Badge>

@@ -1,5 +1,6 @@
 import { UserSkills } from "@/types";
 import { Lock, Star, Trophy, Target } from "lucide-react";
+import { Icon, getCategoryIcon } from '@/lib/iconUtils';
 
 interface SkillTreeProps {
   userSkills: UserSkills;
@@ -10,39 +11,39 @@ export function SkillTree({ userSkills }: SkillTreeProps) {
     {
       id: 'sleep',
       name: 'Sleep Mastery',
-      icon: '🌙',
-      description: 'Master your sleep patterns and recovery',
+      icon: getCategoryIcon('Sleep'),
+      description: 'Master the foundation of recovery',
       color: 'purple',
       level: userSkills.sleep?.level || 1,
       progress: userSkills.sleep?.progress || 0,
       maxLevel: 10,
       skills: [
-        { name: 'Sleep Tracker', unlocked: true, description: 'Monitor your sleep quality' },
-        { name: 'Bedtime Routine', unlocked: (userSkills.sleep?.level || 0) >= 2, description: 'Create consistent evening habits' },
-        { name: 'Sleep Environment', unlocked: (userSkills.sleep?.level || 0) >= 4, description: 'Optimize your bedroom' },
-        { name: 'Advanced Recovery', unlocked: (userSkills.sleep?.level || 0) >= 7, description: 'Deep sleep techniques' }
+        { name: 'Consistent Bedtime', unlocked: true, description: 'Regular sleep schedule' },
+        { name: 'Sleep Quality', unlocked: (userSkills.sleep?.level || 0) >= 2, description: 'Optimize sleep environment' },
+        { name: 'Recovery Expert', unlocked: (userSkills.sleep?.level || 0) >= 4, description: 'Advanced sleep optimization' },
+        { name: 'Sleep Master', unlocked: (userSkills.sleep?.level || 0) >= 6, description: 'Complete sleep mastery' }
       ]
     },
     {
       id: 'movement',
       name: 'Movement Flow',
-      icon: '🏃',
-      description: 'Build strength, mobility, and endurance',
+      icon: getCategoryIcon('Physical'),
+      description: 'Build strength, endurance, and mobility',
       color: 'green',
       level: userSkills.movement?.level || 1,
       progress: userSkills.movement?.progress || 0,
       maxLevel: 10,
       skills: [
-        { name: 'Daily Walks', unlocked: true, description: 'Build walking consistency' },
-        { name: 'Strength Training', unlocked: (userSkills.movement?.level || 0) >= 3, description: 'Progressive resistance' },
-        { name: 'Mobility Master', unlocked: (userSkills.movement?.level || 0) >= 5, description: 'Flexibility and range' },
-        { name: 'Athletic Performance', unlocked: (userSkills.movement?.level || 0) >= 8, description: 'Peak physical condition' }
+        { name: 'Daily Steps', unlocked: true, description: 'Consistent walking habit' },
+        { name: 'Strength Training', unlocked: (userSkills.movement?.level || 0) >= 2, description: 'Build muscle strength' },
+        { name: 'Flexibility', unlocked: (userSkills.movement?.level || 0) >= 3, description: 'Improve range of motion' },
+        { name: 'Athletic Performance', unlocked: (userSkills.movement?.level || 0) >= 5, description: 'Peak physical condition' }
       ]
     },
     {
       id: 'nutrition',
       name: 'Nutrition Wisdom',
-      icon: '🥗',
+      icon: getCategoryIcon('Nutrition'),
       description: 'Fuel your body with optimal nutrition',
       color: 'orange',
       level: userSkills.nutrition?.level || 1,
@@ -58,7 +59,7 @@ export function SkillTree({ userSkills }: SkillTreeProps) {
     {
       id: 'recovery',
       name: 'Recovery Arts',
-      icon: '💆',
+      icon: getCategoryIcon('Recovery'),
       description: 'Master recovery and stress management',
       color: 'blue',
       level: userSkills.recovery?.level || 1,
@@ -74,7 +75,7 @@ export function SkillTree({ userSkills }: SkillTreeProps) {
     {
       id: 'mindfulness',
       name: 'Mental Clarity',
-      icon: '🧘',
+      icon: getCategoryIcon('Mental'),
       description: 'Develop focus, presence, and awareness',
       color: 'pink',
       level: userSkills.mindfulness?.level || 1,
@@ -154,7 +155,7 @@ export function SkillTree({ userSkills }: SkillTreeProps) {
               return (
                 <div key={category.id} className="text-center">
                   <div className={`w-12 h-12 mx-auto rounded-full ${colors.bg} flex items-center justify-center text-lg mb-2`}>
-                    {category.icon}
+                    <Icon name={category.icon} size={20} className="text-white" />
                   </div>
                   <div className="text-xs text-gray-400 mb-1">{category.name.split(' ')[0]}</div>
                   <div className="text-sm font-bold text-white">Lv.{category.level}</div>
@@ -180,7 +181,7 @@ export function SkillTree({ userSkills }: SkillTreeProps) {
               {/* Category Header */}
               <div className="flex items-center gap-4 mb-4">
                 <div className={`w-16 h-16 rounded-2xl ${colors.bg} flex items-center justify-center text-2xl`}>
-                  {category.icon}
+                  <Icon name={category.icon} size={32} className="text-white" />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-white">{category.name}</h3>
