@@ -45,7 +45,7 @@ export function QuickQuiz({ onComplete }: QuickQuizProps) {
   const question = QUICK_QUIZ_QUESTIONS[currentQuestion];
 
   return (
-    <div className="min-h-screen bg-black flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-black flex flex-col relative">
       {/* Subtle background effects */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div

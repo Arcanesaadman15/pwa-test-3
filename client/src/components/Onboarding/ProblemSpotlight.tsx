@@ -52,7 +52,7 @@ export function ProblemSpotlight({ onComplete }: ProblemSpotlightProps) {
   const isLastSlide = currentSlide === PROBLEM_SPOTLIGHT_SLIDES.length - 1;
 
   return (
-    <div className="h-screen bg-black overflow-hidden flex flex-col">
+    <div className="min-h-screen bg-black flex flex-col">
       {/* Skip button - Apple style */}
       <div className="absolute top-4 right-4 z-20 safe-area-top">
         <button
@@ -63,10 +63,10 @@ export function ProblemSpotlight({ onComplete }: ProblemSpotlightProps) {
         </button>
       </div>
 
-      {/* Main content container - flexible height */}
+      {/* Main content container - flexible height with proper scrolling */}
       <div
         ref={containerRef}
-        className="flex-1 relative overflow-hidden"
+        className="flex-1 relative min-h-screen pb-20"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}

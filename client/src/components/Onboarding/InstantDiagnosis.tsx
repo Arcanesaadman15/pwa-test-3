@@ -74,7 +74,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
   const StatusIcon = status.icon;
 
   return (
-    <div className="fixed inset-0 bg-black text-white overflow-y-auto">
+    <div className="min-h-screen bg-black text-white">
       {/* Enhanced background effects */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
@@ -122,9 +122,9 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
       </div>
 
       {/* Scrollable content container with proper mobile-first spacing */}
-      <div className="relative z-10 min-h-full">
+      <div className="relative z-10 min-h-screen">
         {/* Mobile-first padding with safe areas */}
-        <div className="px-4 py-8 sm:py-10 md:py-12">
+        <div className="px-4 py-8 sm:py-10 md:py-12 pb-24">
           <div className="container mx-auto max-w-md">
             <motion.div
               initial={{ opacity: 0, y: 30 }}

@@ -14,7 +14,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
   }, [onComplete]);
 
   return (
-    <div className="h-screen bg-black text-white overflow-hidden flex flex-col justify-center items-center relative">
+    <div className="min-h-screen bg-black text-white flex flex-col justify-center items-center relative">
       {/* Enhanced background effects */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div

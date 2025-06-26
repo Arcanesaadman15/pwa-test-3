@@ -32,11 +32,11 @@ export function RoadmapPreview({ onComplete }: RoadmapPreviewProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-y-auto">
-      <div className="max-w-2xl mx-auto px-4 py-16">
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-2xl mx-auto px-4 pt-8 pb-24">
         
         {/* Hero Section */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
             <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center">
               <Flame className="w-8 h-8 text-white" />
@@ -44,7 +44,7 @@ export function RoadmapPreview({ onComplete }: RoadmapPreviewProps) {
           </div>
           
           <motion.h1 
-            className="text-4xl md:text-6xl font-bold mb-6"
+            className="text-3xl md:text-5xl font-bold mb-6 leading-tight"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
@@ -54,7 +54,7 @@ export function RoadmapPreview({ onComplete }: RoadmapPreviewProps) {
           </motion.h1>
           
           <motion.p 
-            className="text-xl text-gray-300 mb-8 leading-relaxed"
+            className="text-lg md:text-xl text-gray-300 mb-8 leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -64,7 +64,7 @@ export function RoadmapPreview({ onComplete }: RoadmapPreviewProps) {
         </div>
 
         {/* Phases */}
-        <div className="space-y-6 mb-16">
+        <div className="space-y-4 mb-12">
           {phases.map((phase, index) => {
             const IconComponent = phase.icon;
             return (
@@ -73,13 +73,13 @@ export function RoadmapPreview({ onComplete }: RoadmapPreviewProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-gray-900 border border-gray-700 rounded-2xl p-8"
+                className="bg-gray-900 border border-gray-700 rounded-2xl p-6"
               >
-                <div className="flex items-start space-x-6">
+                <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
                     <IconComponent className="w-6 h-6 text-orange-400" />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-3 mb-3">
                       <span className="text-sm font-medium text-orange-400">{phase.week}</span>
                       <CheckCircle className="w-4 h-4 text-green-400" />
@@ -106,24 +106,24 @@ export function RoadmapPreview({ onComplete }: RoadmapPreviewProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-gray-900 border border-gray-700 rounded-2xl p-8 mb-16"
+          className="bg-gray-900 border border-gray-700 rounded-2xl p-6 mb-12"
         >
-          <h3 className="text-2xl font-bold mb-8 text-center">🎯 What You'll Achieve</h3>
-          <div className="grid grid-cols-2 gap-6 text-center">
+          <h3 className="text-xl font-bold mb-6 text-center">🎯 What You'll Achieve</h3>
+          <div className="grid grid-cols-2 gap-4 text-center">
             <div>
-              <div className="text-3xl font-bold text-green-400 mb-2">+40%</div>
+              <div className="text-2xl md:text-3xl font-bold text-green-400 mb-2">+40%</div>
               <div className="text-sm text-gray-300">Testosterone Boost</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-blue-400 mb-2">+65%</div>
+              <div className="text-2xl md:text-3xl font-bold text-blue-400 mb-2">+65%</div>
               <div className="text-sm text-gray-300">Energy Increase</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-purple-400 mb-2">-50%</div>
+              <div className="text-2xl md:text-3xl font-bold text-purple-400 mb-2">-50%</div>
               <div className="text-sm text-gray-300">Stress Reduction</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-yellow-400 mb-2">+80%</div>
+              <div className="text-2xl md:text-3xl font-bold text-yellow-400 mb-2">+80%</div>
               <div className="text-sm text-gray-300">Confidence Gain</div>
             </div>
           </div>
@@ -138,11 +138,14 @@ export function RoadmapPreview({ onComplete }: RoadmapPreviewProps) {
         >
           <Button
             onClick={onComplete}
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 text-lg rounded-xl transition-all duration-200 hover:scale-105"
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 text-lg rounded-xl transition-all duration-200 hover:scale-105 max-w-md mx-auto"
           >
             See Success Stories →
           </Button>
         </motion.div>
+
+        {/* Mobile safe area */}
+        <div className="h-6" />
       </div>
     </div>
   );

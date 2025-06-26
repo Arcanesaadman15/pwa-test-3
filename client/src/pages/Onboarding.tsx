@@ -124,7 +124,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white overflow-hidden">
+    <div className="min-h-screen bg-gray-900 text-white">
       {/* Progress Bar - Only show during data collection steps */}
       {!['splash', 'paywall'].includes(currentStep) && (
         <div className="fixed top-0 left-0 right-0 z-50">
@@ -139,8 +139,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         </div>
       )}
 
-      {/* Screen Container */}
-      <div className="relative w-full h-screen">
+      {/* Screen Container with proper scrolling */}
+      <div className="relative w-full min-h-screen">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentStep}
@@ -153,7 +153,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               x: { type: "spring", stiffness: 300, damping: 30 },
               opacity: { duration: 0.2 }
             }}
-            className="absolute inset-0"
+            className="w-full min-h-screen"
           >
             {currentStep === 'splash' && (
               <SplashScreen onComplete={goToNextStep} />

@@ -9,11 +9,11 @@ interface SocialProofProps {
 
 export function SocialProof({ onComplete }: SocialProofProps) {
   return (
-    <div className="min-h-screen bg-black text-white overflow-y-auto">
-      <div className="max-w-2xl mx-auto px-4 py-16">
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-2xl mx-auto px-4 pt-8 pb-24">
         
         {/* Hero Section */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
             <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center">
               <Users className="w-8 h-8 text-white" />
@@ -21,7 +21,7 @@ export function SocialProof({ onComplete }: SocialProofProps) {
           </div>
           
           <motion.h1 
-            className="text-4xl md:text-6xl font-bold mb-6"
+            className="text-3xl md:text-5xl font-bold mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
@@ -31,7 +31,7 @@ export function SocialProof({ onComplete }: SocialProofProps) {
           </motion.h1>
           
           <motion.p 
-            className="text-xl text-gray-300 mb-8 leading-relaxed"
+            className="text-lg md:text-xl text-gray-300 mb-8 leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -129,10 +129,13 @@ export function SocialProof({ onComplete }: SocialProofProps) {
         >
           <Button
             onClick={onComplete}
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 text-lg rounded-xl transition-all duration-200 hover:scale-105"
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 text-lg rounded-xl transition-all duration-200 hover:scale-105 max-w-md mx-auto min-h-[60px] active:scale-95"
           >
             I'm Ready to Reclaim My Power →
           </Button>
+          
+          {/* Mobile safe area */}
+          <div className="h-6 mt-4" />
         </motion.div>
       </div>
     </div>

@@ -108,7 +108,7 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden">
+    <div className="min-h-screen bg-black text-white">
       {/* Header with Progress */}
       <div className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl border-b border-gray-800">
         <div className="max-w-md mx-auto px-4 py-4">
@@ -142,7 +142,7 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-md mx-auto px-4 py-8">
+      <div className="max-w-md mx-auto px-4 py-8 pb-24">
         <AnimatePresence mode="wait">
           <motion.div
             key={safeCurrentQuestion}

@@ -118,7 +118,7 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col overflow-hidden relative">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col relative">
       {/* Background effects */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
