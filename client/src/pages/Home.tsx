@@ -232,7 +232,11 @@ export default function Home() {
           setShowSkillModal(true);
         }} />;
       case 'profile':
-        return <ProfileOverview user={legacyUser} onOpenSettings={handleOpenSettings} />;
+        return <ProfileOverview 
+          user={legacyUser} 
+          onOpenSettings={handleOpenSettings}
+          onProgramChange={handleOpenProgramSelector}
+        />;
       default:
         return null;
     }

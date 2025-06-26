@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Share2, Instagram, MessageCircle, Download, Copy, Trophy, Star, CheckCircle, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Icon, getCategoryIcon } from '@/lib/iconUtils';
 
 interface SkillUnlockModalProps {
   isOpen: boolean;
@@ -98,9 +99,27 @@ export function SkillUnlockModal({ isOpen, onClose, skill, isNewUnlock = false, 
         ctx.fillStyle = skill.categoryColor || '#8b5cf6';
         ctx.fillText(skill.title || skill.name, canvas.width / 2, 320);
         
-        // Skill icon - Use the actual category icon
+        // Use proper category icon emoji representation for canvas
+        const getIconEmoji = (category: string) => {
+          const emojiMap: { [key: string]: string } = {
+            Physical: '💪',
+            Nutrition: '🍎', 
+            Sleep: '🌙',
+            Mental: '🧠',
+            Recovery: '🔄',
+            Movement: '🏃',
+            Mindfulness: '❤️',
+            Training: '💪',
+            'Explosive Training': '⚡',
+            'Breath & Tension': '💨',
+            Mind: '🧠'
+          };
+          return emojiMap[category] || '⭐';
+        };
+        
+        // Skill icon - Use emoji representation
         ctx.font = '160px system-ui';
-        ctx.fillText(skill.categoryIcon || '⭐', canvas.width / 2, 500);
+        ctx.fillText(getIconEmoji(skill.category), canvas.width / 2, 500);
         
         // Description
         ctx.font = '28px system-ui';
@@ -289,14 +308,18 @@ export function SkillUnlockModal({ isOpen, onClose, skill, isNewUnlock = false, 
             {/* Header */}
             <div className="text-center mb-6 pt-2">
               <motion.div
-                className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center text-4xl"
+                className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center"
                 style={{ backgroundColor: skill.categoryColor ? `${skill.categoryColor}20` : '#f3f4f6' }}
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
               >
-                {skill.categoryIcon || '📋'}
-          </motion.div>
+                <Icon 
+                  name={getCategoryIcon(skill.category)} 
+                  size={32} 
+                  color={skill.categoryColor || '#8b5cf6'}
+                />
+              </motion.div>
           
               <motion.h2
                 className="text-2xl font-bold text-gray-900 mb-2"
@@ -310,9 +333,9 @@ export function SkillUnlockModal({ isOpen, onClose, skill, isNewUnlock = false, 
               <motion.h3
                 className="text-xl font-semibold mb-2"
                 style={{ color: skill.categoryColor || '#8b5cf6' }}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4 }}
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.4 }}
               >
                 {skill.title || skill.name}
               </motion.h3>
@@ -356,8 +379,13 @@ export function SkillUnlockModal({ isOpen, onClose, skill, isNewUnlock = false, 
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <div className="text-gray-500">Category</div>
-                  <div className="text-gray-900 font-medium flex items-center gap-1">
-                    {skill.categoryIcon} {skill.category || 'Wellness'}
+                  <div className="text-gray-900 font-medium flex items-center gap-2">
+                    <Icon 
+                      name={getCategoryIcon(skill.category)} 
+                      size={16} 
+                      color={skill.categoryColor || '#8b5cf6'}
+                    />
+                    {skill.category || 'Wellness'}
                   </div>
                 </div>
                 <div>
