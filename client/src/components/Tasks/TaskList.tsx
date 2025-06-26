@@ -17,8 +17,20 @@ import {
   Wifi, 
   WifiOff,
   Target,
-  Flame
+  Flame,
+  Moon,
+  Activity,
+  Apple,
+  RotateCcw,
+  Brain,
+  Dumbbell,
+  Zap,
+  Wind,
+  Clipboard,
+  PartyPopper,
+  SkipForward
 } from "lucide-react";
+import { Icon, getCategoryIcon } from "@/lib/iconUtils";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -35,20 +47,6 @@ interface TaskCardProps {
 }
 
 function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReason, onComplete, onSkip, index = 0 }: TaskCardProps) {
-  const getCategoryIcon = (category: string) => {
-    const icons = {
-      'Sleep': '🌙',
-      'Movement': '🏃',
-      'Nutrition': '🥗',
-      'Recovery': '💆',
-      'Mindfulness': '🧘',
-      'Training': '💪',
-      'Explosive Training': '⚡',
-      'Breath & Tension': '🫁',
-      'Mind': '🧠'
-    };
-    return icons[category as keyof typeof icons] || '📋';
-  };
 
   const getCategoryColor = (category: string) => {
     const colors = {
@@ -97,7 +95,16 @@ function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReaso
               : undefined
           }}
         >
-          {getCategoryIcon(task.category)}
+          <Icon 
+            name={getCategoryIcon(task.category)} 
+            className="w-6 h-6" 
+            color={
+              canInteract && status !== 'completed' && status !== 'skipped' 
+                ? getCategoryColor(task.category) 
+                : status === 'completed' ? '#059669' 
+                : '#6B7280'
+            }
+          />
         </div>
 
         {/* Task Content */}
@@ -603,21 +610,21 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
               >
-                <div className="text-6xl mb-4">
-                  {activeTab === 'active' && '🎯'}
-                  {activeTab === 'completed' && '🎉'}
-                  {activeTab === 'skipped' && '⏭️'}
-        </div>
+                <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-gray-100">
+                  {activeTab === 'active' && <Target className="w-8 h-8 text-gray-400" />}
+                  {activeTab === 'completed' && <PartyPopper className="w-8 h-8 text-gray-400" />}
+                  {activeTab === 'skipped' && <SkipForward className="w-8 h-8 text-gray-400" />}
+                </div>
                 <h3 className="text-lg font-semibold text-gray-700 mb-2">
                   {activeTab === 'active' && 'No active tasks'}
                   {activeTab === 'completed' && 'No completed tasks yet'}
                   {activeTab === 'skipped' && 'No skipped tasks'}
-            </h3>
+                </h3>
                 <p className="text-gray-500 text-sm">
                   {activeTab === 'active' && 'All tasks for today are complete!'}
                   {activeTab === 'completed' && 'Complete some tasks to see them here'}
                   {activeTab === 'skipped' && 'Skipped tasks will appear here'}
-            </p>
+                </p>
               </motion.div>
             )}
           </div>

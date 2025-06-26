@@ -81,11 +81,19 @@ export const Icon: React.FC<IconProps> = ({ name, size = 20, className = "", col
 // Helper function to get category icon component
 export const getCategoryIcon = (category: string): IconName => {
   const categoryIcons: { [key: string]: IconName } = {
+    // Legacy categories (keep for backward compatibility)
     Physical: 'Dumbbell',
     Nutrition: 'Apple',
     Sleep: 'Moon',
     Mental: 'Brain',
-    Recovery: 'RotateCcw'
+    Recovery: 'RotateCcw',
+    // Task categories
+    Movement: 'Activity',
+    Mindfulness: 'Heart',
+    Training: 'Dumbbell',
+    'Explosive Training': 'Zap',
+    'Breath & Tension': 'Wind',
+    Mind: 'Brain'
   };
   
   return categoryIcons[category] || 'Star';
