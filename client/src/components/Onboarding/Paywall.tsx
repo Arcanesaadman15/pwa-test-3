@@ -4,6 +4,7 @@ import { CheckCircle, Clock, Users, Zap, ArrowLeft, Star, Shield, Award, Flame, 
 import { AuthForm } from "@/components/Auth/AuthForm";
 import { PricingPlans } from "@/components/Subscription/PricingPlans";
 import { useAuth } from "@/contexts/AuthContext";
+import { Icon } from '@/lib/iconUtils';
 
 interface PaywallProps {
   onComplete: () => void;
@@ -155,9 +156,9 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
           className="bg-gray-900 border border-gray-700 rounded-2xl p-8 mb-16"
         >
           <div className="text-center mb-8">
-            <div className="inline-flex items-center bg-orange-500/20 px-4 py-2 rounded-full text-orange-400 text-sm font-medium mb-4">
-              <Star className="w-4 h-4 mr-2" />
-              TRANSFORMATION SYSTEM
+            <div className="flex items-center text-blue-400 mb-4">
+              <Icon name="Rocket" size={20} className="mr-2" />
+              <span className="text-sm font-medium">PREMIUM UPGRADE</span>
             </div>
             <h2 className="text-2xl font-bold mb-2">The Masculine Revival System</h2>
             <p className="text-gray-300">Everything you need to reclaim your masculine power</p>
@@ -262,7 +263,7 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
                 }}
                 className="mr-2"
               >
-                🚀
+                <Icon name="Rocket" size={20} className="text-white" />
               </motion.span>
               Get Started Now
             </span>
@@ -286,7 +287,7 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
               }}
               className="mr-1"
             >
-              ✅
+              <Icon name="CheckCircle" size={16} className="text-green-400" />
             </motion.span>
             30-day money-back guarantee
           </motion.p>

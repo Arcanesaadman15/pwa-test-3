@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Crown, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Icon } from '@/lib/iconUtils';
 
 export function SubscriptionSuccess() {
   const navigate = useNavigate();
@@ -45,7 +46,7 @@ export function SubscriptionSuccess() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          Welcome to Premium! 🎉
+          Welcome to Premium!
         </motion.h1>
 
         {/* Description */}

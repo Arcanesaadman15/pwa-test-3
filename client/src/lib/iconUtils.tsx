@@ -23,7 +23,19 @@ import {
   Footprints,
   Utensils,
   Wind,
-  Droplets
+  Droplets,
+  // New icons for replacing emojis
+  Rocket,
+  Mountain,
+  Smartphone,
+  ArrowUp,
+  PartyPopper,
+  Clipboard,
+  Sprout,
+  Tablet,
+  User,
+  Share2,
+  Settings
 } from 'lucide-react';
 
 // Icon mapping for lucide-react components
@@ -54,7 +66,20 @@ export const IconMap = {
   Zap,
   TrendingUp,
   Shield,
-  Clock
+  Clock,
+  
+  // UI/Program Icons
+  Rocket,
+  Mountain,
+  Smartphone,
+  ArrowUp,
+  PartyPopper,
+  Clipboard,
+  Sprout,
+  Tablet,
+  User,
+  Share2,
+  Settings
 } as const;
 
 export type IconName = keyof typeof IconMap;
@@ -111,4 +136,30 @@ export const getAchievementIcon = (type: string): IconName => {
   };
   
   return achievementIcons[type] || 'Trophy';
+};
+
+// Helper function to get program badge icon
+export const getProgramIcon = (program: string): IconName => {
+  const programIcons: { [key: string]: IconName } = {
+    beginner: 'Sprout',
+    intermediate: 'Zap',
+    advanced: 'Flame'
+  };
+  
+  return programIcons[program] || 'Sprout';
+};
+
+// Helper function to get milestone icon
+export const getMilestoneIcon = (milestone: string): IconName => {
+  const milestoneIcons: { [key: string]: IconName } = {
+    'Week 1 Complete': 'Target',
+    '7 Day Streak': 'Flame', 
+    'Halfway Point': 'Mountain',
+    'Level 5': 'Star',
+    'Achievement': 'Trophy',
+    'Progress': 'TrendingUp',
+    'Launch': 'Rocket'
+  };
+  
+  return milestoneIcons[milestone] || 'Target';
 }; 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Flame, Star, Trophy, Crown } from 'lucide-react';
+import { Icon } from '@/lib/iconUtils';
 
 interface StreakSparkleProps {
   streakCount: number;
@@ -69,12 +70,12 @@ export function StreakSparkle({ streakCount, isVisible, onComplete }: StreakSpar
   };
 
   const getStreakMessage = (streak: number): string => {
-    if (streak >= 30) return `🏆 LEGENDARY ${streak} DAY STREAK! 🏆`;
-    if (streak >= 21) return `👑 AMAZING ${streak} DAY STREAK! 👑`;
-    if (streak >= 14) return `⭐ FANTASTIC ${streak} DAY STREAK! ⭐`;
-    if (streak >= 7) return `🔥 GREAT ${streak} DAY STREAK! 🔥`;
-    if (streak >= 3) return `✨ NICE ${streak} DAY STREAK! ✨`;
-    return `🌟 ${streak} DAY STREAK! 🌟`;
+    if (streak >= 30) return `LEGENDARY ${streak} DAY STREAK!`;
+    if (streak >= 21) return `AMAZING ${streak} DAY STREAK!`;
+    if (streak >= 14) return `FANTASTIC ${streak} DAY STREAK!`;
+    if (streak >= 7) return `GREAT ${streak} DAY STREAK!`;
+    if (streak >= 3) return `NICE ${streak} DAY STREAK!`;
+    return `${streak} DAY STREAK!`;
   };
 
   const StreakIcon = getStreakIcon(streakCount);
@@ -178,12 +179,13 @@ export function StreakSparkle({ streakCount, isVisible, onComplete }: StreakSpar
 
             {/* Motivational text */}
             <motion.p
-              className="text-gray-300 text-sm"
+              className="text-gray-300 text-sm flex items-center justify-center gap-1"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
             >
-              Keep up the amazing momentum! 🚀
+              Keep up the amazing momentum!
+              <Icon name="Rocket" size={16} className="text-orange-400" />
             </motion.p>
 
             {/* Floating sparkles around the card */}

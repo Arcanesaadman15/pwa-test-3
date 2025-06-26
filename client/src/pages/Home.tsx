@@ -20,6 +20,7 @@ import { useTabSwipeNavigation } from "@/hooks/useSwipeNavigation";
 import { StreakSparkle } from "@/components/Rewards/StreakSparkle";
 import { storage } from "@/lib/storage";
 import { skillUnlockSystem } from "@/lib/skillUnlockSystem";
+import { Icon } from "@/lib/iconUtils";
 
 type TabType = 'tasks' | 'skills' | 'profile';
 type ViewType = 'main' | 'settings' | 'programSelector';
@@ -117,7 +118,7 @@ export default function Home() {
               id: `streak-${newStreak}`,
               title: `${newStreak} Day Streak!`,
               description: `Completed ${newStreak} consecutive days of wellness tasks`,
-              icon: '🔥',
+              icon: 'Flame',
               color: '#f97316',
               unlockedAt: new Date(),
               type: 'streak'
@@ -208,7 +209,7 @@ export default function Home() {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">🏔️</span>
+              <Icon name="Mountain" size={32} className="text-white" />
             </div>
             <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-white/70">Loading your progress...</p>
@@ -324,10 +325,17 @@ export default function Home() {
 
       {/* Offline indicator */}
       {!isOnline && (
-        <div className="fixed top-4 left-4 right-4 z-50">
-          <div className="bg-orange-500/90 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-center text-sm">
-            📱 Offline Mode - Changes will sync when connected
-            {hasPendingActions && <span className="ml-2">• Pending sync</span>}
+        <div className="fixed bottom-0 left-0 right-0 bg-gray-900/90 backdrop-blur-lg border-t border-gray-700/50 px-4 py-3 z-40">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
+              <Icon name="Smartphone" size={20} className="text-gray-300" />
+            </div>
+            <div className="flex-1">
+              <p className="text-white text-sm font-medium">
+                <Icon name="Smartphone" size={16} className="inline mr-1" />
+                Offline Mode - Changes will sync when connected
+              </p>
+            </div>
           </div>
         </div>
       )}

@@ -1,6 +1,7 @@
 import { User } from "@/types";
 import { Settings, Target, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Icon, getProgramIcon } from "@/lib/iconUtils";
 
 interface ProfileOverviewProps {
   user: User;
@@ -13,9 +14,9 @@ export function ProfileOverview({ user, onOpenSettings, onProgramChange }: Profi
   
   const getProgramBadge = (program: string) => {
     const badges = {
-      beginner: { color: 'bg-green-500', text: 'Beginner', icon: '🌱' },
-      intermediate: { color: 'bg-blue-500', text: 'Intermediate', icon: '⚡' },
-      advanced: { color: 'bg-purple-500', text: 'Advanced', icon: '🔥' }
+      beginner: { color: 'bg-green-500', text: 'Beginner', icon: getProgramIcon('beginner') },
+      intermediate: { color: 'bg-blue-500', text: 'Intermediate', icon: getProgramIcon('intermediate') },
+      advanced: { color: 'bg-purple-500', text: 'Advanced', icon: getProgramIcon('advanced') }
     };
     return badges[program as keyof typeof badges] || badges.beginner;
   };
@@ -34,7 +35,7 @@ export function ProfileOverview({ user, onOpenSettings, onProgramChange }: Profi
           
           {/* Program Badge */}
           <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${badge.color} text-white text-sm font-medium`}>
-            <span>{badge.icon}</span>
+            <Icon name={badge.icon} size={16} className="text-white" />
             {badge.text} Program
           </div>
         </div>
@@ -100,8 +101,8 @@ export function ProfileOverview({ user, onOpenSettings, onProgramChange }: Profi
               className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className={`w-8 h-8 rounded-full ${badge.color} flex items-center justify-center text-white text-sm`}>
-                  {badge.icon}
+                <div className={`w-8 h-8 rounded-full ${badge.color} flex items-center justify-center`}>
+                  <Icon name={badge.icon} size={16} className="text-white" />
                 </div>
                 <div className="text-left">
                   <div className="font-medium text-gray-900">Current Program</div>
@@ -136,8 +137,9 @@ export function ProfileOverview({ user, onOpenSettings, onProgramChange }: Profi
         </div>
 
         {/* Simple motivational footer */}
-        <div className="text-center text-gray-500 text-sm">
-          <p>Keep building your wellness habits! 🌟</p>
+        <div className="text-center text-gray-500 text-sm flex items-center justify-center gap-2">
+          <Icon name="Sparkles" size={16} />
+          <p>Keep building your wellness habits!</p>
         </div>
       </div>
     </div>

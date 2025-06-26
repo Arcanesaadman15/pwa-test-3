@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Calendar, Trophy, Target, Flame } from "lucide-react";
+import { Icon } from '@/lib/iconUtils';
 
 interface RoadmapPreviewProps {
   onComplete: () => void;
@@ -108,7 +109,12 @@ export function RoadmapPreview({ onComplete }: RoadmapPreviewProps) {
           transition={{ delay: 0.4 }}
           className="bg-gray-900 border border-gray-700 rounded-2xl p-6 mb-12"
         >
-          <h3 className="text-xl font-bold mb-6 text-center">🎯 What You'll Achieve</h3>
+          <div className="text-center mb-8">
+            <h3 className="text-xl font-bold mb-6 text-center flex items-center justify-center gap-2">
+              <Icon name="Target" size={24} className="text-blue-500" />
+              What You'll Achieve
+            </h3>
+          </div>
           <div className="grid grid-cols-2 gap-4 text-center">
             <div>
               <div className="text-2xl md:text-3xl font-bold text-green-400 mb-2">+40%</div>

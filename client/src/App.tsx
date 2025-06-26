@@ -19,6 +19,7 @@ import SubscriptionCancelPage from "@/pages/SubscriptionCancelPage";
 import LemonSqueezySetup from "@/pages/LemonSqueezySetup";
 import Onboarding from "@/pages/Onboarding";
 import { useEffect } from "react";
+import { Icon } from "./lib/iconUtils";
 
 function Router() {
   return (
@@ -67,14 +68,14 @@ function AuthenticatedApp() {
     console.log('🎯 App: Still loading...');
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl">🏔️</span>
+          <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Icon name="Mountain" size={32} className="text-white" />
           </div>
-          <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto"></div>
-          <p className="text-white/70 mt-4">Loading PeakForge...</p>
-          <p className="text-white/50 text-sm mt-2">Connecting to services...</p>
+          <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white/70">Loading your wellness journey...</p>
+          <p className="text-white/50 text-sm mt-2">Almost ready...</p>
         </div>
       </div>
     );

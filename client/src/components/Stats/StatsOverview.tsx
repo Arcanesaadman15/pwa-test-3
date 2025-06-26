@@ -1,6 +1,7 @@
 import { User } from "@/types";
 import { Calendar, Target, Flame, Trophy } from "lucide-react";
 import { motion } from "framer-motion";
+import { Icon, getMilestoneIcon } from "@/lib/iconUtils";
 
 interface StatsOverviewProps {
   user: User;
@@ -139,10 +140,10 @@ export function StatsOverview({ user }: StatsOverviewProps) {
           
           <div className="space-y-3">
             {[
-              { title: "Week 1 Complete", target: 7, current: completedDays, emoji: "🎯" },
-              { title: "7 Day Streak", target: 7, current: currentStreak, emoji: "🔥" },
-              { title: "Halfway Point", target: 32, current: completedDays, emoji: "🏔️" },
-              { title: "Level 5", target: 50, current: completedDays, emoji: "⭐" }
+              { title: "Week 1 Complete", target: 7, current: completedDays, icon: getMilestoneIcon("Week 1 Complete") },
+              { title: "7 Day Streak", target: 7, current: currentStreak, icon: getMilestoneIcon("7 Day Streak") },
+              { title: "Halfway Point", target: 32, current: completedDays, icon: getMilestoneIcon("Halfway Point") },
+              { title: "Level 5", target: 50, current: completedDays, icon: getMilestoneIcon("Level 5") }
             ].map((milestone, index) => {
               const progress = Math.min((milestone.current / milestone.target) * 100, 100);
               const isCompleted = milestone.current >= milestone.target;
@@ -156,7 +157,11 @@ export function StatsOverview({ user }: StatsOverviewProps) {
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-lg">{milestone.emoji}</span>
+                      <Icon 
+                        name={milestone.icon} 
+                        size={18} 
+                        className={isCompleted ? 'text-green-600' : 'text-gray-600'} 
+                      />
                       <span className={`text-sm font-medium ${
                         isCompleted ? 'text-green-700' : 'text-gray-700'
                       }`}>
@@ -184,8 +189,9 @@ export function StatsOverview({ user }: StatsOverviewProps) {
         </motion.div>
 
         {/* Simple footer */}
-        <div className="text-center mt-8 text-gray-500 text-sm">
-          <p>Keep going! Every day counts. 💪</p>
+        <div className="text-center mt-8 text-gray-500 text-sm flex items-center justify-center gap-2">
+          <Icon name="Dumbbell" size={16} />
+          <p>Keep going! Every day counts.</p>
         </div>
       </div>
     </div>

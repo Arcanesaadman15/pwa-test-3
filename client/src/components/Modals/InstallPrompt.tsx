@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { X, Download, Smartphone, Monitor, Share } from "lucide-react";
 import { useState } from "react";
+import { Icon } from '@/lib/iconUtils';
 
 interface InstallPromptProps {
   onInstall: () => void;
@@ -188,21 +189,17 @@ export function InstallPrompt({
                   </h4>
                   
                   {isIOS ? (
-                    <ol className="list-decimal list-inside space-y-2 text-sm text-blue-100">
-                      <li className="flex items-start">
-                        <span className="mr-2">1.</span>
-                        <div>
-                          <span>Tap the </span>
-                          <span className="inline-flex items-center bg-white/20 px-2 py-1 rounded text-xs">
-                            <Share className="w-3 h-3 mr-1" />
-                            Share
-                          </span>
-                          <span> button (⬆️) at the bottom of Safari</span>
-                        </div>
+                    <ol className="list-decimal list-inside space-y-2 text-sm text-gray-300">
+                      <li>Tap the share <Icon name="ArrowUp" size={16} className="inline mx-1" /> button at the bottom of Safari</li>
+                      <li>Scroll down and tap "Add to Home Screen"</li>
+                      <li className="flex items-center gap-2">
+                        <Icon name="Smartphone" size={16} className="text-blue-400" />
+                        Scroll down and tap "Add to Home Screen"
                       </li>
-                      <li>📱 Scroll down and tap "Add to Home Screen"</li>
-                      <li>✅ Tap "Add" to install PeakForge</li>
-                      <li>🎉 Find the app icon on your home screen!</li>
+                      <li className="flex items-center gap-2">
+                        <Icon name="PartyPopper" size={16} className="text-green-400" />
+                        Find the app icon on your home screen!
+                      </li>
                     </ol>
                   ) : (
                     <ol className="list-decimal list-inside space-y-2 text-sm text-blue-100">

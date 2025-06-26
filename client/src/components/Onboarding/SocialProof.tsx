@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Star, Quote, Users, Target, TrendingUp } from "lucide-react";
 import { SOCIAL_PROOF_TESTIMONIALS, SUCCESS_STATS } from "@/data/onboardingData";
+import { Icon } from '@/lib/iconUtils';
 
 interface SocialProofProps {
   onComplete: () => void;
@@ -114,7 +115,10 @@ export function SocialProof({ onComplete }: SocialProofProps) {
           transition={{ delay: 0.8 }}
           className="bg-gray-900 border border-gray-700 rounded-2xl p-6 mb-16 text-center"
         >
-          <h3 className="font-semibold mb-2">💪 Real Men, Real Results</h3>
+          <h3 className="font-semibold mb-2 flex items-center gap-2">
+            <Icon name="Dumbbell" size={20} className="text-orange-500" />
+            Real Men, Real Results
+          </h3>
           <p className="text-sm text-gray-300">
             No gimmicks, no shortcuts - just the natural methods that actually work
           </p>

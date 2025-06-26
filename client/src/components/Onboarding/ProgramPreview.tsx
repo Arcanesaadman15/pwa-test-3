@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Icon } from '@/lib/iconUtils';
 
 interface ProgramPreviewProps {
   onComplete: () => void;
@@ -21,8 +22,10 @@ export function ProgramPreview({ onComplete, data }: ProgramPreviewProps) {
     <div className="min-h-screen bg-black text-white overflow-y-auto">
       <div className="max-w-2xl mx-auto p-6 py-12">
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full mx-auto mb-6 flex items-center justify-center shadow-xl">
-            <span className="text-3xl">🎯</span>
+          <div className="flex items-center justify-center mb-6">
+            <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center">
+              <Icon name="Target" size={32} className="text-blue-600" />
+            </div>
           </div>
           <h2 className="text-3xl font-bold mb-4 text-white">Your 63-Day Transformation</h2>
           <p className="text-lg text-gray-300">Based on your answers, we've designed your perfect program:</p>

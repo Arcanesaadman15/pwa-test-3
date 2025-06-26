@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle, AlertTriangle, TrendingUp, Zap, Target, Heart } from "lucide-react";
 import { OnboardingData } from "@/data/onboardingData";
+import { Icon } from "@/lib/iconUtils";
 
 interface InstantDiagnosisProps {
   data: Partial<OnboardingData>;
@@ -319,7 +320,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                           ease: "easeInOut"
                         }}
                       >
-                        🔥
+                        <Icon name="Flame" size={24} className="text-orange-500" />
                       </motion.span>
                       Your Personal Insights:
                     </motion.h3>
@@ -367,7 +368,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 2.2, duration: 0.4 }}
                         >
-                          <span className="mr-2 mt-0.5 text-sm">💪</span>
+                          <Icon name="Dumbbell" size={16} className="mr-2 mt-0.5 text-orange-500" />
                           Adding regular exercise could increase testosterone by 40%
                         </motion.li>
                       )}
@@ -391,7 +392,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 2.4, duration: 0.4 }}
                         >
-                          <span className="mr-2 mt-0.5 text-sm">⚡</span>
+                          <Icon name="Zap" size={16} className="mr-2 mt-0.5 text-yellow-500" />
                           High stress is blocking testosterone production
                         </motion.li>
                       )}
@@ -402,7 +403,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 2.4, duration: 0.4 }}
                         >
-                          <span className="mr-2 mt-0.5 text-sm">🧘</span>
+                          <Icon name="Heart" size={16} className="mr-2 mt-0.5 text-blue-500" />
                           Managing stress better will unlock significant T-gains
                         </motion.li>
                       )}
@@ -426,7 +427,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 2.6, duration: 0.4 }}
                         >
-                          <span className="mr-2 mt-0.5 text-sm">🎯</span>
+                          <Icon name="Target" size={16} className="mr-2 mt-0.5 text-red-500" />
                           Body composition improvements will enhance testosterone
                         </motion.li>
                       )}
@@ -437,7 +438,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 2.8, duration: 0.4 }}
                       >
-                        <span className="mr-2 mt-0.5 text-sm">🚀</span>
+                        <Icon name="Rocket" size={16} className="mr-2 mt-0.5 text-purple-500" />
                         Your {(data.recommendedProgram || 'beginner')} program is perfectly tailored for you
                       </motion.li>
                     </ul>
@@ -476,7 +477,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                           ease: "easeInOut"
                         }}
                       >
-                        🎯
+                        <Icon name="Target" size={24} className="text-blue-500" />
                       </motion.span>
                       Recommended Program:
                     </motion.h3>
