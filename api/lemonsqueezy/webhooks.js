@@ -7,6 +7,11 @@ const LEMONSQUEEZY_API_KEY = process.env.VITE_LEMONSQUEEZY_API_KEY || process.en
 const LEMONSQUEEZY_STORE_ID = process.env.VITE_LEMONSQUEEZY_STORE_ID || process.env.LEMONSQUEEZY_STORE_ID;
 const LEMONSQUEEZY_WEBHOOK_SECRET = process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
 
+console.log('🍋 LemonSqueezy Webhook Configuration:');
+console.log('  API Key exists:', !!LEMONSQUEEZY_API_KEY);
+console.log('  Store ID exists:', !!LEMONSQUEEZY_STORE_ID);
+console.log('  Webhook Secret exists:', !!LEMONSQUEEZY_WEBHOOK_SECRET);
+
 if (LEMONSQUEEZY_API_KEY) {
   lemonSqueezySetup({
     apiKey: LEMONSQUEEZY_API_KEY,
