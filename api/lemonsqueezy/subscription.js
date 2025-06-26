@@ -1,10 +1,22 @@
-import { cancelSubscription } from '@lemonsqueezy/lemonsqueezy.js';
+import { lemonSqueezySetup, getSubscription, cancelSubscription } from '@lemonsqueezy/lemonsqueezy.js';
 import { createClient } from '@supabase/supabase-js';
+
+// Initialize LemonSqueezy - Prioritize VITE_ variables for Vercel
+const LEMONSQUEEZY_API_KEY = process.env.VITE_LEMONSQUEEZY_API_KEY || process.env.LEMONSQUEEZY_API_KEY;
+
+if (LEMONSQUEEZY_API_KEY) {
+  lemonSqueezySetup({
+    apiKey: LEMONSQUEEZY_API_KEY,
+    onError: (error) => {
+      console.error('LemonSqueezy Setup Error:', error);
+    },
+  });
+}
 
 // Initialize Supabase
 const supabase = createClient(
-  process.env.VITE_SUPABASE_URL,
-  process.env.VITE_SUPABASE_ANON_KEY
+  process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_SERVICE_ROLE_KEY
 );
 
 export default async function handler(req, res) {

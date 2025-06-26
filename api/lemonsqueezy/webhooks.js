@@ -2,9 +2,9 @@ import { lemonSqueezySetup, createCheckout, getSubscription, updateSubscription,
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
-// Initialize LemonSqueezy - Try both naming conventions
-const LEMONSQUEEZY_API_KEY = process.env.LEMONSQUEEZY_API_KEY || process.env.VITE_LEMONSQUEEZY_API_KEY;
-const LEMONSQUEEZY_STORE_ID = process.env.LEMONSQUEEZY_STORE_ID || process.env.VITE_LEMONSQUEEZY_STORE_ID;
+// Initialize LemonSqueezy - Prioritize VITE_ prefixed variables for Vercel
+const LEMONSQUEEZY_API_KEY = process.env.VITE_LEMONSQUEEZY_API_KEY || process.env.LEMONSQUEEZY_API_KEY;
+const LEMONSQUEEZY_STORE_ID = process.env.VITE_LEMONSQUEEZY_STORE_ID || process.env.LEMONSQUEEZY_STORE_ID;
 const LEMONSQUEEZY_WEBHOOK_SECRET = process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
 
 if (LEMONSQUEEZY_API_KEY) {
@@ -18,7 +18,7 @@ if (LEMONSQUEEZY_API_KEY) {
 
 // Initialize Supabase with service role key
 const supabase = createClient(
-  process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL,
+  process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY  // Use service role key to bypass RLS
 );
 

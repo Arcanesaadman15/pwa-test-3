@@ -1,8 +1,14 @@
 import { lemonSqueezySetup, createCheckout } from '@lemonsqueezy/lemonsqueezy.js';
 
-// Initialize LemonSqueezy
-const LEMONSQUEEZY_API_KEY = process.env.VITE_LEMONSQUEEZY_API_KEY;
-const LEMONSQUEEZY_STORE_ID = process.env.VITE_LEMONSQUEEZY_STORE_ID;
+// Initialize LemonSqueezy - Prioritize VITE_ variables for Vercel
+const LEMONSQUEEZY_API_KEY = process.env.VITE_LEMONSQUEEZY_API_KEY || process.env.LEMONSQUEEZY_API_KEY;
+const LEMONSQUEEZY_STORE_ID = process.env.VITE_LEMONSQUEEZY_STORE_ID || process.env.LEMONSQUEEZY_STORE_ID;
+
+console.log('🍋 LemonSqueezy Configuration Check:');
+console.log('  API Key exists:', !!LEMONSQUEEZY_API_KEY);
+console.log('  Store ID exists:', !!LEMONSQUEEZY_STORE_ID);
+console.log('  Store ID value:', LEMONSQUEEZY_STORE_ID);
+console.log('  Available env vars:', Object.keys(process.env).filter(k => k.includes('LEMONSQUEEZY')));
 
 if (LEMONSQUEEZY_API_KEY) {
   lemonSqueezySetup({
@@ -11,9 +17,14 @@ if (LEMONSQUEEZY_API_KEY) {
       console.error('LemonSqueezy Setup Error:', error);
     },
   });
+  console.log('🍋 LemonSqueezy setup completed');
+} else {
+  console.error('❌ LemonSqueezy API key not found!');
 }
 
 export default async function handler(req, res) {
+  console.log('🛒 Checkout endpoint called:', req.method);
+  
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -34,18 +45,21 @@ export default async function handler(req, res) {
 
     if (!LEMONSQUEEZY_STORE_ID) {
       console.error('❌ LEMONSQUEEZY_STORE_ID not configured');
-      return res.status(500).json({ error: 'Store ID not configured' });
+      return res.status(500).json({ error: 'Store ID not configured. Please set LEMONSQUEEZY_STORE_ID environment variable.' });
     }
 
     if (!LEMONSQUEEZY_API_KEY) {
       console.error('❌ LEMONSQUEEZY_API_KEY not configured');
-      return res.status(500).json({ error: 'API Key not configured' });
+      return res.status(500).json({ error: 'API Key not configured. Please set LEMONSQUEEZY_API_KEY environment variable.' });
     }
 
     console.log('🍋 Creating LemonSqueezy checkout...');
 
-    // Prepare redirect URLs
-    const baseUrl = process.env.VITE_APP_URL || 'https://pwa-test-4-ten.vercel.app';
+    // Prepare redirect URLs - use the current domain
+    const baseUrl = process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}` 
+      : process.env.VITE_APP_URL || 'https://pwa-test-4-ten.vercel.app';
+    
     const redirectSuccessUrl = successUrl || `${baseUrl}/subscription/success`;
     const redirectCancelUrl = cancelUrl || `${baseUrl}/subscription/cancel`;
 
