@@ -1,11 +1,11 @@
-import { CheckSquare, BarChart3, TreePine, User } from "lucide-react";
+import { CheckSquare, TreePine, User } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMicroInteractions } from "@/hooks/useMicroInteractions";
 
 interface BottomNavigationProps {
-  activeTab: 'tasks' | 'stats' | 'skills' | 'profile';
-  onTabChange: (tab: 'tasks' | 'stats' | 'skills' | 'profile') => void;
+  activeTab: 'tasks' | 'skills' | 'profile';
+  onTabChange: (tab: 'tasks' | 'skills' | 'profile') => void;
 }
 
 export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationProps) {
@@ -23,17 +23,6 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
       gradientTo: 'to-blue-600',
       bgGlow: 'shadow-blue-500/25',
       badgeColor: 'bg-blue-500'
-    },
-    { 
-      id: 'stats' as const, 
-      label: 'Stats', 
-      icon: BarChart3,
-      activeColor: 'text-green-400',
-      inactiveColor: 'text-gray-500',
-      gradientFrom: 'from-green-500',
-      gradientTo: 'to-green-600',
-      bgGlow: 'shadow-green-500/25',
-      badgeColor: 'bg-green-500'
     },
     { 
       id: 'skills' as const, 

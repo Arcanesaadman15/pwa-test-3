@@ -3,7 +3,6 @@ import { Switch, Route } from "wouter";
 import Onboarding from "@/pages/Onboarding";
 import { BottomNavigation } from "@/components/Layout/BottomNavigation";
 import TaskList from "@/components/Tasks/TaskList";
-import { StatsOverview } from "@/components/Stats/StatsOverview";
 import { ComprehensiveSkillTree } from "@/components/Skills/ComprehensiveSkillTree";
 import { ProfileOverview } from "@/components/Profile/ProfileOverview";
 import { SettingsPanel } from "@/components/Profile/SettingsPanel";
@@ -22,10 +21,10 @@ import { StreakSparkle } from "@/components/Rewards/StreakSparkle";
 import { storage } from "@/lib/storage";
 import { skillUnlockSystem } from "@/lib/skillUnlockSystem";
 
-type TabType = 'tasks' | 'stats' | 'skills' | 'profile';
+type TabType = 'tasks' | 'skills' | 'profile';
 type ViewType = 'main' | 'settings' | 'programSelector';
 
-const TAB_ORDER: TabType[] = ['tasks', 'stats', 'skills', 'profile'];
+const TAB_ORDER: TabType[] = ['tasks', 'skills', 'profile'];
 
 // Test comment to verify Vercel auto-deployment
 export default function Home() {
@@ -225,8 +224,6 @@ export default function Home() {
     switch (activeTab) {
       case 'tasks':
         return <TaskList onTaskComplete={handleTaskComplete} onTaskSkip={handleTaskSkip} />;
-      case 'stats':
-        return <StatsOverview user={legacyUser} />;
       case 'skills':
         return <ComprehensiveSkillTree onSkillClick={(skill) => {
           // Only show modal for viewing unlocked skills (no sharing for viewing)
