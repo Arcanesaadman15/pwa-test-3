@@ -24,6 +24,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/home" component={Home} />
       <Route path="/pricing" component={PricingPage} />
       <Route path="/subscription" component={SubscriptionPage} />
       <Route path="/subscription/success" component={SubscriptionSuccessPage} />
@@ -46,6 +47,10 @@ function AuthenticatedApp() {
     showInstallBanner,
     installPromptDismissed
   } = usePWA();
+  
+  // Check if current path is subscription-related (allow access even without active subscription)
+  const currentPath = window.location.pathname;
+  const isSubscriptionPath = currentPath.startsWith('/subscription');
 
   // DEBUG: Log the current state
   useEffect(() => {
@@ -99,7 +104,8 @@ function AuthenticatedApp() {
   }
 
   // STEP 3: User is authenticated and onboarded, check subscription status
-  if (!subscription.isSubscribed) {
+  // Allow access to subscription pages even without active subscription (for success/cancel/manage pages)
+  if (!subscription.isSubscribed && !isSubscriptionPath) {
     console.log('🎯 App: User authenticated and onboarded but no active subscription, showing pricing');
     return (
       <div>
