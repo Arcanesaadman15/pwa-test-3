@@ -15,11 +15,13 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
 
   // Debug effect to track component state
   useEffect(() => {
+    // Track component state
+    const state = {
       currentQuestion,
       totalQuestions: COMMITMENT_QUESTIONS?.length || 0,
       isValidIndex: currentQuestion >= 0 && currentQuestion < (COMMITMENT_QUESTIONS?.length || 0)
-    });
-  }, []);
+    };
+  }, [currentQuestion]);
 
   useEffect(() => {
   }, [currentQuestion]);
