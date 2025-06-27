@@ -1,24 +1,41 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Crown, ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { Icon } from '@/lib/iconUtils';
+import { useLocation } from "wouter";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function SubscriptionSuccess() {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
+  const [countdown, setCountdown] = useState(5);
+  const { user } = useAuth();
 
   useEffect(() => {
-    // You could refresh user subscription status here
-    // or trigger a context refresh
+    // Simple redirect after 5 seconds
+    const timer = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          handleContinue();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, []);
 
   const handleContinue = () => {
-    navigate('/home');
+    if (user) {
+      setLocation('/home');
+    } else {
+      setLocation('/');
+    }
   };
 
   const handleManageSubscription = () => {
-    navigate('/subscription');
+    setLocation('/subscription');
   };
 
   return (
@@ -46,7 +63,7 @@ export function SubscriptionSuccess() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          Welcome to Premium!
+          Payment Successful! 🎉
         </motion.h1>
 
         {/* Description */}
@@ -56,7 +73,7 @@ export function SubscriptionSuccess() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          Your subscription has been activated successfully. You now have access to all premium features!
+          Thank you for your purchase! Your premium access is being activated and will be available shortly.
         </motion.p>
 
         {/* Premium Features List */}
@@ -102,7 +119,7 @@ export function SubscriptionSuccess() {
             onClick={handleContinue}
             className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 rounded-xl font-medium"
           >
-            Start Your Journey
+            Continue to App {countdown > 0 && `(${countdown}s)`}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
           
@@ -123,7 +140,7 @@ export function SubscriptionSuccess() {
           transition={{ duration: 0.6, delay: 0.8 }}
         >
           <p className="text-gray-400 text-sm">
-            Need help? Contact our support team at{" "}
+            Your subscription will be active within a few minutes. If you have any issues, contact{" "}
             <a href="mailto:support@peakforge.com" className="text-blue-400 hover:underline">
               support@peakforge.com
             </a>

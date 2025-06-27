@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Plus, Zap, CheckCircle, SkipForward, Timer } from 'lucide-react';
+import { Plus, Zap, CheckCircle, SkipForward, Timer, Flame } from 'lucide-react';
 import { Button } from './button';
 
 interface QuickAction {
   id: string;
   label: string;
-  icon: React.ComponentType<any>;
-  action: () => void;
+  icon: any;
   color: string;
   gradient: string;
+  disabled?: boolean;
+  action: () => void;
 }
 
 interface QuickActionsProps {
@@ -158,34 +159,46 @@ export function QuickActions({
 export const defaultQuickActions: QuickAction[] = [
   {
     id: 'complete-task',
-    label: 'Complete Task',
+    label: 'Complete Current Task',
     icon: CheckCircle,
-    action: () => console.log('Complete current task'),
-    color: '#10b981',
-    gradient: 'bg-gradient-to-br from-green-500 to-emerald-600'
+    color: 'bg-green-500',
+    gradient: 'bg-gradient-to-br from-green-500 to-emerald-600',
+    action: () => {
+      // TODO: Implement task completion
+    },
+    disabled: true
   },
   {
     id: 'skip-task',
-    label: 'Skip Task',
+    label: 'Skip Current Task',
     icon: SkipForward,
-    action: () => console.log('Skip current task'),
-    color: '#f59e0b',
-    gradient: 'bg-gradient-to-br from-yellow-500 to-orange-600'
+    color: 'bg-orange-500',
+    gradient: 'bg-gradient-to-br from-yellow-500 to-orange-600',
+    action: () => {
+      // TODO: Implement task skipping
+    },
+    disabled: true
   },
   {
     id: 'quick-session',
-    label: 'Quick Session',
-    icon: Timer,
-    action: () => console.log('Start quick session'),
-    color: '#8b5cf6',
-    gradient: 'bg-gradient-to-br from-purple-500 to-violet-600'
+    label: 'Start Quick Session',
+    icon: Zap,
+    color: 'bg-blue-500',
+    gradient: 'bg-gradient-to-br from-blue-500 to-cyan-600',
+    action: () => {
+      // TODO: Implement quick session
+    },
+    disabled: true
   },
   {
     id: 'boost-mode',
-    label: 'Boost Mode',
-    icon: Zap,
-    action: () => console.log('Activate boost mode'),
-    color: '#f97316',
-    gradient: 'bg-gradient-to-br from-orange-500 to-red-600'
+    label: 'Activate Boost Mode',
+    icon: Flame,
+    color: 'bg-purple-500',
+    gradient: 'bg-gradient-to-br from-purple-500 to-violet-600',
+    action: () => {
+      // TODO: Implement boost mode
+    },
+    disabled: true
   }
 ]; 

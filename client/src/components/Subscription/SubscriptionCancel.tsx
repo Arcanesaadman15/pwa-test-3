@@ -1,17 +1,17 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { XCircle, ArrowLeft, HelpCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "wouter";
 
 export function SubscriptionCancel() {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
 
   const handleRetry = () => {
-    navigate('/pricing');
+    setLocation('/pricing');
   };
 
   const handleGoHome = () => {
-    navigate('/home');
+    setLocation('/home');
   };
 
   const handleContactSupport = () => {

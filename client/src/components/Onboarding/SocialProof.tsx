@@ -73,7 +73,29 @@ export function SocialProof({ onComplete }: SocialProofProps) {
 
         {/* Testimonials */}
         <div className="space-y-6 mb-16">
-          {SOCIAL_PROOF_TESTIMONIALS.slice(0, 3).map((testimonial, index) => (
+          {[
+            {
+              name: "Marcus Rodriguez",
+              age: "42",
+              image: "/images/marcus.png",
+              quote: "Lost 30 lbs and gained my confidence back. My wife says I'm like the man she married again.",
+              result: "↗ 38% T-boost, Lost 30 lbs"
+            },
+            {
+              name: "Jake Thompson", 
+              age: "38",
+              image: "/images/jake.png",
+              quote: "Morning wood returned after 6 weeks. Haven't felt this energetic in years. Game changer.",
+              result: "↗ 52% T-boost, Energy restored"
+            },
+            {
+              name: "Carlos Martinez",
+              age: "35",
+              image: "/images/carlos.png", 
+              quote: "Finally sleeping through the night. Lost the dad bod and feel like a warrior again.",
+              result: "↗ 41% T-boost, Better sleep"
+            }
+          ].map((testimonial, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
@@ -82,9 +104,11 @@ export function SocialProof({ onComplete }: SocialProofProps) {
               className="bg-gray-900 border border-gray-700 rounded-2xl p-6"
             >
               <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-xl">{testimonial.avatar}</span>
-                </div>
+                <img 
+                  src={testimonial.image}
+                  alt={testimonial.name}
+                  className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+                />
                 <div className="flex-1">
                   <div className="flex items-center space-x-2 mb-2">
                     <h3 className="font-semibold">{testimonial.name}</h3>

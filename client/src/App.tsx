@@ -17,6 +17,7 @@ import SubscriptionPage from "@/pages/SubscriptionPage";
 import SubscriptionSuccessPage from "@/pages/SubscriptionSuccessPage";
 import SubscriptionCancelPage from "@/pages/SubscriptionCancelPage";
 import LemonSqueezySetup from "@/pages/LemonSqueezySetup";
+import DebugSubscription from "@/pages/DebugSubscription";
 import Onboarding from "@/pages/Onboarding";
 import { useEffect } from "react";
 import { Icon } from "./lib/iconUtils";
@@ -30,6 +31,9 @@ function Router() {
       <Route path="/subscription" component={SubscriptionPage} />
       <Route path="/subscription/success" component={SubscriptionSuccessPage} />
       <Route path="/subscription/cancel" component={SubscriptionCancelPage} />
+      {process.env.NODE_ENV === 'development' && (
+        <Route path="/debug" component={DebugSubscription} />
+      )}
       <Route path="/lemonsqueezy-setup" component={LemonSqueezySetup} />
       <Route component={NotFound} />
     </Switch>
@@ -55,17 +59,9 @@ function AuthenticatedApp() {
 
   // DEBUG: Log the current state
   useEffect(() => {
-    console.log('🎯 AuthenticatedApp Debug:');
-    console.log('  - user:', !!user);
-    console.log('  - userProfile:', userProfile);
-    console.log('  - onboarding_complete:', userProfile?.onboarding_complete);
-    console.log('  - subscription.isSubscribed:', subscription.isSubscribed);
-    console.log('  - subscription:', subscription);
-    console.log('  - loading:', loading);
-  }, [user, userProfile, subscription, loading]);
+  }, [user, userProfile, subscription, loading, currentPath]);
 
   if (loading) {
-    console.log('🎯 App: Still loading...');
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 flex items-center justify-center">
@@ -83,31 +79,58 @@ function AuthenticatedApp() {
 
   // STEP 1: Check if user is authenticated
   if (!user) {
-    console.log('🎯 App: User not authenticated, showing login/signup');
     return <AuthForm onComplete={() => {
-      console.log('🎯 App: Authentication completed, will recheck auth state');
       // After auth completion, the useAuth hook will update and this component will re-render
       // If it's a returning user with completed onboarding, they'll go straight to main app
       // If it's a new user or incomplete onboarding, they'll go to onboarding
     }} />;
   }
 
-  // STEP 2: User is authenticated, check if onboarding is complete
+  // STEP 2: Allow access to subscription success/cancel pages even without onboarding completion
+  // This handles the case where user completes payment but returns to app
+  if (isSubscriptionPath) {
+    return (
+      <div className="min-h-screen" style={{ backgroundColor: '#111827' }}>
+        <Router />
+        
+        {/* Install Prompt */}
+        {isInstallable && !installPromptDismissed && (
+          <InstallPrompt 
+            onInstall={promptInstall} 
+            onDismiss={dismissInstall}
+            onDismissPermanently={dismissInstallPermanently}
+            isIOS={isIOS}
+            showBanner={showInstallBanner}
+          />
+        )}
+        
+        {/* Update Notification */}
+        <UpdateNotification
+          isVisible={updateInfo.isUpdateAvailable}
+          onUpdate={updateInfo.updateServiceWorker}
+          onDismiss={() => {
+            // Dismiss update notification temporarily
+          }}
+        />
+        
+        <Toaster />
+      </div>
+    );
+  }
+
+  // STEP 3: User is authenticated, check if onboarding is complete
   // For existing users logging in: userProfile.onboarding_complete should be true -> skip onboarding
   // For new users signing up: userProfile.onboarding_complete should be false -> show onboarding
   if (!userProfile?.onboarding_complete) {
-    console.log('🎯 App: User authenticated but onboarding not complete, showing onboarding');
     return <Onboarding onComplete={async (data) => {
-      console.log('🎯 App: Onboarding completed successfully');
       // The onboarding component already handles updating the profile with onboarding_complete: true
       // React will re-render this component when userProfile updates
     }} />;
   }
 
-  // STEP 3: User is authenticated and onboarded, check subscription status
+  // STEP 4: User is authenticated and onboarded, check subscription status
   // Allow access to subscription pages even without active subscription (for success/cancel/manage pages)
-  if (!subscription.isSubscribed && !isSubscriptionPath) {
-    console.log('🎯 App: User authenticated and onboarded but no active subscription, showing pricing');
+  if (!subscription.isSubscribed) {
     return (
       <div>
         <PricingPage />
@@ -128,8 +151,7 @@ function AuthenticatedApp() {
     );
   }
 
-  // STEP 4: User is authenticated, onboarded, and has active subscription - show main app
-  console.log('🎯 App: User fully authenticated with active subscription, showing main app');
+  // STEP 5: User is authenticated, onboarded, and has active subscription - show main app
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#111827' }}>
       <Router />
@@ -151,7 +173,6 @@ function AuthenticatedApp() {
         onUpdate={updateInfo.updateServiceWorker}
         onDismiss={() => {
           // Dismiss update notification temporarily
-          console.log('Update dismissed temporarily');
         }}
       />
       

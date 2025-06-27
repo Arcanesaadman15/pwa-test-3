@@ -62,6 +62,20 @@ export function RoadmapPreview({ onComplete }: RoadmapPreviewProps) {
           >
             Here's exactly how we'll optimize your testosterone and confidence
           </motion.p>
+
+          {/* Program Preview Image */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="mb-8"
+          >
+            <img 
+              src="/images/program_preview_image.png"
+              alt="63-Day Transformation Program Overview"
+              className="w-full max-w-md mx-auto rounded-2xl shadow-2xl border border-gray-700"
+            />
+          </motion.div>
         </div>
 
         {/* Phases */}

@@ -82,15 +82,12 @@ export function useOffline() {
         switch (action.type) {
           case 'COMPLETE_TASK':
             // Sync task completion
-            console.log('Syncing task completion:', action);
             break;
           case 'UPDATE_HABIT':
             // Sync habit update
-            console.log('Syncing habit update:', action);
             break;
           case 'UPDATE_PROGRESS':
             // Sync progress update
-            console.log('Syncing progress update:', action);
             break;
         }
       }

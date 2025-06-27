@@ -21,6 +21,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<User>) => Promise<void>;
   createUserProfile: (supabaseUserId: string, userData: { name: string; program: 'beginner' | 'intermediate' | 'advanced'; email: string }) => Promise<void>;
+  refreshSubscription: () => Promise<void>;
   isLocalMode: boolean;
 }
 
@@ -42,7 +43,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Fast timeout for production (1 second)
     const loadingTimeout = setTimeout(() => {
-      console.log('Auth loading complete - no session found');
       setLoading(false);
     }, 1000);
 
@@ -50,7 +50,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     supabase.auth.getSession()
       .then(({ data: { session } }: any) => {
         clearTimeout(loadingTimeout);
-        console.log('Auth session retrieved:', !!session);
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
@@ -67,7 +66,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: any, session: any) => {
-      console.log('Auth state changed:', event, !!session);
       setSession(session);
       setUser(session?.user ?? null);
       
@@ -96,7 +94,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!isSupabaseConfigured) return;
     
     try {
-      console.log('🔍 Fetching user profile for:', supabaseUserId);
       
       // Simple, fast profile fetch with 3-second timeout
       const timeoutPromise = new Promise((_, reject) => {
@@ -129,13 +126,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (profile) {
-        console.log('User profile found:', profile.name);
         setUserProfile(profile);
         // Save user to localStorage for faster restoration
         localStorage.setItem('peakforge-user', JSON.stringify(profile));
         await fetchSubscriptionStatus(profile.id);
       } else {
-        console.log('No user profile found, user needs to complete signup flow');
         setLoading(false);
       }
     } catch (error) {
@@ -148,7 +143,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!isSupabaseConfigured) return;
     
     try {
-      console.log('Fetching subscription status for:', userId);
       
       // Create a timeout promise to prevent hanging (increased from 5 to 10 seconds)
       const timeoutPromise = new Promise((_, reject) => {
@@ -177,7 +171,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (subscription) {
-        console.log('Active subscription found');
         setSubscription({
           isSubscribed: true,
           plan: subscription.subscription_plans?.name || null,
@@ -186,7 +179,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           cancelAtPeriodEnd: subscription.cancel_at_period_end
         });
       } else {
-        console.log('No active subscription found');
         setSubscription({
           isSubscribed: false,
           plan: null,
@@ -210,7 +202,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (email: string, password: string, userData: { name: string; program: 'beginner' | 'intermediate' | 'advanced' }) => {
     try {
-      console.log('🎯 Starting signup process for:', email);
       
       // Step 1: Create the auth user with metadata
       const signUpResult = await supabase.auth.signUp({
@@ -235,7 +226,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error: new Error('No user returned from signup') };
       }
 
-      console.log('✅ Auth user created:', signUpResult.data.user.id);
       
       // Step 2: Create the profile
       try {
@@ -244,7 +234,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           program: userData.program,
           email
         });
-        console.log('✅ Profile creation completed');
       } catch (profileError) {
         console.warn('⚠️ Profile creation failed, but auth user exists:', profileError);
       }
@@ -266,7 +255,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      console.log('🚪 Signing out user...');
       
       // Clear all local state immediately
       setUser(null);
@@ -283,7 +271,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Sign out from Supabase
       await supabase.auth.signOut();
       
-      console.log('✅ Sign out completed');
     } catch (error) {
       console.error('❌ Sign out error:', error);
       
@@ -303,7 +290,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const createUserProfile = async (supabaseUserId: string, userData: { name: string; program: 'beginner' | 'intermediate' | 'advanced'; email: string }) => {
     try {
-      console.log('🎯 Creating user profile in Supabase:', userData);
       
       // Create profile directly with correct onboarding status
       const profileData = {
@@ -335,9 +321,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw error;
       }
 
-      console.log('🎯 User profile created successfully:');
-      console.log('   - onboarding_complete:', data.onboarding_complete);
-      console.log('   - Full profile data:', data);
       
       // CRITICAL CHECK: If onboarding_complete is still true, something is wrong
       if (data.onboarding_complete === true) {
@@ -345,7 +328,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error('🚨 This indicates a database trigger or constraint is overriding our value');
         
         // Force it to false immediately
-        console.log('🔧 Force-fixing onboarding_complete to false...');
         const { data: fixedData, error: fixError } = await supabase
           .from('users')
           .update({ onboarding_complete: false })
@@ -357,11 +339,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.error('🚨 Failed to force-fix onboarding_complete:', fixError);
           setUserProfile(data); // Use original data even if fix failed
         } else {
-          console.log('✅ Successfully force-fixed onboarding_complete to:', fixedData.onboarding_complete);
           setUserProfile(fixedData);
         }
       } else {
-        console.log('✅ onboarding_complete correctly set to false');
         setUserProfile(data);
       }
       return;
@@ -396,6 +376,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const refreshSubscription = async () => {
+    if (!user) return;
+
+    try {
+      await fetchSubscriptionStatus(user.id);
+    } catch (error) {
+      console.error('Error in refreshSubscription:', error);
+    }
+  };
+
   const value = {
     user,
     userProfile,
@@ -407,6 +397,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut,
     updateProfile,
     createUserProfile,
+    refreshSubscription,
     isLocalMode: false
   };
 

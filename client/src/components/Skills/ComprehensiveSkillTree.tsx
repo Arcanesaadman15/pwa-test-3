@@ -36,7 +36,7 @@ function SkillNode({ skill, isUnlocked, isRecentlyUnlocked, onClick, index = 0 }
     if (isUnlocked) return '#10b981';
     return '#6b7280';
   };
-
+  
   return (
     <motion.div
       className={`
@@ -69,7 +69,7 @@ function SkillNode({ skill, isUnlocked, isRecentlyUnlocked, onClick, index = 0 }
       }`}>
         {skill.level}
       </div>
-
+      
       {/* Skill content */}
       <div className="text-center">
         {/* Category icon */}
@@ -80,7 +80,7 @@ function SkillNode({ skill, isUnlocked, isRecentlyUnlocked, onClick, index = 0 }
             color={getIconColor()}
           />
         </div>
-        
+      
         {/* Skill title */}
         <h3 className={`font-bold text-sm mb-2 ${
           isUnlocked ? 'text-gray-900' : 'text-gray-500'
@@ -94,7 +94,7 @@ function SkillNode({ skill, isUnlocked, isRecentlyUnlocked, onClick, index = 0 }
         }`}>
           {skill.description}
         </p>
-        
+      
         {/* Status indicator */}
         <div className="mt-3 flex justify-center">
           {isRecentlyUnlocked ? (
@@ -105,7 +105,7 @@ function SkillNode({ skill, isUnlocked, isRecentlyUnlocked, onClick, index = 0 }
             <div className="w-4 h-4 rounded-full bg-gray-300" />
           )}
         </div>
-      </div>
+          </div>
     </motion.div>
   );
 }

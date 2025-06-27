@@ -15,7 +15,6 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
 
   // Debug effect to track component state
   useEffect(() => {
-    console.log('🎯 CommitmentQuestions mounted:', {
       currentQuestion,
       totalQuestions: COMMITMENT_QUESTIONS?.length || 0,
       isValidIndex: currentQuestion >= 0 && currentQuestion < (COMMITMENT_QUESTIONS?.length || 0)
@@ -23,7 +22,6 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
   }, []);
 
   useEffect(() => {
-    console.log('🎯 CommitmentQuestions currentQuestion changed to:', currentQuestion);
   }, [currentQuestion]);
 
   // Safety check to prevent crashes

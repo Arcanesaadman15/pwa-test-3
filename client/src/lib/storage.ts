@@ -199,7 +199,6 @@ class Storage {
       // Also clear user data to force fresh start
       localStorage.removeItem(STORAGE_KEYS.USER);
       
-      console.log('✅ Onboarding reset! The user will see onboarding flow on next app load.');
     } catch (error) {
       console.error('Failed to reset onboarding:', error);
       throw error;
@@ -222,13 +221,11 @@ class Storage {
         if (supabaseUrl && supabaseKey) {
           const supabase = createClient(supabaseUrl, supabaseKey);
           await supabase.auth.signOut();
-          console.log('✅ Signed out from Supabase');
         }
       } catch (authError) {
         console.warn('⚠️ Could not sign out from Supabase:', authError);
       }
       
-      console.log('✅ Complete onboarding and auth reset! The user will see onboarding flow on next app load.');
     } catch (error) {
       console.error('Failed to reset onboarding and auth:', error);
       throw error;

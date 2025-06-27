@@ -319,7 +319,7 @@ export function SkillUnlockModal({ isOpen, onClose, skill, isNewUnlock = false, 
                   size={32} 
                   color={skill.categoryColor || '#8b5cf6'}
                 />
-              </motion.div>
+          </motion.div>
           
               <motion.h2
                 className="text-2xl font-bold text-gray-900 mb-2"
@@ -333,9 +333,9 @@ export function SkillUnlockModal({ isOpen, onClose, skill, isNewUnlock = false, 
               <motion.h3
                 className="text-xl font-semibold mb-2"
                 style={{ color: skill.categoryColor || '#8b5cf6' }}
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.4 }}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4 }}
               >
                 {skill.title || skill.name}
               </motion.h3>

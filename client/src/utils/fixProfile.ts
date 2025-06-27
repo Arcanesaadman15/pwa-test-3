@@ -15,14 +15,12 @@ declare global {
 // Only expose debug functions in development
 if (isDevelopment) {
   window.fixProfile = async () => {
-    console.log('🔧 Starting profile fix...');
     
     try {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
       
       if (!supabaseUrl || !supabaseKey) {
-        console.log('❌ Supabase not configured. Skipping profile fix.');
         return;
       }
       
@@ -30,11 +28,9 @@ if (isDevelopment) {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       
       if (userError || !user) {
-        console.log('❌ No authenticated user found');
         return;
       }
       
-      console.log('✅ Found user:', user.id);
       
       // Check if profile exists
       const { data: profile, error: profileError } = await supabase
@@ -49,7 +45,6 @@ if (isDevelopment) {
       }
       
       if (!profile) {
-        console.log('📝 Creating missing profile...');
         const { error: insertError } = await supabase
           .from('profiles')
           .insert({
@@ -64,10 +59,8 @@ if (isDevelopment) {
         if (insertError) {
           console.error('❌ Failed to create profile:', insertError);
         } else {
-          console.log('✅ Profile created successfully');
         }
       } else {
-        console.log('✅ Profile already exists:', profile);
       }
       
     } catch (error) {
@@ -76,14 +69,12 @@ if (isDevelopment) {
   };
 
   window.resetOnboarding = async () => {
-    console.log('🔄 Resetting onboarding status...');
     
     try {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
       
       if (!supabaseUrl || !supabaseKey) {
-        console.log('❌ Supabase not configured');
         return;
       }
       
@@ -91,7 +82,6 @@ if (isDevelopment) {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       
       if (userError || !user) {
-        console.log('❌ No authenticated user found');
         return;
       }
       
@@ -104,7 +94,6 @@ if (isDevelopment) {
       if (error) {
         console.error('❌ Failed to reset onboarding:', error);
       } else {
-        console.log('✅ Onboarding reset successfully! Refresh the page to see onboarding flow.');
         // Also clear localStorage
         localStorage.removeItem('onboarding_complete');
         localStorage.removeItem('onboarding_data');
@@ -121,14 +110,9 @@ if (isDevelopment) {
   };
 
   window.debugAuth = () => {
-    console.log('🐛 Current Auth Debug Info:');
-    console.log('  - LocalStorage onboarding_complete:', localStorage.getItem('onboarding_complete'));
-    console.log('  - LocalStorage onboarding_data:', localStorage.getItem('onboarding_data'));
-    console.log('  - LocalStorage user:', localStorage.getItem('user'));
     
     // Check if there are any auth tokens
     const keys = Object.keys(localStorage).filter(key => key.includes('supabase') || key.includes('auth'));
-    console.log('  - Auth-related localStorage keys:', keys);
   };
 }
 
@@ -137,17 +121,8 @@ if (isDevelopment) {
   // Wait for DOM to be ready before announcing utilities
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-      console.log('🔧 Profile fix utilities loaded! Available commands:');
-      console.log('  - fixProfile() - Create missing profile');
-      console.log('  - resetOnboarding() - Reset onboarding status to see flow again');
-      console.log('  - debugAuth() - Show current auth state');
     });
   } else {
-    console.log('🔧 Profile fix utilities loaded! Available commands:');
-    console.log('  - fixProfile() - Create missing profile');
-    console.log('  - resetOnboarding() - Reset onboarding status to see flow again');
-    console.log('  - debugAuth() - Show current auth state');
   }
 } else {
-  console.log('🔒 Debug utilities disabled in production');
 } 

@@ -105,7 +105,6 @@ export class LemonSqueezyService {
     const MOCK_MODE = import.meta.env.VITE_LEMONSQUEEZY_MOCK_MODE === 'true' || !this.isConfigured();
     
     if (MOCK_MODE) {
-      console.log('🧪 MOCK MODE: Would create checkout for:', options);
       // Simulate checkout URL - opens a test page
       return { 
         checkoutUrl: `${APP_URL}/subscription/success?mock=true&plan=${options.variantId}`,

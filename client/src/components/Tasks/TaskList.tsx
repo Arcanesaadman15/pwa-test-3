@@ -614,17 +614,17 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
                   {activeTab === 'active' && <Target className="w-8 h-8 text-gray-400" />}
                   {activeTab === 'completed' && <PartyPopper className="w-8 h-8 text-gray-400" />}
                   {activeTab === 'skipped' && <SkipForward className="w-8 h-8 text-gray-400" />}
-                </div>
+        </div>
                 <h3 className="text-lg font-semibold text-gray-700 mb-2">
                   {activeTab === 'active' && 'No active tasks'}
                   {activeTab === 'completed' && 'No completed tasks yet'}
                   {activeTab === 'skipped' && 'No skipped tasks'}
-                </h3>
+            </h3>
                 <p className="text-gray-500 text-sm">
                   {activeTab === 'active' && 'All tasks for today are complete!'}
                   {activeTab === 'completed' && 'Complete some tasks to see them here'}
                   {activeTab === 'skipped' && 'Skipped tasks will appear here'}
-                </p>
+            </p>
               </motion.div>
             )}
           </div>

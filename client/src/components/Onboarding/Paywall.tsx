@@ -38,13 +38,11 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
   };
 
   const handleAuthComplete = () => {
-    console.log('✅ Auth completed, showing pricing...');
     setShowAuthForm(false);
     setShowPricing(true);
   };
 
   const handlePricingSuccess = () => {
-    console.log('✅ Payment successful, completing onboarding...');
     onComplete();
   };
 

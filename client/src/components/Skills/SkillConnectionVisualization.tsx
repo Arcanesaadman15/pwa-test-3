@@ -438,7 +438,7 @@ export function SkillConnectionVisualization({ onSkillClick, onBackToTree }: Ski
                     size={24} 
                     color={getCategoryColor(selectedNode.category)}
                   />
-                </div>
+                    </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-900 mb-1">
                     {selectedNode.skill.title}

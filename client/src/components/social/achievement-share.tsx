@@ -210,15 +210,15 @@ export function AchievementShare({ achievement, userStats, onClose }: Achievemen
 
         {/* Achievement Details */}
         <div className="bg-gray-50 rounded-xl p-4 mb-6">
-                      <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center space-x-2">
                 <Icon 
                   name={getAchievementIcon(achievement.type)} 
                   size={24} 
                   className="text-blue-500" 
                 />
-                <span className="text-gray-900 font-medium">Achievement Details</span>
-              </div>
+              <span className="text-gray-900 font-medium">Achievement Details</span>
+            </div>
             <Badge variant="outline" className="text-gray-600 border-gray-300">
               {achievement.type}
             </Badge>
