@@ -327,14 +327,18 @@ export default function Home() {
       {!isOnline && (
         <div className="fixed bottom-0 left-0 right-0 bg-gray-900/90 backdrop-blur-lg border-t border-gray-700/50 px-4 py-3 z-40">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
-              <Icon name="Smartphone" size={20} className="text-gray-300" />
-            </div>
-            <div className="flex-1">
-              <p className="text-white text-sm font-medium">
-                <Icon name="Smartphone" size={16} className="inline mr-1" />
-                Offline Mode - Changes will sync when connected
-              </p>
+            <div className="flex items-center space-x-3">
+              <img 
+                src="/images/marcus.png"
+                alt="Community member"
+                className="w-10 h-10 rounded-full object-cover border-2 border-orange-500/30"
+              />
+              <div>
+                <p className="text-white text-sm font-medium">
+                  <Icon name="Smartphone" size={16} className="inline mr-1" />
+                  Offline Mode - Changes will sync when connected
+                </p>
+              </div>
             </div>
           </div>
         </div>

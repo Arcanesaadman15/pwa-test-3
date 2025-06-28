@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { LemonSqueezyService, SUBSCRIPTION_PLANS } from "@/lib/lemonsqueezy";
 import { Check, AlertTriangle, Flame, Target, Zap } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface PricingPlansProps {
   onPlanSelect?: (plan: any) => void;
@@ -96,17 +97,39 @@ export function PricingPlans({ onPlanSelect }: PricingPlansProps) {
           </p>
         </div>
 
-        {/* Social Proof */}
-        <div className="mb-16">
-          <div className="flex justify-center items-center space-x-4 mb-4">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="w-8 h-8 bg-gray-700 rounded-full"></div>
+        {/* Trust indicators with testimonial images */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="text-center mb-12"
+        >
+          <div className="flex justify-center items-center space-x-3 mb-3">
+            {[
+              { name: "Marcus", image: "/images/marcus.png" },
+              { name: "Jake", image: "/images/jake.png" },
+              { name: "Carlos", image: "/images/carlos.png" }
+            ].map((user, i) => (
+              <motion.div 
+                key={user.name}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.7 + i * 0.1, duration: 0.3 }}
+                className="relative"
+              >
+                <img 
+                  src={user.image}
+                  alt={user.name}
+                  className="w-10 h-10 rounded-full object-cover border-2 border-orange-500/30"
+                />
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-900"></div>
+              </motion.div>
             ))}
           </div>
-          <p className="text-gray-400 text-sm">
-            "Increased my energy by 300% in 30 days" - Jake, 32
+          <p className="text-sm text-gray-400">
+            Join 50,000+ men who've transformed their lives
           </p>
-        </div>
+        </motion.div>
 
         {/* Pricing Card */}
         <div className="bg-gray-900 border border-gray-700 rounded-2xl p-8 mb-8">

@@ -226,6 +226,40 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
           <p className="text-gray-400 text-xs">- Jake, 32</p>
         </motion.div>
 
+        {/* Trust indicators with testimonial images */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="text-center mb-8"
+        >
+          <div className="flex justify-center items-center space-x-3 mb-3">
+            {[
+              { name: "Marcus", image: "/images/marcus.png" },
+              { name: "Jake", image: "/images/jake.png" },
+              { name: "Carlos", image: "/images/carlos.png" }
+            ].map((user, i) => (
+              <motion.div 
+                key={user.name}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.9 + i * 0.1, duration: 0.3 }}
+                className="relative"
+              >
+                <img 
+                  src={user.image}
+                  alt={user.name}
+                  className="w-10 h-10 rounded-full object-cover border-2 border-orange-500/30"
+                />
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-900"></div>
+              </motion.div>
+            ))}
+          </div>
+          <p className="text-sm text-gray-400">
+            Join 50,000+ men who've transformed their lives
+          </p>
+        </motion.div>
+
         {/* CTA Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -55,9 +55,8 @@ export default async function handler(req, res) {
 
     console.log('🍋 Creating LemonSqueezy checkout...');
 
-    const webUrl = process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : 'https://peakforge.club';
+    const webUrl = process.env.VITE_APP_URL || 
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://peakforge.club');
 
     const redirectSuccessUrl = successUrl || `${webUrl}/subscription/success`;
     const redirectCancelUrl = cancelUrl || `${webUrl}/subscription/cancel`;

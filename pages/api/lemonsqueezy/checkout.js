@@ -56,9 +56,8 @@ export default async function handler(req, res) {
     console.log('🍋 Creating LemonSqueezy checkout...');
 
     const storeId = process.env.LEMONSQUEEZY_STORE_ID;
-    const webUrl = process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : 'https://peakforge.club';
+    const webUrl = process.env.VITE_APP_URL || 
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://peakforge.club');
     
     if (!storeId) {
       return new Response(JSON.stringify({ error: "LEMONSQUEEZY_STORE_ID is not set in env" }), {
