@@ -3,7 +3,7 @@ import { lemonSqueezySetup } from '@lemonsqueezy/lemonsqueezy.js';
 // LemonSqueezy configuration
 const LEMONSQUEEZY_API_KEY = import.meta.env.VITE_LEMONSQUEEZY_API_KEY;
 const LEMONSQUEEZY_STORE_ID = import.meta.env.VITE_LEMONSQUEEZY_STORE_ID;
-const APP_URL = import.meta.env.VITE_APP_URL || 'http://localhost:3000';
+const APP_URL = import.meta.env.VITE_APP_URL || 'https://peakforge.club';
 
 // Use relative URL when in browser (for ngrok and production)
 // Only use absolute localhost URL during server-side operations

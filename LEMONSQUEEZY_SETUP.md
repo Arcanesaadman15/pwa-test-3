@@ -47,7 +47,7 @@ VITE_LEMONSQUEEZY_STORE_ID=your_store_id_here
 VITE_LEMONSQUEEZY_API_KEY=your_api_key_here
 
 # Your app URL for webhooks and redirects
-VITE_APP_URL=http://localhost:3000
+VITE_APP_URL=https://peakforge.club
 ```
 
 ### Server Environment (server/.env)

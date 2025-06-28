@@ -273,8 +273,25 @@ export function AuthForm({ onComplete, initialData }: AuthFormProps) {
               {/* Trust Indicators */}
               <div className="mt-6 text-center">
                 <div className="flex justify-center items-center space-x-4 mb-2">
-                  {[...Array(3)].map((_, i) => (
-                    <div key={i} className="w-6 h-6 bg-gray-700 rounded-full"></div>
+                  {[
+                    { name: "Marcus", image: "/images/marcus.png" },
+                    { name: "Jake", image: "/images/jake.png" },
+                    { name: "Carlos", image: "/images/carlos.png" }
+                  ].map((user, i) => (
+                    <motion.div 
+                      key={user.name}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.4 + i * 0.1, duration: 0.3 }}
+                      className="relative"
+                    >
+                      <img 
+                        src={user.image}
+                        alt={user.name}
+                        className="w-8 h-8 rounded-full object-cover border-2 border-orange-500/30"
+                      />
+                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-900"></div>
+                    </motion.div>
                   ))}
                 </div>
                 <p className="text-xs text-gray-400">

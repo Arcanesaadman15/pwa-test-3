@@ -6,7 +6,7 @@ Your payment integration should now work! Here's how to test it:
 
 Visit this URL to check if your environment variables are working:
 ```
-https://pwa-test-4-ten.vercel.app/api/lemonsqueezy/test
+https://peakforge.club/api/lemonsqueezy/test
 ```
 
 **Expected Response:**
@@ -98,9 +98,10 @@ Your app is currently set up with:
 - Missing `LEMONSQUEEZY_WEBHOOK_SECRET` environment variable
 - **To set up webhooks:**
   1. Go to LemonSqueezy Dashboard → Settings → Webhooks
-  2. Create new webhook pointing to: `https://pwa-test-4-ten.vercel.app/api/lemonsqueezy/webhooks`
-  3. Copy the webhook secret and add as `LEMONSQUEEZY_WEBHOOK_SECRET` in Vercel
-  4. Enable events: `subscription_created`, `subscription_updated`, `subscription_cancelled`
+  2. Create new webhook pointing to: `https://peakforge.club/api/lemonsqueezy/webhooks`
+  3. Select all `subscription_*` and `order_*` events
+  4. Add your `LEMONSQUEEZY_WEBHOOK_SECRET` to the webhook settings
+  5. This will now update user subscription status in your app's database whenever it changes
 
 ## 🎉 Success!
 

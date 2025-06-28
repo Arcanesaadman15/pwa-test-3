@@ -55,13 +55,22 @@ export default async function handler(req, res) {
 
     console.log('🍋 Creating LemonSqueezy checkout...');
 
-    // Prepare redirect URLs - use the current domain
-    const baseUrl = process.env.VERCEL_URL 
-      ? `https://${process.env.VERCEL_URL}` 
-      : process.env.VITE_APP_URL || 'https://pwa-test-4-ten.vercel.app';
+    const storeId = process.env.LEMONSQUEEZY_STORE_ID;
+    const webUrl = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'https://peakforge.club';
     
-    const redirectSuccessUrl = successUrl || `${baseUrl}/subscription/success`;
-    const redirectCancelUrl = cancelUrl || `${baseUrl}/subscription/cancel`;
+    if (!storeId) {
+      return new Response(JSON.stringify({ error: "LEMONSQUEEZY_STORE_ID is not set in env" }), {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    }
+
+    const redirectSuccessUrl = successUrl || `${webUrl}/subscription/success`;
+    const redirectCancelUrl = cancelUrl || `${webUrl}/subscription/cancel`;
 
     console.log('🔗 Redirect URLs:', { success: redirectSuccessUrl, cancel: redirectCancelUrl });
 

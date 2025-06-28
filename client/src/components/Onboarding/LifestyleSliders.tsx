@@ -268,7 +268,7 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
           >
-            <div className="relative px-4">
+            <div className="relative px-6">
               {/* Slider track with enhanced styling */}
               <div className="w-full h-6 bg-gray-700/60 rounded-full relative overflow-hidden backdrop-blur-sm border border-gray-600/50">
                 {/* Active track with gradient */}
@@ -293,14 +293,11 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
                 </motion.div>
               </div>
               
-              {/* Enhanced Slider thumb */}
+              {/* Enhanced Slider thumb - properly constrained */}
               <motion.div
-                className="absolute flex items-center justify-center cursor-pointer"
+                className="absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 cursor-pointer z-20"
                 style={{ 
-                  left: `${((currentValue - slider.min) / (slider.max - slider.min)) * 100}%`,
-                  marginLeft: '-20px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
+                  left: `calc(${((currentValue - slider.min) / (slider.max - slider.min)) * 100}%)`,
                   width: '40px',
                   height: '40px'
                 }}
@@ -312,7 +309,7 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
                 onTouchEnd={() => setIsDragging(false)}
               >
                 <motion.div 
-                  className="w-8 h-8 bg-white rounded-full shadow-xl border-4 border-gray-800 relative overflow-hidden"
+                  className="w-10 h-10 bg-white rounded-full shadow-xl border-4 border-gray-800 relative overflow-hidden flex items-center justify-center"
                   animate={{
                     boxShadow: isDragging 
                       ? "0 0 0 8px rgba(59, 130, 246, 0.3)" 
@@ -321,11 +318,11 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
                   transition={{ duration: 0.2 }}
                 >
                   {/* Inner glow */}
-                  <div className={`absolute inset-1 bg-gradient-to-br ${getSliderColor()} rounded-full opacity-20`} />
+                  <div className={`absolute inset-2 bg-gradient-to-br ${getSliderColor()} rounded-full opacity-20`} />
                   
                   {/* Center dot */}
                   <motion.div
-                    className={`absolute inset-0 m-auto w-2 h-2 bg-gradient-to-r ${getSliderColor()} rounded-full`}
+                    className={`w-3 h-3 bg-gradient-to-r ${getSliderColor()} rounded-full`}
                     animate={{
                       scale: isDragging ? [1, 1.5, 1] : 1
                     }}
@@ -337,20 +334,25 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
                 </motion.div>
               </motion.div>
               
-              {/* Hidden input for accessibility */}
+              {/* Improved range input for better accessibility and interaction */}
               <input
                 type="range"
                 min={slider.min}
                 max={slider.max}
                 value={currentValue}
                 onChange={(e) => handleSliderChange(slider.id, parseInt(e.target.value))}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                onMouseDown={() => setIsDragging(true)}
+                onMouseUp={() => setIsDragging(false)}
+                onTouchStart={() => setIsDragging(true)}
+                onTouchEnd={() => setIsDragging(false)}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30"
+                style={{ margin: 0, padding: 0 }}
               />
             </div>
             
             {/* Min/Max labels with better styling */}
             <motion.div 
-              className="flex justify-between mt-6 text-sm text-gray-500 px-4"
+              className="flex justify-between mt-6 text-sm text-gray-500 px-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.4 }}

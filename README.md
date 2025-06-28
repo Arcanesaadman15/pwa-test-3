@@ -169,7 +169,7 @@ VITE_SUPABASE_URL=your_supabase_project_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 VITE_LEMONSQUEEZY_STORE_ID=your_store_id
 VITE_LEMONSQUEEZY_API_KEY=your_api_key
-VITE_APP_URL=your_vercel_deployment_url
+VITE_APP_URL=https://peakforge.club
 ```
 
 The app uses Vite for building and requires:

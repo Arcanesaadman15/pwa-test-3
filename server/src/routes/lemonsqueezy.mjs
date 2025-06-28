@@ -96,7 +96,7 @@ router.post('/checkout', async (req, res) => {
     console.log('🍋 Creating LemonSqueezy checkout...');
 
     // Prepare redirect URLs
-    const baseUrl = process.env.VITE_APP_URL || 'http://localhost:3000';
+    const baseUrl = process.env.VITE_APP_URL || 'https://peakforge.club';
     const redirectSuccessUrl = successUrl || `${baseUrl}/subscription/success`;
     const redirectCancelUrl = cancelUrl || `${baseUrl}/subscription/cancel`;
 
