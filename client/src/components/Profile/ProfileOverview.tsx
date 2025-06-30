@@ -1,5 +1,5 @@
 import { User } from "@/types";
-import { Settings, Target, ChevronRight } from "lucide-react";
+import { Settings, Target, ChevronRight, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Icon, getProgramIcon } from "@/lib/iconUtils";
 
@@ -11,6 +11,10 @@ interface ProfileOverviewProps {
 
 export function ProfileOverview({ user, onOpenSettings, onProgramChange }: ProfileOverviewProps) {
   const progressPercentage = Math.round((user.completedDays / 63) * 100);
+  
+  const handleFeedback = () => {
+    window.open('https://peakforge.canny.io/feature-requests-and-issues', '_blank');
+  };
   
   const getProgramBadge = (program: string) => {
     const badges = {
@@ -40,8 +44,8 @@ export function ProfileOverview({ user, onOpenSettings, onProgramChange }: Profi
           </div>
         </div>
 
-        {/* Settings Button */}
-        <div className="text-center">
+        {/* Action Buttons */}
+        <div className="flex gap-3 justify-center">
           <Button 
             onClick={onOpenSettings}
             variant="outline"
@@ -49,6 +53,14 @@ export function ProfileOverview({ user, onOpenSettings, onProgramChange }: Profi
           >
             <Settings className="w-4 h-4 mr-2" />
             Settings
+          </Button>
+          <Button 
+            onClick={handleFeedback}
+            variant="outline"
+            className="border-orange-300 text-orange-700 hover:bg-orange-50 hover:border-orange-400"
+          >
+            <MessageSquare className="w-4 h-4 mr-2" />
+            Feedback
           </Button>
         </div>
       </div>
@@ -133,6 +145,26 @@ export function ProfileOverview({ user, onOpenSettings, onProgramChange }: Profi
               <span className="text-gray-600 text-sm">Program</span>
               <span className="text-gray-900 font-semibold capitalize">{user.program}</span>
             </div>
+          </div>
+        </div>
+
+        {/* Feedback Card */}
+        <div className="bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-2xl p-6 mb-6">
+          <div className="text-center">
+            <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-3">
+              <MessageSquare className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-lg font-semibold text-orange-900 mb-2">Help Us Improve</h3>
+            <p className="text-orange-700 text-sm mb-4 leading-relaxed">
+              Your feedback shapes PeakForge. Request features, report issues, or share ideas to make your transformation journey even better.
+            </p>
+            <Button 
+              onClick={handleFeedback}
+              className="bg-orange-500 hover:bg-orange-600 text-white font-medium px-6 py-2 rounded-xl transition-all hover:scale-105"
+            >
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Send Feedback
+            </Button>
           </div>
         </div>
 

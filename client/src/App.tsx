@@ -19,7 +19,7 @@ import SubscriptionCancelPage from "@/pages/SubscriptionCancelPage";
 import LemonSqueezySetup from "@/pages/LemonSqueezySetup";
 import DebugSubscription from "@/pages/DebugSubscription";
 import Onboarding from "@/pages/Onboarding";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Icon } from "./lib/iconUtils";
 
 function Router() {
@@ -42,6 +42,7 @@ function Router() {
 
 function AuthenticatedApp() {
   const { user, userProfile, subscription, loading, signOut } = useAuth();
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const { 
     isInstallable, 
     promptInstall, 
@@ -57,25 +58,48 @@ function AuthenticatedApp() {
   const currentPath = window.location.pathname;
   const isSubscriptionPath = currentPath.startsWith('/subscription');
 
-  // DEBUG: Log the current state
+  // Extended loading to prevent flashing between states
   useEffect(() => {
-  }, [user, userProfile, subscription, loading, currentPath]);
+    if (!loading) {
+      // Add a small delay after auth loading completes to ensure smooth transition
+      const timer = setTimeout(() => {
+        setInitialLoadComplete(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
 
-  if (loading) {
-
+  // Show loading screen until both auth loading and initial transition are complete
+  if (loading || !initialLoadComplete) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Icon name="Mountain" size={32} className="text-white" />
+      <div className="min-h-screen bg-gradient-to-br from-orange-600 via-orange-500 to-red-600 flex items-center justify-center">
+        <div className="text-center relative">
+          {/* Background glow effect */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-orange-300/20 rounded-full blur-3xl animate-pulse"></div>
           </div>
-          <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white/70">Loading your wellness journey...</p>
-          <p className="text-white/50 text-sm mt-2">Almost ready...</p>
+          
+          <div className="relative z-10">
+            <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-6 backdrop-blur-sm">
+              <Icon name="Mountain" size={36} className="text-white" />
+            </div>
+            
+            {/* Enhanced loading spinner */}
+            <div className="relative mb-6">
+              <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto"></div>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 border-2 border-orange-200/40 border-t-orange-200 rounded-full animate-spin"></div>
+            </div>
+            
+            <h2 className="text-2xl font-bold text-white mb-2">PeakForge</h2>
+            <p className="text-white/80 text-lg mb-1">Loading your wellness journey...</p>
+            <p className="text-white/60 text-sm">Preparing your transformation</p>
+          </div>
         </div>
       </div>
     );
   }
+
+
 
   // STEP 1: Check if user is authenticated
   if (!user) {

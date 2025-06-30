@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { RefreshCw, AlertTriangle, ArrowLeft, Trash2, RotateCcw, Download, Target, LogOut } from "lucide-react";
+import { RefreshCw, AlertTriangle, ArrowLeft, Trash2, RotateCcw, Download, Target, LogOut, MessageSquare } from "lucide-react";
 import { storage } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { usePWA } from "@/hooks/usePWA";
@@ -49,6 +49,10 @@ export function SettingsPanel({ onBack, onDataReset, onProgramChange }: Settings
         variant: "error"
       });
     }
+  };
+
+  const handleFeedback = () => {
+    window.open('https://peakforge.canny.io/feature-requests-and-issues', '_blank');
   };
 
   type SettingsItem = {
@@ -118,6 +122,18 @@ export function SettingsPanel({ onBack, onDataReset, onProgramChange }: Settings
           description: "Clear all data and start fresh",
           action: handleResetData,
           destructive: true
+        }
+      ]
+    },
+    {
+      title: "Feedback",
+      items: [
+        {
+          icon: MessageSquare,
+          title: "Send Feedback",
+          description: "Request features, report bugs, or share ideas",
+          action: handleFeedback,
+          disabled: false
         }
       ]
     },

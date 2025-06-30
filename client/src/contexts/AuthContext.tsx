@@ -41,10 +41,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fast timeout for production (1 second)
+    // Extended timeout to ensure smooth loading experience (2.5 seconds)
     const loadingTimeout = setTimeout(() => {
       setLoading(false);
-    }, 1000);
+    }, 2500);
 
     // Get current session
     supabase.auth.getSession()
