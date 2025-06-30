@@ -290,6 +290,10 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
     if (!taskEngine) return;
     
     try {
+      if (!taskEngine.isManualNavigation()) {
+        taskEngine.syncToActiveDay();
+      }
+      
       const currentDayTasks = await taskEngine.getCurrentDayTasks();
       const dayInfo = {
         dayNumber: taskEngine.getViewingDay(),
@@ -335,6 +339,11 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
       
       await loadTasks();
       triggerRefresh();
+      
+      if (taskEngine && !taskEngine.isManualNavigation()) {
+        taskEngine.syncToActiveDay();
+        await loadTasks();
+      }
     } catch (error) {
       console.error('Failed to complete task:', error);
       toast({
@@ -366,6 +375,11 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
       
       await loadTasks();
       triggerRefresh();
+      
+      if (taskEngine && !taskEngine.isManualNavigation()) {
+        taskEngine.syncToActiveDay();
+        await loadTasks();
+      }
     } catch (error) {
       console.error('Failed to skip task:', error);
       toast({
@@ -392,22 +406,28 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
 
   const handleNavigatePrevious = async () => {
     if (taskEngine) {
-      taskEngine.navigatePrevious();
-      loadTasks();
+      const success = taskEngine.navigatePrevious();
+      if (success) {
+        await loadTasks();
+      }
     }
   };
 
   const handleNavigateNext = async () => {
     if (taskEngine) {
-      taskEngine.navigateNext();
-      loadTasks();
+      const success = taskEngine.navigateNext();
+      if (success) {
+        await loadTasks();
+      }
     }
   };
 
   const handleGoToToday = async () => {
     if (taskEngine) {
-      taskEngine.goToToday();
-      loadTasks();
+      const success = taskEngine.goToToday();
+      if (success) {
+        await loadTasks();
+      }
     }
   };
 

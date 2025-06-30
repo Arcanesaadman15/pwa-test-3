@@ -100,6 +100,18 @@ export class TaskEngine {
     return this.navigateToDay(activeDay);
   }
 
+  // CRITICAL FIX: Add method to force sync viewing day with active day
+  syncToActiveDay(): void {
+    const activeDay = this.getCurrentActiveDay();
+    this.viewingDay = activeDay;
+    this.manualNavigation = false;
+  }
+
+  // CRITICAL FIX: Add method to check if user is viewing current day
+  isViewingCurrentDay(): boolean {
+    return this.viewingDay === this.getCurrentActiveDay() && !this.manualNavigation;
+  }
+
   canNavigatePrevious(): boolean {
     return this.viewingDay > 1;
   }
@@ -162,7 +174,13 @@ export class TaskEngine {
     await this.initialize();
     
     const currentActiveDay = this.getCurrentActiveDay();
-    if (this.viewingDay !== currentActiveDay) {
+    
+    // CRITICAL FIX: Allow skipping on current active day regardless of viewing day
+    // Auto-sync viewing day if user is on current active day
+    if (!this.manualNavigation || this.viewingDay === currentActiveDay) {
+      this.viewingDay = currentActiveDay;
+      this.manualNavigation = false;
+    } else if (this.viewingDay !== currentActiveDay) {
       throw new Error("You can only skip tasks for your current active day");
     }
 
@@ -189,7 +207,13 @@ export class TaskEngine {
     await storage.saveTaskCompletion(completion);
     
     // Check for day advancement
-    await this.checkDayAdvancement();
+    const didAdvance = await this.checkDayAdvancement();
+    
+    // CRITICAL FIX: Ensure viewing day stays in sync after day advancement
+    if (didAdvance) {
+      this.viewingDay = this.getCurrentActiveDay();
+      this.manualNavigation = false;
+    }
     
     return true;
   }
@@ -273,9 +297,12 @@ export class TaskEngine {
         }
       }
       
-      // Auto-advance to next day and navigate user there
+      // CRITICAL FIX: Auto-advance to next day and ensure viewing day stays in sync
       this.viewingDay = newDay;
       this.manualNavigation = false; // Reset manual navigation since we auto-advanced
+      
+      // Debug logging to help track day advancement
+      console.log(`Day advancement: ${currentActiveDay} -> ${newDay}, viewing day synced to ${this.viewingDay}`);
       
       return true; // Signal that advancement happened
     }

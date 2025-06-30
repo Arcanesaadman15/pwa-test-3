@@ -31,18 +31,22 @@ export function useTaskEngine() {
 
   const completeTask = async (taskId: string) => {
     await taskEngine.completeTask(taskId);
-    // Immediate refresh to sync day advancement
+    // CRITICAL FIX: Immediate refresh to sync day advancement and UI state
     await refreshTasks();
     // Additional refresh after short delay to ensure UI is fully updated
-    setTimeout(() => {
+    setTimeout(async () => {
+      await refreshTasks();
       setRefreshTrigger(prev => prev + 1);
     }, 100);
   };
 
   const skipTask = async (taskId: string) => {
     await taskEngine.skipTask(taskId);
+    // CRITICAL FIX: Immediate refresh to sync day advancement and UI state
     await refreshTasks();
-    setTimeout(() => {
+    // Additional refresh after short delay to ensure UI is fully updated
+    setTimeout(async () => {
+      await refreshTasks();
       setRefreshTrigger(prev => prev + 1);
     }, 100);
   };
