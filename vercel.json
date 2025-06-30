@@ -1,3 +1,17 @@
 {
-  "version": 2
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/((?!api|_next|_static|favicon.ico|images|manifest.json|sw.js).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "functions": {
+    "api/lemonsqueezy/checkout.js": {
+      "maxDuration": 30
+    },
+    "api/lemonsqueezy/webhooks.js": {
+      "maxDuration": 30
+    }
+  }
 } 

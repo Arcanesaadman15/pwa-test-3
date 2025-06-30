@@ -1,17 +1,61 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Crown, ArrowRight } from "lucide-react";
+import { CheckCircle, Crown, ArrowRight, Loader2, RefreshCw } from "lucide-react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
 
 export function SubscriptionSuccess() {
   const [, setLocation] = useLocation();
-  const [countdown, setCountdown] = useState(5);
-  const { user } = useAuth();
+  const [countdown, setCountdown] = useState(10);
+  const [isCheckingStatus, setIsCheckingStatus] = useState(true);
+  const [statusChecked, setStatusChecked] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const { user, userProfile, subscription, refreshSubscription } = useAuth();
 
+  // Check subscription status with retry logic
   useEffect(() => {
-    // Simple redirect after 5 seconds
+    let mounted = true;
+    
+    const checkSubscriptionStatus = async () => {
+      if (!user) return;
+      
+      try {
+        setIsCheckingStatus(true);
+        await refreshSubscription();
+        
+        if (mounted) {
+          setStatusChecked(true);
+          setIsCheckingStatus(false);
+        }
+      } catch (error) {
+        console.error('Failed to check subscription status:', error);
+        
+        if (mounted && retryCount < 3) {
+          // Retry after a delay
+          setTimeout(() => {
+            setRetryCount(prev => prev + 1);
+          }, 2000);
+        } else if (mounted) {
+          setIsCheckingStatus(false);
+          setStatusChecked(true);
+        }
+      }
+    };
+
+    if (user && !statusChecked) {
+      checkSubscriptionStatus();
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, [user, retryCount, statusChecked, refreshSubscription]);
+
+  // Countdown timer for auto-redirect
+  useEffect(() => {
+    if (!statusChecked || isCheckingStatus) return;
+
     const timer = setInterval(() => {
       setCountdown(prev => {
         if (prev <= 1) {
@@ -24,18 +68,29 @@ export function SubscriptionSuccess() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [statusChecked, isCheckingStatus]);
 
   const handleContinue = () => {
-    if (user) {
+    if (subscription.isSubscribed) {
+      // User has active subscription, go to main app
+      setLocation('/home');
+    } else if (userProfile?.onboarding_complete) {
+      // User completed onboarding but subscription not detected yet, go to home anyway
       setLocation('/home');
     } else {
+      // User needs to complete onboarding first
       setLocation('/');
     }
   };
 
   const handleManageSubscription = () => {
     setLocation('/subscription');
+  };
+
+  const handleRetryCheck = async () => {
+    setRetryCount(0);
+    setStatusChecked(false);
+    setIsCheckingStatus(true);
   };
 
   return (
@@ -66,44 +121,94 @@ export function SubscriptionSuccess() {
           Payment Successful! 🎉
         </motion.h1>
 
-        {/* Description */}
-        <motion.p
-          className="text-lg text-gray-300 mb-8"
+        {/* Dynamic Description based on status */}
+        <motion.div
+          className="mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          Thank you for your purchase! Your premium access is being activated and will be available shortly.
-        </motion.p>
+          {isCheckingStatus ? (
+            <div className="flex items-center justify-center space-x-3 text-lg text-gray-300">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span>Activating your premium access...</span>
+            </div>
+          ) : subscription.isSubscribed ? (
+            <p className="text-lg text-green-300">
+              ✅ Premium access activated! You're all set to unlock your potential.
+            </p>
+          ) : (
+            <div className="text-lg text-gray-300">
+              <p className="mb-2">Thank you for your purchase!</p>
+              <p className="text-sm text-gray-400">
+                Your subscription is being processed and will be active within a few minutes.
+              </p>
+            </div>
+          )}
+        </motion.div>
+
+        {/* Subscription Status Indicator */}
+        {statusChecked && (
+          <motion.div
+            className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-4 border border-gray-700/50 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
+            <div className="flex items-center justify-center space-x-3">
+              <Crown className="w-5 h-5 text-yellow-400" />
+              <span className="text-white font-medium">
+                {subscription.isSubscribed ? 'Premium Active' : 'Activating Premium...'}
+              </span>
+              {subscription.isSubscribed ? (
+                <CheckCircle className="w-5 h-5 text-green-400" />
+              ) : (
+                <Loader2 className="w-5 h-5 animate-spin text-yellow-400" />
+              )}
+            </div>
+            
+            {!subscription.isSubscribed && (
+              <Button
+                onClick={handleRetryCheck}
+                variant="ghost"
+                size="sm"
+                className="mt-3 text-gray-400 hover:text-white"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Refresh Status
+              </Button>
+            )}
+          </motion.div>
+        )}
 
         {/* Premium Features List */}
         <motion.div
           className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
         >
           <div className="flex items-center justify-center mb-4">
             <Crown className="w-6 h-6 text-yellow-400 mr-2" />
-            <h3 className="text-xl font-semibold text-white">Premium Features Unlocked</h3>
+            <h3 className="text-xl font-semibold text-white">What You've Unlocked</h3>
           </div>
           
           <ul className="text-left space-y-2 text-gray-300">
             <li className="flex items-center">
               <CheckCircle className="w-4 h-4 text-green-400 mr-3 flex-shrink-0" />
-              Advanced analytics and insights
+              Complete 63-day testosterone revival program
             </li>
             <li className="flex items-center">
               <CheckCircle className="w-4 h-4 text-green-400 mr-3 flex-shrink-0" />
-              Personalized wellness programs
+              Daily masculine habits & confidence building
             </li>
             <li className="flex items-center">
               <CheckCircle className="w-4 h-4 text-green-400 mr-3 flex-shrink-0" />
-              Priority customer support
+              Personalized nutrition & workout plans
             </li>
             <li className="flex items-center">
               <CheckCircle className="w-4 h-4 text-green-400 mr-3 flex-shrink-0" />
-              Exclusive premium content
+              Advanced progress tracking & insights
             </li>
           </ul>
         </motion.div>
@@ -113,14 +218,25 @@ export function SubscriptionSuccess() {
           className="space-y-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
+          transition={{ duration: 0.6, delay: 0.7 }}
         >
           <Button
             onClick={handleContinue}
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 rounded-xl font-medium"
+            disabled={isCheckingStatus}
+            className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-4 rounded-xl font-medium text-lg"
           >
-            Continue to App {countdown > 0 && `(${countdown}s)`}
-            <ArrowRight className="w-5 h-5 ml-2" />
+            {isCheckingStatus ? (
+              <div className="flex items-center justify-center">
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                Setting up your account...
+              </div>
+            ) : (
+              <div className="flex items-center justify-center">
+                Start Your Transformation
+                {countdown > 0 && ` (${countdown}s)`}
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </div>
+            )}
           </Button>
           
           <Button
@@ -140,9 +256,9 @@ export function SubscriptionSuccess() {
           transition={{ duration: 0.6, delay: 0.8 }}
         >
           <p className="text-gray-400 text-sm">
-            Your subscription will be active within a few minutes. If you have any issues, contact{" "}
-            <a href="mailto:support@peakforge.com" className="text-blue-400 hover:underline">
-              support@peakforge.com
+            Having issues? Contact{" "}
+            <a href="mailto:support@peakforge.club" className="text-orange-400 hover:underline">
+              support@peakforge.club
             </a>
           </p>
         </motion.div>
