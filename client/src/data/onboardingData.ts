@@ -63,47 +63,47 @@ export const QUICK_QUIZ_QUESTIONS = [
   {
     id: 'ageRange',
     question: "What's your age?",
-    subtitle: "Your testosterone decline started earlier than you think - but it's reversible",
+    subtitle: "Your testosterone has been declining since 25. Let's see how much damage we need to undo.",
     options: [
-      { value: '18-24', label: '18-24', subtitle: 'Prime years - maximize now' },
-      { value: '25-34', label: '25-34', subtitle: 'Decline starts here - fight back' },
-      { value: '35-44', label: '35-44', subtitle: 'Critical intervention time' },
-      { value: '45-54', label: '45-54', subtitle: 'Reclaim your prime' },
-      { value: '55+', label: '55+', subtitle: 'Prove age is just a number' }
+      { value: '18-24', label: '18-24', subtitle: 'Still at your peak - let\'s keep you there' },
+      { value: '25-34', label: '25-34', subtitle: 'Decline just started - perfect timing to fight back' },
+      { value: '35-44', label: '35-44', subtitle: 'Your body is betraying you - time to take control' },
+      { value: '45-54', label: '45-54', subtitle: 'Critical years - reclaim what you\'ve lost' },
+      { value: '55+', label: '55+', subtitle: 'Prove that age is just a number' }
     ]
   },
   {
     id: 'sleepQuality',
-    question: "How often do you toss and turn at night?",
-    subtitle: "Poor sleep cuts testosterone by 15% every single night",
+    question: "How's your sleep honestly?",
+    subtitle: "Poor sleep destroys testosterone faster than anything else. One bad night = 15% T-level drop.",
     options: [
-      { value: '0-1', label: 'Sleep like a baby', subtitle: 'Rare - you\'re winning' },
-      { value: '2-3', label: '2-3 bad nights per week', subtitle: 'T-levels taking a hit' },
-      { value: '4-5', label: '4-5 restless nights', subtitle: 'Serious hormone damage' },
-      { value: '6-7', label: 'Can barely sleep anymore', subtitle: 'Emergency intervention needed' }
+      { value: '0-1', label: 'I sleep like a rock', subtitle: 'You\'re ahead of 90% of men' },
+      { value: '2-3', label: 'Few bad nights per week', subtitle: 'Your T-levels are suffering' },
+      { value: '4-5', label: 'Tossing and turning most nights', subtitle: 'Serious hormone damage happening' },
+      { value: '6-7', label: 'Sleep is a nightmare', subtitle: 'Emergency intervention needed' }
     ]
   },
   {
     id: 'exerciseFrequency',
-    question: "How often do you actually move your body?",
-    subtitle: "Be honest - your testosterone is counting on this truth",
+    question: "How often do you actually exercise?",
+    subtitle: "Be brutally honest. Your body knows when you're lying to yourself.",
     options: [
-      { value: '0', label: 'I avoid physical activity', subtitle: 'T-levels in freefall' },
-      { value: '1-2', label: '1-2 times when forced', subtitle: 'Bare minimum survival' },
-      { value: '3-4', label: '3-4 times consistently', subtitle: 'Building momentum' },
-      { value: '5+', label: '5+ times - I\'m committed', subtitle: 'Serious about change' }
+      { value: '0', label: 'Exercise? What exercise?', subtitle: 'Your testosterone is in freefall' },
+      { value: '1-2', label: '1-2 times when I have to', subtitle: 'Barely surviving, not thriving' },
+      { value: '3-4', label: '3-4 times consistently', subtitle: 'Building good momentum' },
+      { value: '5+', label: '5+ times - I\'m serious', subtitle: 'You understand what it takes' }
     ]
   },
   {
     id: 'primaryGoal',
-    question: "What do you miss most about the old you?",
-    subtitle: "This isn't about fitness - it's about reclaiming who you were meant to be",
+    question: "What do you want back most?",
+    subtitle: "Think about who you were at your best. What would change your life the most?",
     options: [
-      { value: 'confidence', label: 'That unshakeable confidence', subtitle: 'Walk tall again' },
-      { value: 'energy', label: 'Boundless energy & drive', subtitle: 'Feel alive again' },
-      { value: 'strength', label: 'Physical strength & respect', subtitle: 'Command presence' },
-      { value: 'attraction', label: 'Being desired by your partner', subtitle: 'Rekindle the spark' },
-      { value: 'testosterone', label: 'Just feeling like a MAN again', subtitle: 'Total masculine revival' }
+      { value: 'confidence', label: 'Unshakeable confidence', subtitle: 'Command respect in any room' },
+      { value: 'energy', label: 'All-day energy & drive', subtitle: 'Feel unstoppable again' },
+      { value: 'strength', label: 'Physical strength & presence', subtitle: 'Be the strong man others look up to' },
+      { value: 'attraction', label: 'Sexual attraction & magnetism', subtitle: 'Rekindle that spark and desire' },
+      { value: 'testosterone', label: 'Just feeling like a MAN again', subtitle: 'Complete masculine transformation' }
     ]
   }
 ];
@@ -112,124 +112,124 @@ export const QUICK_QUIZ_QUESTIONS = [
 export const COMMITMENT_QUESTIONS = [
   {
     id: 'problemAwareness',
-    question: "Which statement resonates most with you right now?",
-    subtitle: "Be honest - this is about more than just physical health",
+    question: "How would you describe where you're at right now?",
+    subtitle: "Your honesty here determines everything that comes next",
     options: [
       { 
         value: 'denial', 
-        label: 'I don\'t really have a problem', 
-        subtitle: 'Maybe you\'re not ready yet',
+        label: 'I don\'t really see a problem', 
+        subtitle: 'Maybe this isn\'t for you yet',
         scoreModifier: -2
       },
       { 
         value: 'aware', 
-        label: 'I know something needs to change', 
-        subtitle: 'Awareness is the first step',
+        label: 'I know things need to change', 
+        subtitle: 'Awareness is the first step to power',
         scoreModifier: 0
       },
       { 
         value: 'frustrated', 
-        label: 'I\'m tired of feeling this way', 
-        subtitle: 'Frustration fuels transformation',
+        label: 'I\'m fed up with feeling this way', 
+        subtitle: 'Frustration becomes fuel for transformation',
         scoreModifier: 1
       },
       { 
         value: 'desperate', 
-        label: 'I\'m ready to do whatever it takes', 
-        subtitle: 'This level of commitment changes everything',
+        label: 'I\'ll do whatever it takes to change', 
+        subtitle: 'This commitment level guarantees success',
         scoreModifier: 2
       }
     ]
   },
   {
     id: 'actionCommitment',
-    question: "What's held you back from fixing this before?",
-    subtitle: "Understanding your barriers helps us break through them",
+    question: "What's stopped you from fixing this before now?",
+    subtitle: "Understanding your barriers is key to breaking through them",
     options: [
       { 
         value: 'time', 
-        label: 'I don\'t have time for complicated routines', 
-        subtitle: 'We\'ll make it simple',
+        label: 'I don\'t have time for complex routines', 
+        subtitle: 'We\'ll make it simple and sustainable',
         scoreModifier: 0
       },
       { 
         value: 'money', 
         label: 'I\'ve wasted money on things that don\'t work', 
-        subtitle: 'This investment pays for itself',
+        subtitle: 'This investment will pay for itself',
         scoreModifier: 1
       },
       { 
         value: 'willpower', 
-        label: 'I always lose motivation and quit', 
+        label: 'I start strong but always quit', 
         subtitle: 'Systems beat willpower every time',
         scoreModifier: 0
       },
       { 
         value: 'knowledge', 
         label: 'I don\'t know what actually works', 
-        subtitle: 'We\'ll give you the roadmap',
+        subtitle: 'We\'ll give you the exact roadmap',
         scoreModifier: 1
       }
     ]
   },
   {
     id: 'investmentReadiness',
-    question: "How much would reclaiming your masculine power be worth to you?",
-    subtitle: "Think about the cost of staying where you are for another year",
+    question: "How much is feeling like a real man worth to you?",
+    subtitle: "Think about the cost of staying weak for another year",
     options: [
       { 
         value: 'free', 
-        label: 'I only want free solutions', 
-        subtitle: 'Free gets you what you pay for',
+        label: 'I only try free stuff', 
+        subtitle: 'Free gets you exactly what you pay for',
         scoreModifier: -1
       },
       { 
         value: 'minimal', 
-        label: 'Under $50 if it really works', 
-        subtitle: 'Smart investment in yourself',
+        label: 'Maybe $50 if it actually works', 
+        subtitle: 'Smart investment in your future self',
         scoreModifier: 1
       },
       { 
         value: 'serious', 
-        label: '$50-100 for proven results', 
-        subtitle: 'You understand real value',
+        label: '$50-100 for real results', 
+        subtitle: 'You understand true value',
         scoreModifier: 2
       },
       { 
         value: 'whatever', 
         label: 'Whatever it takes - I\'m done being weak', 
-        subtitle: 'This mindset guarantees success',
+        subtitle: 'This mindset changes everything',
         scoreModifier: 3
       }
     ]
   },
   {
     id: 'urgencyLevel',
-    question: "How urgent is this transformation for you?",
-    subtitle: "The longer you wait, the harder it gets to turn things around",
+    question: "When do you want to start feeling powerful again?",
+    subtitle: "Every day you wait, it gets harder to turn things around",
     options: [
       { 
         value: 'someday', 
-        label: 'Someday when I have more time', 
-        subtitle: 'Someday never comes',
+        label: 'Someday when life slows down', 
+        subtitle: 'Someday never comes for most men',
         scoreModifier: -2
       },
       { 
         value: 'soon', 
-        label: 'In the next few months', 
-        subtitle: 'Soon becomes never',
+        label: 'In a few months maybe', 
+        subtitle: 'Soon becomes never for 90% of men',
         scoreModifier: -1
       },
       { 
         value: 'now', 
         label: 'I need to start right now', 
-        subtitle: 'Now is the only time that matters',
+        subtitle: 'Now is the only moment you control',
         scoreModifier: 2
       },
       { 
         value: 'yesterday', 
         label: 'I should have started years ago', 
-        subtitle: 'Today is the best day to begin',
+        subtitle: 'Today is the best day to begin again',
         scoreModifier: 3
       }
     ]

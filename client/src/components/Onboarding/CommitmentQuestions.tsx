@@ -187,13 +187,13 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
                     variant="outline"
                     className={`w-full p-6 text-left border-2 transition-all duration-300 min-h-[80px] flex items-start relative overflow-hidden group ${
                       selectedOption === option.value
-                        ? 'border-orange-500 bg-orange-500/20 text-white scale-105 shadow-lg shadow-orange-500/25'
-                        : 'border-gray-600/70 bg-gray-900/50 hover:border-gray-500 hover:bg-gray-800/60 text-gray-200 hover:shadow-lg hover:shadow-gray-500/10'
+                        ? 'border-orange-500 bg-orange-500/10 text-white scale-105 shadow-lg shadow-orange-500/25'
+                        : 'border-gray-600/50 bg-gray-900/80 hover:border-orange-400/60 hover:bg-gray-800/90 text-gray-100 hover:shadow-lg hover:shadow-orange-400/20 backdrop-blur-sm'
                     }`}
                   >
                     {/* Background shimmer effect */}
                     <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100"
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-orange-400/10 to-transparent opacity-0 group-hover:opacity-100"
                       animate={{ x: [-100, 300] }}
                       transition={{
                         duration: 1.5,
@@ -204,7 +204,9 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
                     
                     <div className="flex flex-col text-left w-full relative z-10">
                       <motion.span 
-                        className="font-semibold text-lg mb-2 leading-tight text-left"
+                        className={`font-semibold text-lg mb-2 leading-tight text-left ${
+                          selectedOption === option.value ? 'text-white' : 'text-gray-100 group-hover:text-white'
+                        }`}
                         animate={selectedOption === option.value ? { x: [0, 5, 0] } : {}}
                         transition={{ duration: 0.3 }}
                       >
@@ -212,7 +214,9 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
                       </motion.span>
                       {option.subtitle && (
                         <motion.span 
-                          className="text-sm text-gray-400 leading-relaxed text-left"
+                          className={`text-sm leading-relaxed text-left ${
+                            selectedOption === option.value ? 'text-orange-200' : 'text-gray-300 group-hover:text-gray-200'
+                          }`}
                           animate={selectedOption === option.value ? { opacity: [0.7, 1, 0.7] } : {}}
                           transition={{ duration: 0.5 }}
                         >

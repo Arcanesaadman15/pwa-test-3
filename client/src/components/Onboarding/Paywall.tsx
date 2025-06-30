@@ -208,29 +208,13 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
           </div>
         </motion.div>
 
-        {/* Social Proof */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="bg-gray-900 border border-gray-700 rounded-2xl p-6 mb-16 text-center"
-        >
-          <div className="flex justify-center items-center space-x-4 mb-4">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="w-8 h-8 bg-gray-700 rounded-full"></div>
-            ))}
-          </div>
-          <p className="text-gray-300 text-sm italic mb-2">
-            "Increased my energy by 300% in 30 days"
-          </p>
-          <p className="text-gray-400 text-xs">- Jake, 32</p>
-        </motion.div>
+
 
         {/* Trust indicators with testimonial images */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
+          transition={{ delay: 0.6 }}
           className="text-center mb-8"
         >
           <div className="flex justify-center items-center space-x-3 mb-3">
@@ -243,7 +227,7 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
                 key={user.name}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.9 + i * 0.1, duration: 0.3 }}
+                transition={{ delay: 0.7 + i * 0.1, duration: 0.3 }}
                 className="relative"
               >
                 <img 
@@ -255,7 +239,7 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
               </motion.div>
             ))}
           </div>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-400 mb-6">
             Join 50,000+ men who've transformed their lives
           </p>
         </motion.div>
