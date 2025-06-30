@@ -122,31 +122,18 @@ function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReaso
                 </h3>
                 {task.whyItMatters && (
                   <div className="flex items-center gap-1">
-                    {/* T+ Badge to indicate testosterone benefits */}
-                    <span className="text-xs font-bold bg-orange-500 text-white px-1.5 py-0.5 rounded-md">
-                      T+
-                    </span>
+                    {/* T+ Badge and info button combined for larger touch target */}
                     <button
                       onClick={() => setShowWhyItMatters(!showWhyItMatters)}
-                      className={`p-1.5 rounded-full transition-all duration-200 group relative ${
+                      className={`flex items-center gap-1.5 px-2 py-1 rounded-lg transition-all duration-200 active:scale-95 ${
                         showWhyItMatters 
-                          ? 'bg-orange-100 shadow-sm' 
-                          : 'bg-orange-50 hover:bg-orange-100 hover:shadow-sm border border-orange-200'
+                          ? 'bg-orange-100 text-orange-600' 
+                          : 'bg-orange-50 text-orange-500'
                       }`}
                       title="Why this matters for testosterone"
                     >
-                      <Info 
-                        size={16} 
-                        className={`transition-colors ${
-                          showWhyItMatters 
-                            ? 'text-orange-600' 
-                            : 'text-orange-500 group-hover:text-orange-600'
-                        }`}
-                      />
-                      {/* Subtle pulse animation to draw attention */}
-                      {!showWhyItMatters && (
-                        <div className="absolute inset-0 rounded-full bg-orange-400/20 animate-ping"></div>
-                      )}
+                      <span className="text-xs font-bold">T+</span>
+                      <Info size={16} />
                     </button>
                   </div>
                 )}
@@ -197,8 +184,11 @@ function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReaso
               {task.subtitle}
             </p>
             {task.whyItMatters && !showWhyItMatters && (
-              <p className="text-xs text-orange-600 mt-1 font-medium">
-                💡 Tap T+ to see why this boosts testosterone
+              <p 
+                className="text-xs text-orange-500/80 mt-1 font-medium active:text-orange-600 transition-colors inline-flex items-center gap-1 rounded-lg py-1" 
+                onClick={() => setShowWhyItMatters(true)}
+              >
+                💡 Learn why this boosts testosterone
               </p>
             )}
           </div>
