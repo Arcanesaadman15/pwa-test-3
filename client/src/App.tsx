@@ -74,9 +74,9 @@ function AuthenticatedApp() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-600 via-orange-500 to-red-600 flex items-center justify-center">
         <div className="text-center relative">
-          {/* Background glow effect */}
+          {/* Subtle background glow */}
           <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-orange-300/20 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-orange-300/10 rounded-full blur-2xl"></div>
           </div>
           
           <div className="relative z-10">
@@ -84,10 +84,9 @@ function AuthenticatedApp() {
               <Icon name="Mountain" size={36} className="text-white" />
             </div>
             
-            {/* Enhanced loading spinner */}
-            <div className="relative mb-6">
-              <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto"></div>
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 border-2 border-orange-200/40 border-t-orange-200 rounded-full animate-spin"></div>
+            {/* Clean loading spinner */}
+            <div className="mb-6">
+              <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto"></div>
             </div>
             
             <h2 className="text-2xl font-bold text-white mb-2">PeakForge</h2>
