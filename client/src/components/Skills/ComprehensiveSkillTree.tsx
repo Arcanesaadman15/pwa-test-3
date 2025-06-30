@@ -6,6 +6,9 @@ import { SkillConnectionVisualization } from "./SkillConnectionVisualization";
 import { Search, Filter, ArrowUp, Star, Zap, TreePine, Network } from "lucide-react";
 import { Icon, getCategoryIcon } from '@/lib/iconUtils';
 
+// Type definition for view mode
+type ViewMode = 'tree' | 'connections';
+
 interface SkillTreeProps {
   onSkillClick?: (skill: UnlockedSkill) => void;
 }
@@ -17,6 +20,11 @@ interface SkillNodeProps {
   onClick?: () => void;
   index?: number;
 }
+
+// Helper function for view mode comparison
+const isViewMode = (current: ViewMode, target: ViewMode): boolean => {
+  return current === target;
+};
 
 function SkillNode({ skill, isUnlocked, isRecentlyUnlocked, onClick, index = 0 }: SkillNodeProps) {
   const getBorderColor = () => {
@@ -40,11 +48,13 @@ function SkillNode({ skill, isUnlocked, isRecentlyUnlocked, onClick, index = 0 }
   return (
     <motion.div
       className={`
-        skill-node relative p-4 rounded-2xl border-2 cursor-pointer
+        skill-node relative p-6 rounded-2xl border-2 cursor-pointer
         transition-all duration-300 hover:scale-105 hover:shadow-lg
         bg-gradient-to-br ${getBackgroundGradient()}
         ${getBorderColor()}
         ${isUnlocked ? 'shadow-md' : 'shadow-sm'}
+        w-[280px] min-h-[200px] flex flex-col justify-between
+        mx-auto my-2
       `}
       onClick={onClick}
       initial={{ opacity: 0, scale: 0.8, y: 20 }}
@@ -64,48 +74,48 @@ function SkillNode({ skill, isUnlocked, isRecentlyUnlocked, onClick, index = 0 }
       )}
       
       {/* Level badge */}
-      <div className={`absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+      <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
         isUnlocked ? 'bg-green-500 text-white' : 'bg-gray-400 text-gray-600'
       }`}>
         {skill.level}
       </div>
       
       {/* Skill content */}
-      <div className="text-center">
+      <div className="flex flex-col items-center justify-between h-full">
         {/* Category icon */}
-        <div className="mb-3 flex justify-center">
+        <div className="mb-4">
           <Icon 
             name={getCategoryIcon(skill.category)} 
-            size={28} 
+            size={32} 
             color={getIconColor()}
           />
         </div>
       
         {/* Skill title */}
-        <h3 className={`font-bold text-sm mb-2 ${
+        <h3 className={`font-bold text-base mb-3 ${
           isUnlocked ? 'text-gray-900' : 'text-gray-500'
         }`}>
           {skill.title}
         </h3>
         
         {/* Skill description */}
-        <p className={`text-xs leading-tight ${
+        <p className={`text-sm leading-relaxed text-center mb-4 ${
           isUnlocked ? 'text-gray-600' : 'text-gray-400'
         }`}>
           {skill.description}
         </p>
       
         {/* Status indicator */}
-        <div className="mt-3 flex justify-center">
+        <div className="mt-auto">
           {isRecentlyUnlocked ? (
-            <Zap size={16} className="text-yellow-500" />
+            <Zap size={20} className="text-yellow-500" />
           ) : isUnlocked ? (
-            <Star size={16} className="text-green-500" />
+            <Star size={20} className="text-green-500" />
           ) : (
-            <div className="w-4 h-4 rounded-full bg-gray-300" />
+            <div className="w-5 h-5 rounded-full bg-gray-300" />
           )}
         </div>
-          </div>
+      </div>
     </motion.div>
   );
 }
@@ -165,9 +175,14 @@ export function ComprehensiveSkillTree({ onSkillClick }: SkillTreeProps) {
   const [unlockedSkills, setUnlockedSkills] = useState<UnlockedSkill[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [overallProgress, setOverallProgress] = useState<any>(null);
-  const [viewMode, setViewMode] = useState<'tree' | 'connections'>('tree');
+  const [viewMode, setViewMode] = useState<ViewMode>('tree');
   const [searchTerm, setSearchTerm] = useState('');
   const [showOnlyUnlocked, setShowOnlyUnlocked] = useState(false);
+
+  // Function to handle view mode change with type safety
+  const handleViewModeChange = (mode: ViewMode) => {
+    setViewMode(mode);
+  };
 
   useEffect(() => {
     loadSkillData();
@@ -304,9 +319,9 @@ export function ComprehensiveSkillTree({ onSkillClick }: SkillTreeProps) {
         {/* View Toggle */}
         <div className="flex bg-gray-100 rounded-xl p-1">
           <button
-            onClick={() => setViewMode('tree')}
+            onClick={() => handleViewModeChange('tree')}
             className={`flex-1 py-2.5 px-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
-              viewMode === 'tree' 
+              isViewMode(viewMode, 'tree') 
                 ? 'bg-white text-gray-900 shadow-sm' 
                 : 'text-gray-600 hover:text-gray-900'
             }`}
@@ -314,9 +329,9 @@ export function ComprehensiveSkillTree({ onSkillClick }: SkillTreeProps) {
             <TreePine size={16} /> <span className="text-sm">Skill Tree</span>
           </button>
           <button
-            onClick={() => setViewMode('connections')}
+            onClick={() => handleViewModeChange('connections')}
             className={`flex-1 py-2.5 px-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
-              viewMode === 'connections' 
+              isViewMode(viewMode, 'connections') 
                 ? 'bg-white text-gray-900 shadow-sm' 
                 : 'text-gray-600 hover:text-gray-900'
             }`}
@@ -420,21 +435,22 @@ export function ComprehensiveSkillTree({ onSkillClick }: SkillTreeProps) {
                 >
                   <div className="text-center">
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Level {level}
-              </h3>
-                    <div className="w-16 h-0.5 bg-blue-500 rounded-full mx-auto" />
+                      Level {level}
+                    </h3>
+                    <div className="w-16 h-0.5 bg-blue-500 rounded-full mx-auto mb-6" />
                   </div>
               
-                  <div className="grid grid-cols-3 gap-4 justify-items-center">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center max-w-7xl mx-auto px-4">
                     {skills.map((skill, index) => (
-                    <SkillNode
-                        key={skill.id}
-                      skill={skill}
-                      isUnlocked={isSkillUnlocked(skill.id)}
-                      isRecentlyUnlocked={isSkillRecentlyUnlocked(skill.id)}
-                      onClick={() => handleSkillClick(skill)}
-                        index={index}
-                      />
+                      <div className="w-full" key={skill.id}>
+                        <SkillNode
+                          skill={skill}
+                          isUnlocked={isSkillUnlocked(skill.id)}
+                          isRecentlyUnlocked={isSkillRecentlyUnlocked(skill.id)}
+                          onClick={() => handleSkillClick(skill)}
+                          index={index}
+                        />
+                      </div>
                     ))}
                   </div>
                 </motion.div>

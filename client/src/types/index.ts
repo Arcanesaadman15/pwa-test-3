@@ -7,6 +7,7 @@ export interface Task {
   durationMin: number;
   difficulty: number; // 1-5 scale
   repeat: string;
+  whyItMatters?: string; // Optional explanation of testosterone benefits
 }
 
 export interface User {

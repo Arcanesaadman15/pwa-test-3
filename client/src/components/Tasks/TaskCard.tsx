@@ -1,6 +1,8 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Task } from "@/types";
+import { Info, Zap } from "lucide-react";
+import { useState } from "react";
 
 interface TaskCardProps {
   task: Task;
@@ -11,6 +13,8 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, onComplete, onSkip, isCompleted, completedAt }: TaskCardProps) {
+  const [showWhyItMatters, setShowWhyItMatters] = useState(false);
+
   const getCategoryColor = (category: string) => {
     switch (category.toLowerCase()) {
       case 'sleep':
@@ -22,6 +26,14 @@ export function TaskCard({ task, onComplete, onSkip, isCompleted, completedAt }:
       case 'recovery':
         return 'bg-orange-100 text-orange-700 border-orange-200';
       case 'mindfulness':
+        return 'bg-indigo-100 text-indigo-700 border-indigo-200';
+      case 'training':
+        return 'bg-red-100 text-red-700 border-red-200';
+      case 'explosive training':
+        return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+      case 'breath & tension':
+        return 'bg-teal-100 text-teal-700 border-teal-200';
+      case 'mind':
         return 'bg-indigo-100 text-indigo-700 border-indigo-200';
       default:
         return 'bg-gray-100 text-gray-700 border-gray-200';
@@ -74,16 +86,61 @@ export function TaskCard({ task, onComplete, onSkip, isCompleted, completedAt }:
         
         <div className="flex-1">
           <div className="flex items-start justify-between mb-2">
-            <div>
-              <h4 className={`font-semibold ${isCompleted ? 'text-gray-700 line-through' : 'text-gray-900'}`}>
-                {task.title}
-              </h4>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <h4 className={`font-semibold ${isCompleted ? 'text-gray-700 line-through' : 'text-gray-900'}`}>
+                  {task.title}
+                </h4>
+                {task.whyItMatters && (
+                  <button
+                    onClick={() => setShowWhyItMatters(!showWhyItMatters)}
+                    className="p-1 rounded-full hover:bg-orange-100 transition-colors group"
+                    title="Why this matters for testosterone"
+                  >
+                    <Info 
+                      size={16} 
+                      className={`transition-colors ${
+                        showWhyItMatters 
+                          ? 'text-orange-600' 
+                          : 'text-gray-400 group-hover:text-orange-500'
+                      }`}
+                    />
+                  </button>
+                )}
+              </div>
               <p className="text-sm text-gray-600 mb-2">{task.subtitle}</p>
             </div>
-            <span className={`text-xs px-2 py-1 rounded-full font-medium border ${getCategoryColor(task.category)}`}>
+            <span className={`text-xs px-2 py-1 rounded-full font-medium border flex-shrink-0 ${getCategoryColor(task.category)}`}>
               {task.category}
             </span>
           </div>
+
+          {/* Why It Matters Expandable Section */}
+          <AnimatePresence>
+            {showWhyItMatters && task.whyItMatters && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden mb-3"
+              >
+                <div className="bg-gradient-to-r from-orange-50 to-yellow-50 border-l-4 border-orange-400 p-3 rounded-r-lg">
+                  <div className="flex items-start gap-2">
+                    <Zap size={16} className="text-orange-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h5 className="text-sm font-semibold text-orange-800 mb-1">
+                        Why this boosts testosterone:
+                      </h5>
+                      <p className="text-sm text-orange-700 leading-relaxed">
+                        {task.whyItMatters}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
           
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 text-xs text-gray-500">
