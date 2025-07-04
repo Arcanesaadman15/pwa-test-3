@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QUICK_QUIZ_QUESTIONS } from '@/data/onboardingData';
-import { Button } from '@/components/ui/button';
+import { OptionCard, OptionTitle, OptionSubtitle } from '@/components/ui/option-card';
 
 interface QuickQuizProps {
   onComplete: (data: {
@@ -166,82 +166,22 @@ export function QuickQuiz({ onComplete }: QuickQuizProps) {
         >
           <AnimatePresence mode="wait">
             {question.options.map((option, index) => (
-              <motion.div
+              <OptionCard
                 key={`${currentQuestion}-${option.value}`}
-                initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                transition={{ 
-                  delay: index * 0.1, 
-                  duration: 0.4,
-                  ease: "easeOut"
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                onClick={() => handleOptionSelect(option.value)}
+                isSelected={selectedOption === option.value}
+                isDisabled={isTransitioning}
+                index={index}
               >
-                <Button
-                  onClick={() => handleOptionSelect(option.value)}
-                  variant="outline"
-                  disabled={isTransitioning}
-                  className={`w-full p-6 text-left border-2 transition-all duration-300 min-h-[80px] flex items-start relative overflow-hidden group ${
-                    selectedOption === option.value
-                      ? 'border-orange-500 bg-orange-500/10 text-white scale-105 shadow-lg shadow-orange-500/25'
-                      : 'border-gray-600/50 bg-gray-900/80 hover:border-orange-400/60 hover:bg-gray-800/90 text-gray-100 hover:shadow-lg hover:shadow-orange-400/20 backdrop-blur-sm'
-                  }`}
-                >
-                  {/* Background shimmer effect */}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-orange-400/10 to-transparent opacity-0 group-hover:opacity-100"
-                    animate={{ x: [-100, 300] }}
-                    transition={{
-                      duration: 1.5,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  />
-                  
-                  <div className="flex flex-col text-left w-full relative z-10">
-                    <motion.span 
-                      className={`font-semibold text-lg mb-2 leading-tight text-left ${
-                        selectedOption === option.value ? 'text-white' : 'text-gray-100 group-hover:text-white'
-                      }`}
-                      animate={selectedOption === option.value ? { x: [0, 5, 0] } : {}}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {option.label}
-                    </motion.span>
-                    {option.subtitle && (
-                      <motion.span 
-                        className={`text-sm leading-relaxed text-left ${
-                          selectedOption === option.value ? 'text-orange-200' : 'text-gray-300 group-hover:text-gray-200'
-                        }`}
-                        animate={selectedOption === option.value ? { opacity: [0.7, 1, 0.7] } : {}}
-                        transition={{ duration: 0.5 }}
-                      >
-                        {option.subtitle}
-                      </motion.span>
-                    )}
-                  </div>
-                  
-                  {/* Selection indicator */}
-                  {selectedOption === option.value && (
-                    <motion.div
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2"
-                      initial={{ scale: 0, rotate: -180 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                    >
-                      <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
-                        <motion.div
-                          className="w-2 h-2 bg-white rounded-full"
-                          animate={{ scale: [0, 1.2, 1] }}
-                          transition={{ duration: 0.3 }}
-                        />
-                      </div>
-                    </motion.div>
-                  )}
-                </Button>
-              </motion.div>
+                <OptionTitle isSelected={selectedOption === option.value}>
+                  {option.label}
+                </OptionTitle>
+                {option.subtitle && (
+                  <OptionSubtitle isSelected={selectedOption === option.value}>
+                    {option.subtitle}
+                  </OptionSubtitle>
+                )}
+              </OptionCard>
             ))}
           </AnimatePresence>
         </motion.div>

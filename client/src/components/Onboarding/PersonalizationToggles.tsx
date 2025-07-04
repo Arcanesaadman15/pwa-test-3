@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { PERSONALIZATION_TOGGLES } from '@/data/onboardingData';
-import { Button } from '@/components/ui/button';
+import { OptionCard, OptionTitle } from '@/components/ui/option-card';
 
 interface PersonalizationTogglesProps {
   onComplete: (data: {
@@ -86,23 +86,24 @@ export function PersonalizationToggles({ onComplete }: PersonalizationTogglesPro
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
           >
-            <Button
+            <OptionCard
               onClick={() => handleToggleSelect(toggle.id, toggle.leftValue)}
-              variant="outline"
-              className={`w-full p-6 text-left border-2 transition-all duration-300 ${
-                selectedValue === toggle.leftValue
-                  ? 'border-orange-500 bg-orange-500/20 text-white scale-105 shadow-lg'
-                  : 'border-gray-700 bg-gray-900/50 hover:border-gray-600 hover:bg-gray-800/50 text-gray-200'
-              }`}
+              isSelected={selectedValue === toggle.leftValue}
+              isDisabled={false}
+              index={0}
             >
               <div className="flex items-center space-x-4">
                 <span className="text-3xl">{toggle.leftIcon}</span>
                 <div>
-                  <div className="font-semibold text-lg">{toggle.leftLabel}</div>
-                  <div className="text-sm text-gray-400">Choose this style</div>
+                  <OptionTitle isSelected={selectedValue === toggle.leftValue}>
+                    {toggle.leftLabel}
+                  </OptionTitle>
+                  <div className={`text-sm ${selectedValue === toggle.leftValue ? 'text-orange-200' : 'text-gray-400'}`}>
+                    Choose this style
+                  </div>
                 </div>
               </div>
-            </Button>
+            </OptionCard>
           </motion.div>
 
           {/* VS indicator */}
@@ -116,23 +117,24 @@ export function PersonalizationToggles({ onComplete }: PersonalizationTogglesPro
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4, duration: 0.5 }}
           >
-            <Button
+            <OptionCard
               onClick={() => handleToggleSelect(toggle.id, toggle.rightValue)}
-              variant="outline"
-              className={`w-full p-6 text-left border-2 transition-all duration-300 ${
-                selectedValue === toggle.rightValue
-                  ? 'border-orange-500 bg-orange-500/20 text-white scale-105 shadow-lg'
-                  : 'border-gray-700 bg-gray-900/50 hover:border-gray-600 hover:bg-gray-800/50 text-gray-200'
-              }`}
+              isSelected={selectedValue === toggle.rightValue}
+              isDisabled={false}
+              index={1}
             >
               <div className="flex items-center space-x-4">
                 <span className="text-3xl">{toggle.rightIcon}</span>
                 <div>
-                  <div className="font-semibold text-lg">{toggle.rightLabel}</div>
-                  <div className="text-sm text-gray-400">Choose this style</div>
+                  <OptionTitle isSelected={selectedValue === toggle.rightValue}>
+                    {toggle.rightLabel}
+                  </OptionTitle>
+                  <div className={`text-sm ${selectedValue === toggle.rightValue ? 'text-orange-200' : 'text-gray-400'}`}>
+                    Choose this style
+                  </div>
                 </div>
               </div>
-            </Button>
+            </OptionCard>
           </motion.div>
         </div>
 
