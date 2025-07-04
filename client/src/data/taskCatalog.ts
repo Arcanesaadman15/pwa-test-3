@@ -209,6 +209,116 @@ export const TASK_CATALOG: Record<string, Task> = {
     difficulty: 5,
     repeat: "Advanced only",
     whyItMatters: "This is a primal movement that builds full-body functional strength, a powerful grip, and a rock-solid core. It places a unique metabolic stress on the body that promotes a favorable strength-and-hormone-building environment."
+  },
+  "breathe_power_2m": {
+    id: "breathe_power_2m",
+    title: "2 min Power Breathing",
+    subtitle: "10 deep breaths, chest out, own your space",
+    category: "Mind",
+    cover: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
+    durationMin: 2,
+    difficulty: 1,
+    repeat: "Daily",
+    whyItMatters: "Quick confidence boost that immediately lowers cortisol. Standing tall and breathing deeply triggers your nervous system to shift out of stress mode, creating space for testosterone to rise. This is your daily reset button."
+  },
+  "cold_blast_15s": {
+    id: "cold_blast_15s",
+    title: "15s Cold Blast",
+    subtitle: "End shower with 15s ice cold water",
+    category: "Recovery",
+    cover: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
+    durationMin: 1,
+    difficulty: 1,
+    repeat: "Daily starter",
+    whyItMatters: "Your first step into mental toughness. Cold exposure immediately boosts luteinizing hormone (the T precursor) and builds unshakeable discipline. You'll feel like you can conquer anything after this."
+  },
+  "morning_wins_3m": {
+    id: "morning_wins_3m",
+    title: "3 Quick Morning Wins",
+    subtitle: "Make bed + 10 push-ups + drink water",
+    category: "Mind",
+    cover: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
+    durationMin: 3,
+    difficulty: 1,
+    repeat: "Daily",
+    whyItMatters: "Start every day with 3 instant wins. This creates momentum and floods your brain with achievement chemicals. Making your bed = discipline. Push-ups = strength signal. Hydration = energy. You're already winning before 8am."
+  },
+  "alpha_walk_10m": {
+    id: "alpha_walk_10m",
+    title: "10 min Alpha Walk",
+    subtitle: "Walk tall, shoulders back, own your stride",
+    category: "Movement",
+    cover: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
+    durationMin: 10,
+    difficulty: 1,
+    repeat: "Daily",
+    whyItMatters: "Your posture directly affects your hormones. Walking with confidence literally changes your body chemistry, boosting testosterone and reducing stress hormones. People will notice the difference immediately."
+  },
+  "power_pose_1m": {
+    id: "power_pose_1m",
+    title: "1 min Power Pose",
+    subtitle: "Hands on hips, chest out, feel unstoppable",
+    category: "Mind",
+    cover: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
+    durationMin: 1,
+    difficulty: 1,
+    repeat: "Before tough situations",
+    whyItMatters: "2 minutes in a power pose increases testosterone by 20% and decreases cortisol by 25%. This is science-backed instant confidence that changes how others see you and how you see yourself."
+  },
+  "victory_squats": {
+    id: "victory_squats",
+    title: "Victory Squats",
+    subtitle: "3 sets of 5 squats, celebrate each set",
+    category: "Training",
+    cover: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
+    durationMin: 5,
+    difficulty: 1,
+    repeat: "Daily",
+    whyItMatters: "Working your largest muscle groups sends immediate strength signals to your endocrine system. Even 15 squats tell your body 'we're building here' and trigger testosterone production. Celebrate each set - you're literally getting stronger."
+  },
+  "zen_minute": {
+    id: "zen_minute",
+    title: "Zen Minute",
+    subtitle: "60 seconds of pure focus, eyes closed",
+    category: "Mind",
+    cover: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
+    durationMin: 1,
+    difficulty: 1,
+    repeat: "When stressed",
+    whyItMatters: "Just 60 seconds of mindfulness can reset your nervous system and drop cortisol levels. When cortisol goes down, testosterone can rise. This is your mental reset button for any stressful situation."
+  },
+  "energy_boost_combo": {
+    id: "energy_boost_combo",
+    title: "Energy Boost Combo",
+    subtitle: "20 jumping jacks + cold water on face",
+    category: "Movement",
+    cover: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
+    durationMin: 2,
+    difficulty: 1,
+    repeat: "When energy dips",
+    whyItMatters: "Quick cardio burst + cold exposure instantly elevates your energy and mood. This combo triggers endorphin release and activates your sympathetic nervous system in a positive way. Natural energy without caffeine crashes."
+  },
+  "protein_power_snack": {
+    id: "protein_power_snack",
+    title: "Protein Power Snack",
+    subtitle: "Greek yogurt + nuts or protein shake",
+    category: "Nutrition",
+    cover: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
+    durationMin: 5,
+    difficulty: 1,
+    repeat: "When hungry",
+    whyItMatters: "Quick protein hits give your body the building blocks for testosterone production. Stable blood sugar = stable mood = stable hormones. This snack strategy prevents energy crashes and mood swings."
+  },
+  "confidence_check": {
+    id: "confidence_check",
+    title: "Confidence Check",
+    subtitle: "Look in mirror, say 3 positive things",
+    category: "Mind",
+    cover: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
+    durationMin: 1,
+    difficulty: 1,
+    repeat: "Morning & evening",
+    whyItMatters: "Self-talk directly impacts your neurochemistry. Positive self-affirmation increases serotonin and dopamine while reducing cortisol. You're literally rewiring your brain for confidence and success."
   }
 };
 

@@ -181,6 +181,183 @@ export const SKILL_DEFINITIONS: SkillDefinition[] = [
     categoryIcon: SKILL_CATEGORIES.Mental.icon
   },
 
+  // NEW GAMIFIED SKILLS FOR ENGAGEMENT
+  {
+    id: 'power_breather',
+    title: 'Power Breather',
+    description: 'Mastered the art of confident breathing for instant energy',
+    category: 'Mental',
+    level: 1,
+    requirements: [{ taskId: 'breathe_power_2m', count: 3 }],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+  {
+    id: 'ice_warrior_rookie',
+    title: 'Ice Warrior Rookie',
+    description: 'Took your first steps into cold exposure mastery',
+    category: 'Recovery',
+    level: 1,
+    requirements: [{ taskId: 'cold_blast_15s', count: 3 }],
+    categoryColor: SKILL_CATEGORIES.Recovery.color,
+    categoryIcon: SKILL_CATEGORIES.Recovery.icon
+  },
+  {
+    id: 'morning_champion',
+    title: 'Morning Champion',
+    description: 'Conquered mornings with triple wins and unstoppable momentum',
+    category: 'Mental',
+    level: 1,
+    requirements: [{ taskId: 'morning_wins_3m', count: 5 }],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+  {
+    id: 'alpha_walker',
+    title: 'Alpha Walker',
+    description: 'Walk with confidence and command respect with every step',
+    category: 'Physical',
+    level: 1,
+    requirements: [{ taskId: 'alpha_walk_10m', count: 5 }],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'power_poser',
+    title: 'Power Poser',
+    description: 'Unlocked the science of confidence through body language',
+    category: 'Mental',
+    level: 1,
+    requirements: [{ taskId: 'power_pose_1m', count: 3 }],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+  {
+    id: 'victory_crusher',
+    title: 'Victory Crusher',
+    description: 'Turn every squat into a celebration of strength',
+    category: 'Physical',
+    level: 1,
+    requirements: [{ taskId: 'victory_squats', count: 5 }],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'zen_master_novice',
+    title: 'Zen Master Novice',
+    description: 'Found peace in chaos with mindful moments',
+    category: 'Mental',
+    level: 1,
+    requirements: [{ taskId: 'zen_minute', count: 7 }],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+  {
+    id: 'energy_alchemist',
+    title: 'Energy Alchemist',
+    description: 'Transform low energy into unstoppable momentum',
+    category: 'Physical',
+    level: 1,
+    requirements: [{ taskId: 'energy_boost_combo', count: 5 }],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'confidence_architect',
+    title: 'Confidence Architect',
+    description: 'Building unshakeable self-belief one affirmation at a time',
+    category: 'Mental',
+    level: 1,
+    requirements: [{ taskId: 'confidence_check', count: 7 }],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+
+  // ADVANCED VERSIONS OF GAMIFIED SKILLS
+  {
+    id: 'ice_warrior_veteran',
+    title: 'Ice Warrior Veteran',
+    description: 'Advanced cold exposure mastery - fear is just another temperature',
+    category: 'Recovery',
+    level: 2,
+    requirements: [
+      { taskId: 'cold_blast_15s', count: 15 },
+      { taskId: 'cold_shower_30s', count: 10 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Recovery.color,
+    categoryIcon: SKILL_CATEGORIES.Recovery.icon
+  },
+  {
+    id: 'morning_dominator',
+    title: 'Morning Dominator',
+    description: 'Own every morning with consistent victory routines',
+    category: 'Mental',
+    level: 2,
+    requirements: [
+      { taskId: 'morning_wins_3m', count: 14, consecutive: true }
+    ],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+  {
+    id: 'confidence_titan',
+    title: 'Confidence Titan',
+    description: 'Radiate unshakeable confidence in every situation',
+    category: 'Mental',
+    level: 2,
+    requirements: [
+      { taskId: 'confidence_check', count: 21 },
+      { taskId: 'power_pose_1m', count: 14 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+  {
+    id: 'alpha_movement_master',
+    title: 'Alpha Movement Master',
+    description: 'Every step, squat, and stretch radiates power and purpose',
+    category: 'Physical',
+    level: 2,
+    requirements: [
+      { taskId: 'alpha_walk_10m', count: 14 },
+      { taskId: 'victory_squats', count: 14 },
+      { taskId: 'energy_boost_combo', count: 10 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Physical.color,
+    categoryIcon: SKILL_CATEGORIES.Physical.icon
+  },
+  {
+    id: 'mental_fortress',
+    title: 'Mental Fortress',
+    description: 'Built an unbreakable mind through consistent mental training',
+    category: 'Mental',
+    level: 2,
+    requirements: [
+      { taskId: 'breathe_power_2m', count: 21 },
+      { taskId: 'zen_minute', count: 21 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+
+  // WEEK 1 COMPLETION CELEBRATION SKILL
+  {
+    id: 'trial_week_legend',
+    title: 'Trial Week Legend',
+    description: 'Conquered the first week with multiple daily wins - you\'re unstoppable!',
+    category: 'Mental',
+    level: 1,
+    requirements: [
+      { taskId: 'morning_wins_3m', count: 4 },
+      { taskId: 'cold_blast_15s', count: 3 },
+      { taskId: 'power_pose_1m', count: 3 },
+      { taskId: 'victory_squats', count: 3 },
+      { taskId: 'confidence_check', count: 4 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Mental.color,
+    categoryIcon: SKILL_CATEGORIES.Mental.icon
+  },
+
   // INTERMEDIATE PROGRAM SKILLS (Level 2)
   {
     id: 'intermediate_foundation',
