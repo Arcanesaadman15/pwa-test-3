@@ -71,10 +71,9 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50">
-      {/* Enhanced glass blur background with gradient overlay */}
+    <div className="fixed bottom-0 left-0 right-0 z-50 ios-tab-bar">
       <div className="relative">
-        {/* Background blur layer */}
+        {/* Enhanced glass blur background with gradient overlay */}
         <div className="absolute inset-0 bg-gray-900/80 backdrop-blur-xl" />
         
         {/* Gradient overlay */}
@@ -83,7 +82,7 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
         {/* Top border with subtle glow */}
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
         
-        <div className="relative flex justify-around items-center h-20 px-1">
+        <div className="relative flex justify-around items-center h-16 px-4">  // Reduced height for iOS feel
           {/* Animated background indicator for active tab */}
           <motion.div
             className="absolute top-2 bottom-2 rounded-2xl"
@@ -149,7 +148,7 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
                   
                   {/* Icon with enhanced styling */}
                   <Icon 
-                    className={`w-6 h-6 transition-all duration-300 relative z-10 ${
+                    className={`w-7 h-7 transition-all duration-300 relative z-10 ${
                       isActive ? tab.activeColor : tab.inactiveColor
                     } group-hover:${tab.activeColor}`}
                     strokeWidth={isActive ? 2.5 : 2}
@@ -174,7 +173,7 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
                 
                 {/* Enhanced label with better animations */}
                 <motion.span 
-                  className={`text-xs font-semibold mt-1.5 transition-all duration-300 ${
+                  className={`text-[10px] font-medium mt-1 transition-all duration-300 ${
                     isActive ? tab.activeColor : tab.inactiveColor
                   } group-hover:${tab.activeColor}`}
                   animate={prefersReducedMotion() ? {} : {
@@ -227,7 +226,7 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
         </div>
         
         {/* Safe area padding for devices with home indicators */}
-        <div className="h-safe-bottom bg-gray-900/80" />
+        <div style={{ height: 'env(safe-area-inset-bottom)' }} className="bg-white" />  // Safe area
       </div>
     </div>
   );

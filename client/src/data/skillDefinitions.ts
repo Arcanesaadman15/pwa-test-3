@@ -715,6 +715,57 @@ export const SKILL_DEFINITIONS: SkillDefinition[] = [
     categoryIcon: SKILL_CATEGORIES.Nutrition.icon
   },
 
+  // HYDRATION SKILLS - Critical for testosterone and performance
+  {
+    id: 'hydration_starter',
+    title: 'Hydration Starter',
+    description: 'Established the foundation of daily hydration habits',
+    category: 'Nutrition',
+    level: 1,
+    requirements: [{ taskId: 'morning_hydration', count: 3, consecutive: true }],
+    categoryColor: SKILL_CATEGORIES.Nutrition.color,
+    categoryIcon: SKILL_CATEGORIES.Nutrition.icon
+  },
+  {
+    id: 'water_warrior',
+    title: 'Water Warrior',
+    description: 'Mastered consistent daily water intake for optimal performance',
+    category: 'Nutrition',
+    level: 1,
+    requirements: [
+      { taskId: 'daily_water_goal', count: 5 },
+      { taskId: 'morning_hydration', count: 7 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Nutrition.color,
+    categoryIcon: SKILL_CATEGORIES.Nutrition.icon
+  },
+  {
+    id: 'hydration_champion',
+    title: 'Hydration Champion',
+    description: 'Achieved advanced hydration optimization for peak testosterone',
+    category: 'Nutrition',
+    level: 2,
+    requirements: [
+      { taskId: 'daily_water_goal', count: 14, consecutive: true },
+      { taskId: 'pre_workout_hydration', count: 5 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Nutrition.color,
+    categoryIcon: SKILL_CATEGORIES.Nutrition.icon
+  },
+  {
+    id: 'hydration_master',
+    title: 'Hydration Master',
+    description: 'Complete mastery of hydration science for maximum hormonal benefits',
+    category: 'Nutrition',
+    level: 3,
+    requirements: [
+      { taskId: 'hydration_tracking', count: 7, consecutive: true },
+      { taskId: 'daily_water_goal', count: 21 }
+    ],
+    categoryColor: SKILL_CATEGORIES.Nutrition.color,
+    categoryIcon: SKILL_CATEGORIES.Nutrition.icon
+  },
+
   // SLEEP CATEGORY SKILLS
   {
     id: 'night_owl',

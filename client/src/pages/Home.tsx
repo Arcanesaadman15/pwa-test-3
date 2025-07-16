@@ -160,10 +160,27 @@ export default function Home() {
   const handleOpenProgramSelector = () => setCurrentView('programSelector');
   const handleBackToMain = () => { setCurrentView('main'); setActiveTab('profile'); };
   const handleProgramSelect = async (program: 'beginner' | 'intermediate' | 'advanced') => {
-    await switchProgram(program);
-    await loadUserData(); // Refresh user data to reflect the program change
-    setCurrentView('main');
-    setActiveTab('tasks');
+    try {
+      // First update the local task engine and localStorage
+      await switchProgram(program);
+      
+      // Also update the database to keep profile page in sync
+      await updateUserProgress({
+        program: program,
+        currentDay: 1,
+        completedDays: 0,
+        currentStreak: 0
+      });
+      
+      // Refresh user data to reflect the program change
+      await loadUserData();
+      
+      setCurrentView('main');
+      setActiveTab('tasks');
+    } catch (error) {
+      console.error('Failed to switch program:', error);
+      // Could show error toast here
+    }
   };
   const handleDataReset = () => setCurrentView('main');
 
@@ -265,7 +282,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#111827' }}>
+    <div className="min-h-screen bg-[var(--ios-background)]">
       <main 
         ref={swipeRef as React.RefObject<HTMLElement>}
         className="pb-20 relative"

@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Task } from "@/types";
-import { Info, Zap } from "lucide-react";
+import { Info, Zap, X } from "lucide-react";
 import { useState } from "react";
 
 interface TaskCardProps {
@@ -64,14 +64,10 @@ export function TaskCard({ task, onComplete, onSkip, isCompleted, completedAt }:
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className={`task-card rounded-xl p-4 shadow-sm mb-3 transition-all ${
-        isCompleted 
-          ? 'bg-green-50 border-2 border-green-200 opacity-75' 
-          : 'bg-white border-2 border-transparent hover:border-primary/20'
-      }`}
+      className={`ios-card p-4 mb-4 transition-all duration-200 ${isCompleted ? 'opacity-80' : ''}`}
     >
-      <div className="flex items-start space-x-3">
-        <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 relative">
+      <div className="flex items-start space-x-4">
+        <div className="w-16 h-16 rounded-[12px] overflow-hidden flex-shrink-0 relative">
           <img 
             src={task.cover} 
             alt={task.title}
@@ -125,8 +121,17 @@ export function TaskCard({ task, onComplete, onSkip, isCompleted, completedAt }:
                 transition={{ duration: 0.2 }}
                 className="overflow-hidden mb-3"
               >
-                <div className="bg-gradient-to-r from-orange-50 to-yellow-50 border-l-4 border-orange-400 p-3 rounded-r-lg">
-                  <div className="flex items-start gap-2">
+                <div className="bg-gradient-to-r from-orange-50 to-yellow-50 border-l-4 border-orange-400 p-3 rounded-r-lg relative">
+                  {/* Close button */}
+                  <button
+                    onClick={() => setShowWhyItMatters(false)}
+                    className="absolute top-2 right-2 p-1 rounded-full hover:bg-orange-100 transition-colors"
+                    title="Close explanation"
+                  >
+                    <X size={16} className="text-orange-400 hover:text-orange-600" />
+                  </button>
+                  
+                  <div className="flex items-start gap-2 pr-8">
                     <Zap size={16} className="text-orange-600 mt-0.5 flex-shrink-0" />
                     <div>
                       <h5 className="text-sm font-semibold text-orange-800 mb-1">

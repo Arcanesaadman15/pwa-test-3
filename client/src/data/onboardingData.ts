@@ -27,9 +27,9 @@ export interface OnboardingData {
 export const PROBLEM_SPOTLIGHT_SLIDES = [
   {
     id: 1,
-    title: "Feeling like half the man you used to be?",
-    subtitle: "Your body betrayed you, but there's a way back",
-    description: "You see it in the mirror every morning. That gut, those tired eyes, the way clothes don't fit right. You're not lazy or weak - your hormones hijacked your life. But thousands of men just like you have reclaimed their power.",
+    title: "Tired of Feeling Like a Shadow of Your Former Self?",
+    subtitle: "Your Low T is Robbing You of Your Prime - But You Can Fight Back",
+    description: "That gut, fatigue, and fading drive aren't 'normal aging' - they're symptoms of crashing testosterone. Thousands of men have reversed it naturally. Your comeback starts now.",
     image: "💤",
     gradient: "from-red-600 to-orange-500"
   },
@@ -62,10 +62,10 @@ export const PROBLEM_SPOTLIGHT_SLIDES = [
 export const QUICK_QUIZ_QUESTIONS = [
   {
     id: 'ageRange',
-    question: "What's your age?",
-    subtitle: "Your testosterone has been declining since 25. Let's see how much damage we need to undo.",
+    question: "How Old Are You Really Feeling?",
+    subtitle: "T-levels drop 1-2% yearly after 30. Let's pinpoint your starting point for maximum gains.",
     options: [
-      { value: '18-24', label: '18-24', subtitle: 'Still at your peak - let\'s keep you there' },
+      { value: '18-24', label: '18-24', subtitle: 'Peak years - lock in your advantage before the decline' },
       { value: '25-34', label: '25-34', subtitle: 'Decline just started - perfect timing to fight back' },
       { value: '35-44', label: '35-44', subtitle: 'Your body is betraying you - time to take control' },
       { value: '45-54', label: '45-54', subtitle: 'Critical years - reclaim what you\'ve lost' },

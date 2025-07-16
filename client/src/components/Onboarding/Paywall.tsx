@@ -16,8 +16,9 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
   const [showPricing, setShowPricing] = useState(false);
   const { user } = useAuth();
 
-  const features = [
-    "63-day testosterone revival program that actually works",
+  const personalizedFeatures = [
+    `Custom ${onboardingData.recommendedProgram} program for your ${onboardingData.ageRange} age group`,
+    // Add more personalized items
     "Daily masculine habits that build real confidence",
     "Proven fat-loss protocols that target belly fat",
     "Sleep optimization for morning wood recovery",
@@ -115,7 +116,7 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-y-auto">
+    <div className="min-h-screen bg-[var(--ios-background)] text-black overflow-y-auto ios-safe-areas">
       <div className="max-w-2xl mx-auto px-4 py-16">
         
         {/* Hero Section */}
@@ -163,7 +164,7 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
           </div>
 
           <div className="space-y-4">
-            {features.map((feature, index) => (
+            {personalizedFeatures.map((feature, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, x: -20 }}

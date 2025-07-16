@@ -29,7 +29,8 @@ import {
   Clipboard,
   PartyPopper,
   SkipForward,
-  Info
+  Info,
+  X
 } from "lucide-react";
 import { Icon, getCategoryIcon } from "@/lib/iconUtils";
 import { useToast } from "@/hooks/use-toast";
@@ -60,7 +61,7 @@ function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReaso
       'Training': '#EF4444',
       'Explosive Training': '#F97316',
       'Breath & Tension': '#06B6D4',
-      'Mind': '# F1'
+      'Mind': '#6366F1'
     };
     return colors[category as keyof typeof colors] || '#6B7280';
   };
@@ -203,8 +204,17 @@ function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReaso
                 transition={{ duration: 0.2 }}
                 className="overflow-hidden mb-3"
               >
-                <div className="bg-gradient-to-r from-orange-50 to-yellow-50 border-l-4 border-orange-400 p-3 rounded-r-lg">
-                  <div className="flex items-start gap-2">
+                <div className="bg-gradient-to-r from-orange-50 to-yellow-50 border-l-4 border-orange-400 p-3 rounded-r-lg relative">
+                  {/* Close button */}
+                  <button
+                    onClick={() => setShowWhyItMatters(false)}
+                    className="absolute top-2 right-2 p-1 rounded-full hover:bg-orange-100 transition-colors"
+                    title="Close explanation"
+                  >
+                    <X size={16} className="text-orange-400 hover:text-orange-600" />
+                  </button>
+                  
+                  <div className="flex items-start gap-2 pr-8">
                     <Zap size={16} className="text-orange-600 mt-0.5 flex-shrink-0" />
                     <div>
                       <h5 className="text-sm font-semibold text-orange-800 mb-1">

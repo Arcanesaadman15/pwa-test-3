@@ -11,7 +11,7 @@ interface InstantDiagnosisProps {
 }
 
 export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
-  // Calculate testosterone score based on user responses
+  // Enhance calculateTestosteroneScore with more factors
   const calculateTestosteroneScore = () => {
     let score = 50; // Base score
     
@@ -75,7 +75,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
   const StatusIcon = status.icon;
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-[var(--ios-background)] text-black">
       {/* Enhanced background effects */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
