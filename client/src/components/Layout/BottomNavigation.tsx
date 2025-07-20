@@ -82,7 +82,7 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
         {/* Top border with subtle glow */}
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
         
-        <div className="relative flex justify-around items-center h-16 px-4">  // Reduced height for iOS feel
+                  <div className="relative flex justify-around items-center h-16 px-4">
           {/* Animated background indicator for active tab */}
           <motion.div
             className="absolute top-2 bottom-2 rounded-2xl"
@@ -226,7 +226,7 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
         </div>
         
         {/* Safe area padding for devices with home indicators */}
-        <div style={{ height: 'env(safe-area-inset-bottom)' }} className="bg-white" />  // Safe area
+                  <div style={{ height: 'env(safe-area-inset-bottom)' }} className="bg-white" />
       </div>
     </div>
   );

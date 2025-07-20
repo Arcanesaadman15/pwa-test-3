@@ -18,7 +18,6 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
 
   const personalizedFeatures = [
     `Custom ${onboardingData.recommendedProgram} program for your ${onboardingData.ageRange} age group`,
-    // Add more personalized items
     "Daily masculine habits that build real confidence",
     "Proven fat-loss protocols that target belly fat",
     "Sleep optimization for morning wood recovery",

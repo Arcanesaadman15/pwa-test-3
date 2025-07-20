@@ -27,7 +27,7 @@ type ViewType = 'main' | 'settings' | 'programSelector';
 
 const TAB_ORDER: TabType[] = ['tasks', 'skills', 'profile'];
 
-// Test comment to verify Vercel auto-deployment
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState<TabType>('tasks');
   const [currentView, setCurrentView] = useState<ViewType>('main');

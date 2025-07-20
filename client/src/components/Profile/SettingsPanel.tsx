@@ -148,26 +148,31 @@ export function SettingsPanel({ onBack, onDataReset, onProgramChange }: Settings
           disabled: true
         }
       ]
+    },
+    {
+      title: "Legal & Support",
+      items: []
     }
   ];
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-[var(--ios-background)] text-black">
       {/* Header */}
-      <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 px-6 pt-12 pb-8">
+      <div className="bg-white px-6 pt-12 pb-8 border-b border-gray-100">
         <div className="flex items-center gap-4 mb-8">
           <Button
             onClick={onBack}
-            className="bg-white/20 hover:bg-white/30 text-white border border-white/30 p-2"
+            variant="outline"
+            className="border-gray-300 text-gray-700 hover:bg-gray-50 p-2"
             size="sm"
           >
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-white">
+            <h1 className="text-3xl font-bold text-gray-900">
               Settings
             </h1>
-            <p className="text-gray-300">
+            <p className="text-gray-600">
               Manage your app preferences
             </p>
           </div>
@@ -176,9 +181,9 @@ export function SettingsPanel({ onBack, onDataReset, onProgramChange }: Settings
 
       <div className="px-6 py-6 space-y-6">
         {/* Settings Sections */}
-        {settingsSections.map((section, sectionIndex) => (
-          <div key={sectionIndex} className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
-            <h3 className="text-lg font-bold text-white mb-4">{section.title}</h3>
+        {settingsSections.slice(0, -1).map((section, sectionIndex) => (
+          <div key={sectionIndex} className="ios-card p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">{section.title}</h3>
             
             <div className="space-y-3">
               {section.items.map((item, itemIndex) => (
@@ -186,22 +191,22 @@ export function SettingsPanel({ onBack, onDataReset, onProgramChange }: Settings
                   key={itemIndex}
                   className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${
                     item.disabled 
-                      ? 'border-gray-600 bg-gray-700/50 opacity-50 cursor-not-allowed'
+                      ? 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed'
                       : item.destructive
-                        ? 'border-red-500/30 bg-red-900/20 hover:bg-red-900/30 cursor-pointer'
-                        : 'border-gray-600 bg-gray-700/50 hover:bg-gray-600/80 cursor-pointer'
+                        ? 'border-red-200 bg-red-50 hover:bg-red-100 cursor-pointer'
+                        : 'border-gray-200 bg-gray-50 hover:bg-gray-100 cursor-pointer'
                   }`}
                   onClick={!item.disabled ? item.action : undefined}
                 >
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    item.destructive ? 'bg-red-600' : 'bg-gray-600'
+                    item.destructive ? 'bg-red-500' : 'bg-gray-500'
                   }`}>
                     <item.icon className="w-5 h-5 text-white" />
                   </div>
                   
                   <div className="flex-1">
                     <h4 className={`font-medium ${
-                      item.destructive ? 'text-red-400' : 'text-white'
+                      item.destructive ? 'text-red-600' : 'text-gray-900'
                     }`}>
                       {item.title}
                     </h4>
@@ -220,21 +225,21 @@ export function SettingsPanel({ onBack, onDataReset, onProgramChange }: Settings
         ))}
 
         {/* Reset Data Warning */}
-        <div className="bg-red-900/20 rounded-2xl p-6 border border-red-500/30">
+        <div className="bg-red-50 rounded-2xl p-6 border border-red-200">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5" />
+            <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5" />
             <div>
-              <h3 className="text-lg font-bold text-red-400 mb-2">Data Reset Warning</h3>
-              <p className="text-red-200 text-sm mb-4">
+              <h3 className="text-lg font-bold text-red-700 mb-2">Data Reset Warning</h3>
+              <p className="text-red-600 text-sm mb-4">
                 Resetting your data will permanently delete all progress, including:
               </p>
-              <ul className="text-red-200 text-sm space-y-1 mb-4">
+              <ul className="text-red-600 text-sm space-y-1 mb-4">
                 <li>• Task completion history</li>
                 <li>• Skill progression and unlocks</li>
                 <li>• Streak records and achievements</li>
                 <li>• All user preferences and settings</li>
               </ul>
-              <p className="text-red-200 text-xs">
+              <p className="text-red-600 text-xs">
                 This action cannot be undone. Make sure you want to start completely fresh.
               </p>
             </div>
@@ -242,34 +247,46 @@ export function SettingsPanel({ onBack, onDataReset, onProgramChange }: Settings
         </div>
 
         {/* App Info */}
-        <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
-          <h3 className="text-lg font-bold text-white mb-4">App Information</h3>
+        <div className="ios-card p-6">
+          <h3 className="text-lg font-bold text-gray-900 mb-4">App Information</h3>
           
           <div className="space-y-3 text-sm">
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">Version</span>
-              <span className="text-white font-medium">1.0.0</span>
+              <span className="text-gray-500">Version</span>
+              <span className="text-gray-900 font-medium">1.0.0</span>
             </div>
             
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">Build</span>
-              <span className="text-white font-medium">2024.1</span>
+              <span className="text-gray-500">Build</span>
+              <span className="text-gray-900 font-medium">2024.1</span>
             </div>
             
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">Platform</span>
-              <span className="text-white font-medium">Progressive Web App</span>
+              <span className="text-gray-500">Platform</span>
+              <span className="text-gray-900 font-medium">Progressive Web App</span>
             </div>
           </div>
         </div>
 
         {/* Privacy Notice */}
-        <div className="bg-blue-900/20 rounded-2xl p-6 border border-blue-500/30">
-          <h3 className="text-lg font-bold text-blue-400 mb-2">Privacy & Data</h3>
-          <p className="text-blue-200 text-sm">
+        <div className="bg-blue-50 rounded-2xl p-6 border border-blue-200">
+          <h3 className="text-lg font-bold text-blue-700 mb-2">Privacy & Data</h3>
+          <p className="text-blue-600 text-sm">
             All your data is stored locally on your device. We don't collect or share any personal information. 
             Your wellness journey stays completely private and under your control.
           </p>
+        </div>
+
+        {/* Legal & Support Section */}
+        <div className="ios-card p-6">
+          <h3 className="text-lg font-bold mb-4">Product Details</h3>
+          <p className="text-sm text-gray-600 mb-4">PeakForge is a progressive web app designed to help men naturally boost their testosterone levels through personalized daily habits, skill-building exercises, and comprehensive wellness programs.</p>
+          
+          <h3 className="text-lg font-bold mb-2">Privacy Policy</h3>
+          <p className="text-sm text-gray-600 mb-4">Your program data is stored locally on your device for privacy. Only subscription-related information is stored securely online. We do not collect or share any personal health data without consent.</p>
+          
+          <h3 className="text-lg font-bold mb-2">Contact Us</h3>
+          <p className="text-sm text-gray-600">For support or inquiries: saadman.masud15@gmail.com</p>
         </div>
       </div>
     </div>

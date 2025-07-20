@@ -11,7 +11,7 @@ interface InstantDiagnosisProps {
 }
 
 export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
-  // Enhance calculateTestosteroneScore with more factors
+
   const calculateTestosteroneScore = () => {
     let score = 50; // Base score
     
