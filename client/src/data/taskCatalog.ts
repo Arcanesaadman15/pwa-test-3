@@ -4,13 +4,13 @@ export const TASK_CATALOG: Record<string, Task> = {
   "sleep_7h": {
     id: "sleep_7h",
     title: "Get 7+ Hours of Deep Sleep",
-    subtitle: "Prime Your Body for Maximum Testosterone Production",
+    subtitle: "Support Natural Energy and Recovery",
     category: "Sleep",
     cover: "https://images.unsplash.com/photo-1571508601891-ca5e7a713859?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
     durationMin: 0,
     difficulty: 1,
     repeat: "Everyday",
-    whyItMatters: "Quality sleep is your body's prime time for testosterone production. Studies show 7+ hours nightly optimizes hormone levels, while sleep deprivation can slash testosterone by 10-15%. Build this foundation for peak male vitality."
+    whyItMatters: "Quality sleep is your body's prime time for recovery and energy restoration. Studies show 7+ hours nightly supports optimal wellness, while sleep deprivation can significantly impact energy and mood. Build this foundation for peak vitality."
   },
   "steps_10k": {
     id: "steps_10k",
@@ -21,40 +21,40 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 60,
     difficulty: 2,
     repeat: "Everyday",
-    whyItMatters: "Daily steps combat sedentary living that tanks testosterone. This consistent activity torches fat, builds lean muscle, and crushes cortisol - creating the perfect storm for elevated T levels and unbreakable energy."
+    whyItMatters: "Daily steps combat sedentary living that drains energy. This consistent activity burns fat, builds lean muscle, and reduces stress - creating the perfect conditions for sustained energy and better mood."
   },
   "brisk_walk_30m": {
     id: "brisk_walk_30m",
     title: "30-Minute Power Walk",
-    subtitle: "Get Moving at a Testosterone-Boosting Pace",
+    subtitle: "Get Moving at an Energy-Boosting Pace",
     category: "Movement",
     cover: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
     durationMin: 30,
     difficulty: 2,
     repeat: "2–4× week",
-    whyItMatters: "Brisk walking ignites fat-burning while keeping stress hormones in check. This moderate cardio builds cardiovascular health and maintains the ideal cortisol-testosterone ratio for optimal male hormone production."
+    whyItMatters: "Brisk walking ignites fat-burning while keeping stress hormones in check. This moderate cardio builds cardiovascular health and maintains healthy stress levels for optimal energy and well-being."
   },
   "protein_target": {
     id: "protein_target",
     title: "Crush Your Protein Goal",
-    subtitle: "1.6g+ Per Kg Bodyweight for Muscle and T",
+    subtitle: "1.6g+ Per Kg Bodyweight for Muscle and Energy",
     category: "Nutrition",
     cover: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
     durationMin: 0,
     difficulty: 2,
     repeat: "Everyday",
-    whyItMatters: "Protein supplies the raw materials for testosterone synthesis and muscle building. Hitting this target preserves lean mass, boosts metabolism, and directly supports higher T levels - essential for masculine strength and vitality."
+    whyItMatters: "Protein supplies the raw materials for muscle building and recovery. Hitting this target preserves lean mass, boosts metabolism, and supports sustained energy levels - essential for strength and vitality."
   },
   "sunlight_15min": {
     id: "sunlight_15min",
     title: "15 Minutes of Morning Sun",
-    subtitle: "Charge Your Hormones with Natural Light",
+    subtitle: "Support Natural Energy with Morning Light",
     category: "Recovery",
     cover: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
     durationMin: 15,
     difficulty: 1,
     repeat: "Everyday",
-    whyItMatters: "Early sunlight syncs your circadian rhythm, spiking vitamin D and testosterone production. This simple habit enhances sleep quality and hormone balance, giving you an edge in energy and performance."
+    whyItMatters: "Early sunlight syncs your circadian rhythm and supports natural vitamin D production. This simple habit enhances sleep quality and natural energy patterns, giving you an edge in daily performance."
   },
   "full_body_workout": {
     id: "full_body_workout",
@@ -65,7 +65,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 30,
     difficulty: 3,
     repeat: "Mon / Wed / Fri",
-    whyItMatters: "Full-body compound lifts trigger massive testosterone release by engaging multiple muscle groups. This efficient workout builds real strength while optimizing your hormonal response for peak gains."
+    whyItMatters: "Full-body compound lifts create comprehensive muscle engagement by working multiple muscle groups. This efficient workout builds real strength while supporting natural energy production for peak performance."
   },
   "heavy_leg_day": {
     id: "heavy_leg_day",
@@ -76,7 +76,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 45,
     difficulty: 4,
     repeat: "1× week",
-    whyItMatters: "Hammering your largest muscles with heavy loads is proven to skyrocket testosterone. This powerhouse session builds unbreakable lower body strength and drives systemic hormone optimization."
+    whyItMatters: "Working your largest muscles with heavy loads builds incredible strength. This powerhouse session develops unbreakable lower body strength and supports overall energy and vitality."
   },
   "bw_strength_circuit": {
     id: "bw_strength_circuit",
@@ -87,7 +87,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 20,
     difficulty: 3,
     repeat: "1–2× week",
-    whyItMatters: "Bodyweight circuits forge functional strength and shred fat - both key for elevating testosterone. Build a lean, capable physique that naturally produces more T."
+    whyItMatters: "Bodyweight circuits forge functional strength and burn fat - both key for sustained energy. Build a lean, capable physique that naturally supports better energy and confidence."
   },
   "hiit_sprints": {
     id: "hiit_sprints",
@@ -98,7 +98,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 12,
     difficulty: 4,
     repeat: "1–2× week",
-    whyItMatters: "HIIT torches fat and boosts growth hormone while elevating testosterone. This intense protocol enhances insulin sensitivity and builds explosive power for alpha performance."
+    whyItMatters: "HIIT torches fat and supports natural energy production. This intense protocol enhances insulin sensitivity and builds explosive power for peak performance."
   },
   "plyo_jump_set": {
     id: "plyo_jump_set",
@@ -109,7 +109,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 10,
     difficulty: 4,
     repeat: "1× week",
-    whyItMatters: "Plyometrics build explosive power and fast-twitch muscle fibers that support higher testosterone. Enhance your athletic edge and hormonal profile with this dynamic training."
+    whyItMatters: "Plyometrics build explosive power and fast-twitch muscle fibers that support athletic performance. Enhance your physical capabilities and energy levels with this dynamic training."
   },
   "loaded_carry": {
     id: "loaded_carry",
@@ -120,7 +120,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 10,
     difficulty: 4,
     repeat: "1× week",
-    whyItMatters: "Loaded carries build grip strength, core stability, and full-body power - all while triggering testosterone release through metabolic stress and muscle activation."
+    whyItMatters: "Loaded carries build grip strength, core stability, and full-body power - all while supporting natural energy through metabolic conditioning and comprehensive muscle activation."
   },
   "chair_squats": {
     id: "chair_squats",
@@ -131,7 +131,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 5,
     difficulty: 1,
     repeat: "Everyday or as assigned",
-    whyItMatters: "Fundamental lower body work maintains muscle mass and insulin sensitivity - crucial for steady testosterone production and metabolic health."
+    whyItMatters: "Fundamental lower body work maintains muscle mass and insulin sensitivity - crucial for steady energy levels and metabolic health."
   },
   "yoga_stretch_15m": {
     id: "yoga_stretch_15m",
@@ -142,7 +142,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 15,
     difficulty: 1,
     repeat: "2–3× week",
-    whyItMatters: "Yoga slashes cortisol while improving flexibility and recovery. Lower stress hormones create space for testosterone to thrive, enhancing overall male vitality."
+    whyItMatters: "Yoga reduces stress while improving flexibility and recovery. Lower stress levels create space for natural energy to flourish, enhancing overall vitality and well-being."
   },
   "breath_posture_5m": {
     id: "breath_posture_5m",
@@ -153,7 +153,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 5,
     difficulty: 1,
     repeat: "Daily",
-    whyItMatters: "Proper posture and breathing activate relaxation responses, dropping cortisol and supporting testosterone. Own your presence and hormonal edge."
+    whyItMatters: "Proper posture and breathing activate relaxation responses, reducing stress and supporting natural energy. Own your presence and confident edge."
   },
   "mindfulness_10m": {
     id: "mindfulness_10m",
@@ -164,7 +164,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 10,
     difficulty: 1,
     repeat: "3× week",
-    whyItMatters: "Mindfulness builds stress resilience, lowering cortisol that suppresses testosterone. Forge mental toughness for sustained hormone optimization."
+    whyItMatters: "Mindfulness builds stress resilience, reducing cortisol that drains energy. Forge mental toughness for sustained vitality and focus."
   },
   "cold_shower_30s": {
     id: "cold_shower_30s",
@@ -175,7 +175,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 1,
     difficulty: 2,
     repeat: "2–3× week",
-    whyItMatters: "Cold exposure boosts luteinizing hormone, signaling testosterone production while building unbreakable mental grit and accelerating recovery."
+    whyItMatters: "Cold exposure supports natural energy systems while building unbreakable mental grit and accelerating recovery processes."
   },
   "mobility_20min": {
     id: "mobility_20min",
@@ -186,7 +186,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 20,
     difficulty: 1,
     repeat: "1× week",
-    whyItMatters: "Enhanced mobility allows heavier, more effective training sessions that maximize testosterone response while preventing injuries."
+    whyItMatters: "Enhanced mobility allows heavier, more effective training sessions that maximize energy response while preventing injuries."
   },
   "plyo_jump_set_advanced": {
     id: "plyo_jump_set_advanced",
@@ -197,7 +197,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 15,
     difficulty: 5,
     repeat: "Advanced only",
-    whyItMatters: "Advanced plyos build elite power and coordination, triggering superior hormonal adaptations for peak athletic performance and testosterone."
+    whyItMatters: "Advanced plyos build elite power and coordination, supporting superior energy adaptations for peak athletic performance and vitality."
   },
   "loaded_carry_long": {
     id: "loaded_carry_long",
@@ -208,7 +208,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 15,
     difficulty: 5,
     repeat: "Advanced only",
-    whyItMatters: "Long carries forge mental toughness and full-body strength, creating massive metabolic stress for advanced testosterone optimization."
+    whyItMatters: "Long carries forge mental toughness and full-body strength, creating significant metabolic conditioning for advanced energy optimization."
   },
   "breathe_power_2m": {
     id: "breathe_power_2m",
@@ -219,7 +219,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 2,
     difficulty: 1,
     repeat: "Daily",
-    whyItMatters: "Power breathing enhances confidence and drops stress hormones, creating an optimal state for testosterone production and peak performance."
+    whyItMatters: "Power breathing enhances confidence and reduces stress hormones, creating an optimal state for natural energy and peak performance."
   },
   "cold_blast_15s": {
     id: "cold_blast_15s",
@@ -230,7 +230,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 1,
     difficulty: 1,
     repeat: "Daily starter",
-    whyItMatters: "Quick cold hits build resilience and hormone production while sharpening focus - your daily edge for masculine vitality."
+    whyItMatters: "Quick cold exposure builds resilience and supports natural energy while sharpening focus - your daily edge for vitality and alertness."
   },
   "morning_wins_3m": {
     id: "morning_wins_3m",
@@ -241,7 +241,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 3,
     difficulty: 1,
     repeat: "Daily",
-    whyItMatters: "Stacking morning wins builds unstoppable momentum and confidence, setting a high-testosterone tone for the entire day."
+    whyItMatters: "Stacking morning wins builds unstoppable momentum and confidence, setting an energized tone for the entire day."
   },
   "alpha_walk_10m": {
     id: "alpha_walk_10m",
@@ -252,7 +252,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 10,
     difficulty: 1,
     repeat: "Daily",
-    whyItMatters: "Confident movement elevates testosterone while providing light cardio - double win for hormone health and presence."
+    whyItMatters: "Confident movement supports natural energy while providing light cardio - double win for vitality and presence."
   },
   "power_pose_1m": {
     id: "power_pose_1m",
@@ -263,7 +263,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 1,
     difficulty: 1,
     repeat: "Before tough situations",
-    whyItMatters: "Power posing can boost testosterone and drop cortisol in minutes, priming you for victory in high-stakes situations."
+    whyItMatters: "Power posing can enhance confidence and reduce stress in minutes, priming you for success in high-stakes situations."
   },
   "victory_squats": {
     id: "victory_squats",
@@ -274,7 +274,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 5,
     difficulty: 1,
     repeat: "Daily",
-    whyItMatters: "These quick squats signal strength to your body, maintaining muscle and testosterone while building winning habits."
+    whyItMatters: "These quick squats signal strength to your body, maintaining muscle tone and energy while building winning habits."
   },
   "zen_minute": {
     id: "zen_minute",
@@ -285,7 +285,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 1,
     difficulty: 1,
     repeat: "When stressed",
-    whyItMatters: "Quick zen breaks crush stress hormones, protecting your testosterone and sharpening mental clarity."
+    whyItMatters: "Quick zen breaks reduce stress hormones, preserving your energy and sharpening mental clarity."
   },
   "energy_boost_combo": {
     id: "energy_boost_combo",
@@ -296,7 +296,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 2,
     difficulty: 1,
     repeat: "When energy dips",
-    whyItMatters: "This combo spikes natural energy and alertness, supporting daily movement that maintains healthy testosterone levels."
+    whyItMatters: "This combo spikes natural energy and alertness, supporting daily movement that maintains healthy vitality levels."
   },
   "protein_power_snack": {
     id: "protein_power_snack",
@@ -307,7 +307,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 5,
     difficulty: 1,
     repeat: "When hungry",
-    whyItMatters: "Strategic protein keeps blood sugar stable and supplies T-building aminos, fueling muscle and hormone health all day."
+    whyItMatters: "Strategic protein keeps blood sugar stable and supplies energy-building amino acids, fueling muscle development and vitality all day."
   },
   "confidence_check": {
     id: "confidence_check",
@@ -318,7 +318,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 1,
     difficulty: 1,
     repeat: "Morning & evening",
-    whyItMatters: "Positive self-talk builds unbreakable confidence, reducing stress that kills testosterone and enhancing overall drive."
+    whyItMatters: "Positive self-talk builds unbreakable confidence, reducing stress that drains energy and enhancing overall drive."
   },
   "morning_hydration": {
     id: "morning_hydration",
@@ -329,7 +329,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 2,
     difficulty: 1,
     repeat: "Daily",
-    whyItMatters: "Kickstart metabolism and hormone production after overnight dehydration. Proper morning hydration can boost testosterone by up to 15%."
+    whyItMatters: "Kickstart metabolism and natural energy after overnight dehydration. Proper morning hydration significantly supports vitality and mental clarity."
   },
   "daily_water_goal": {
     id: "daily_water_goal",
@@ -340,7 +340,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 5,
     difficulty: 2,
     repeat: "Daily",
-    whyItMatters: "Optimal hydration is crucial for testosterone synthesis and peak performance. Even mild dehydration can drop T levels by 10-15%."
+    whyItMatters: "Optimal hydration is crucial for natural energy and peak performance. Even mild dehydration can significantly impact energy levels and focus."
   },
   "pre_workout_hydration": {
     id: "pre_workout_hydration", 
@@ -351,7 +351,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 2,
     difficulty: 1,
     repeat: "Before workouts",
-    whyItMatters: "Prime your body for maximum performance and recovery. Well-hydrated training boosts strength by 15-20% and enhances T response."
+    whyItMatters: "Prime your body for maximum performance and recovery. Well-hydrated training significantly boosts strength and enhances energy response."
   },
   "hydration_tracking": {
     id: "hydration_tracking",
@@ -362,7 +362,7 @@ export const TASK_CATALOG: Record<string, Task> = {
     durationMin: 5,
     difficulty: 3,
     repeat: "Daily",
-    whyItMatters: "Precision hydration optimizes sleep, training, and recovery - all key drivers of testosterone. Master this for elite hormone health."
+    whyItMatters: "Precision hydration optimizes sleep, training, and recovery - all key drivers of vitality. Master this for elite energy and performance."
   }
 };
 

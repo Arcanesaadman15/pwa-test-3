@@ -27,7 +27,7 @@ export function RoadmapPreview({ onComplete }: RoadmapPreviewProps) {
       week: "Week 6-9",
       title: "Peak Performance",
       icon: Trophy,
-      description: "Maximize your testosterone potential",
+      description: "Maximize your energy and vitality potential",
       highlights: ["Advanced techniques", "Skill mastery", "Peak optimization"]
     }
   ];
@@ -131,20 +131,20 @@ export function RoadmapPreview({ onComplete }: RoadmapPreviewProps) {
           </div>
           <div className="grid grid-cols-2 gap-4 text-center">
             <div>
-              <div className="text-2xl md:text-3xl font-bold text-green-400 mb-2">+40%</div>
-              <div className="text-sm text-gray-300">Testosterone Boost</div>
+              <div className="text-2xl md:text-3xl font-bold text-green-400 mb-2">63</div>
+              <div className="text-sm text-gray-300">Days to Transform</div>
             </div>
             <div>
-              <div className="text-2xl md:text-3xl font-bold text-blue-400 mb-2">+65%</div>
-              <div className="text-sm text-gray-300">Energy Increase</div>
+              <div className="text-2xl md:text-3xl font-bold text-blue-400 mb-2">Daily</div>
+              <div className="text-sm text-gray-300">Habit Building</div>
             </div>
             <div>
-              <div className="text-2xl md:text-3xl font-bold text-purple-400 mb-2">-50%</div>
-              <div className="text-sm text-gray-300">Stress Reduction</div>
+              <div className="text-2xl md:text-3xl font-bold text-purple-400 mb-2">Better</div>
+              <div className="text-sm text-gray-300">Sleep Quality</div>
             </div>
             <div>
-              <div className="text-2xl md:text-3xl font-bold text-yellow-400 mb-2">+80%</div>
-              <div className="text-sm text-gray-300">Confidence Gain</div>
+              <div className="text-2xl md:text-3xl font-bold text-yellow-400 mb-2">More</div>
+              <div className="text-sm text-gray-300">Energy & Focus</div>
             </div>
           </div>
         </motion.div>

@@ -280,7 +280,7 @@ export function SettingsPanel({ onBack, onDataReset, onProgramChange }: Settings
         {/* Legal & Support Section */}
         <div className="ios-card p-6">
           <h3 className="text-lg font-bold mb-4">Product Details</h3>
-          <p className="text-sm text-gray-600 mb-4">PeakForge is a progressive web app designed to help men naturally boost their testosterone levels through personalized daily habits, skill-building exercises, and comprehensive wellness programs.</p>
+                      <p className="text-sm text-gray-600 mb-4">PeakForge is a progressive web app designed to help men naturally support their energy and vitality through personalized daily habits, skill-building exercises, and comprehensive wellness programs.</p>
           
           <h3 className="text-lg font-bold mb-2">Privacy Policy</h3>
           <p className="text-sm text-gray-600 mb-4">Your program data is stored locally on your device for privacy. Only subscription-related information is stored securely online. We do not collect or share any personal health data without consent.</p>

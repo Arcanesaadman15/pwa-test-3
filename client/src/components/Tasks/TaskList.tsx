@@ -189,7 +189,7 @@ function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReaso
                 className="text-xs text-orange-500/80 mt-1 font-medium active:text-orange-600 transition-colors inline-flex items-center gap-1 rounded-lg py-1" 
                 onClick={() => setShowWhyItMatters(true)}
               >
-                💡 Learn why this boosts testosterone
+                💡 Learn why this supports energy and vitality
               </p>
             )}
           </div>
@@ -218,7 +218,7 @@ function TaskCard({ task, status, canInteract, completedAt, skippedAt, skipReaso
                     <Zap size={16} className="text-orange-600 mt-0.5 flex-shrink-0" />
                     <div>
                       <h5 className="text-sm font-semibold text-orange-800 mb-1">
-                        Why this boosts testosterone:
+                        Why this supports energy and vitality:
                       </h5>
                       <p className="text-sm text-orange-700 leading-relaxed">
                         {task.whyItMatters}

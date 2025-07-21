@@ -135,7 +135,7 @@ export function TaskCard({ task, onComplete, onSkip, isCompleted, completedAt }:
                     <Zap size={16} className="text-orange-600 mt-0.5 flex-shrink-0" />
                     <div>
                       <h5 className="text-sm font-semibold text-orange-800 mb-1">
-                        Why this boosts testosterone:
+                        Why this supports energy and vitality:
                       </h5>
                       <p className="text-sm text-orange-700 leading-relaxed">
                         {task.whyItMatters}

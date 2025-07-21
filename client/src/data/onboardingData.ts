@@ -1,4 +1,4 @@
-// Onboarding data structure and content for testosterone/confidence focused men
+// Onboarding data structure and content for energy/confidence focused men
 export interface OnboardingData {
   // Quick Quiz responses
   ageRange: string;
@@ -27,33 +27,33 @@ export interface OnboardingData {
 export const PROBLEM_SPOTLIGHT_SLIDES = [
   {
     id: 1,
-    title: "Tired of Feeling Like a Shadow of Your Former Self?",
-    subtitle: "Your Low T is Robbing You of Your Prime - But You Can Fight Back",
-    description: "That gut, fatigue, and fading drive aren't 'normal aging' - they're symptoms of crashing testosterone. Thousands of men have reversed it naturally. Your comeback starts now.",
+    title: "Ready to Feel Like Your Best Self Again?",
+    subtitle: "Natural Habits Can Support Your Energy and Vitality",
+    description: "That fatigue and fading drive don't have to be your new normal. Thousands of men have found their edge through natural lifestyle changes. Your journey to feeling better starts now.",
     image: "💤",
     gradient: "from-red-600 to-orange-500"
   },
   {
     id: 2, 
     title: "Remember when you had DRIVE?",
-    subtitle: "That unstoppable energy and confidence isn't gone forever",
-    description: "You used to walk into rooms with presence. Now you feel invisible. That fire in your belly? Low testosterone snuffed it out. But here's the truth: every single day you wait, it gets harder to get back. Today you start reclaiming your edge.",
+    subtitle: "That unstoppable energy and confidence can return",
+    description: "You used to walk into rooms with presence. Now you feel invisible. That fire in your belly can be rekindled through consistent, natural habits. Here's the truth: every single day you wait, it gets harder to get back. Today you start reclaiming your edge.",
     image: "⚡",
     gradient: "from-orange-600 to-yellow-500"
   },
   {
     id: 3,
-    title: "Tired of your gut making decisions?",
-    subtitle: "That belly fat isn't just embarrassing - it's stealing your manhood",
-    description: "Every pound of belly fat produces estrogen and crushes testosterone. It's a vicious cycle: low T creates fat, fat kills T. Breaking this cycle isn't about willpower - it's about strategy. And we've cracked the code.",
+    title: "Tired of carrying extra weight?",
+    subtitle: "That belly fat isn't just about appearance - it affects how you feel",
+    description: "Excess weight can impact your energy and confidence. It's often a cycle: low energy leads to poor habits, poor habits lead to weight gain. Breaking this cycle isn't about willpower - it's about strategy. And we've cracked the code.",
     image: "🔥",
     gradient: "from-blue-600 to-purple-500"
   },
   {
     id: 4,
-    title: "Your wife/partner notices the difference",
-    subtitle: "She remembers the man she fell for - and misses him",
-    description: "She doesn't say it, but you feel it. The spark dimmed when your energy died. When confidence turned to self-doubt. When strength became softness. She wants her man back. And deep down, so do you.",
+    title: "Your relationships matter to you",
+    subtitle: "She remembers the confident man she fell for",
+    description: "You can feel when something's missing. The spark dims when your energy fades. When confidence turns to self-doubt. When strength becomes softness. You want to be your best self again. And deep down, you know you can be.",
     image: "💔",
     gradient: "from-purple-600 to-pink-500"
   }
@@ -63,7 +63,7 @@ export const QUICK_QUIZ_QUESTIONS = [
   {
     id: 'ageRange',
     question: "How Old Are You Really Feeling?",
-    subtitle: "T-levels drop 1-2% yearly after 30. Let's pinpoint your starting point for maximum gains.",
+    subtitle: "Energy and vitality naturally change over time. Let's pinpoint your starting point for improvement.",
     options: [
       { value: '18-24', label: '18-24', subtitle: 'Peak years - lock in your advantage before the decline' },
       { value: '25-34', label: '25-34', subtitle: 'Decline just started - perfect timing to fight back' },
@@ -75,11 +75,11 @@ export const QUICK_QUIZ_QUESTIONS = [
   {
     id: 'sleepQuality',
     question: "How's your sleep honestly?",
-    subtitle: "Poor sleep destroys testosterone faster than anything else. One bad night = 15% T-level drop.",
+    subtitle: "Poor sleep significantly impacts energy and recovery. Quality sleep is essential for feeling your best.",
     options: [
       { value: '0-1', label: 'I sleep like a rock', subtitle: 'You\'re ahead of 90% of men' },
-      { value: '2-3', label: 'Few bad nights per week', subtitle: 'Your T-levels are suffering' },
-      { value: '4-5', label: 'Tossing and turning most nights', subtitle: 'Serious hormone damage happening' },
+      { value: '2-3', label: 'Few bad nights per week', subtitle: 'Your energy levels are suffering' },
+      { value: '4-5', label: 'Tossing and turning most nights', subtitle: 'Serious energy impact happening' },
       { value: '6-7', label: 'Sleep is a nightmare', subtitle: 'Emergency intervention needed' }
     ]
   },
@@ -88,7 +88,7 @@ export const QUICK_QUIZ_QUESTIONS = [
     question: "How often do you actually exercise?",
     subtitle: "Be brutally honest. Your body knows when you're lying to yourself.",
     options: [
-      { value: '0', label: 'Exercise? What exercise?', subtitle: 'Your testosterone is in freefall' },
+      { value: '0', label: 'Exercise? What exercise?', subtitle: 'Your energy could use a boost' },
       { value: '1-2', label: '1-2 times when I have to', subtitle: 'Barely surviving, not thriving' },
       { value: '3-4', label: '3-4 times consistently', subtitle: 'Building good momentum' },
       { value: '5+', label: '5+ times - I\'m serious', subtitle: 'You understand what it takes' }
@@ -103,7 +103,7 @@ export const QUICK_QUIZ_QUESTIONS = [
       { value: 'energy', label: 'All-day energy & drive', subtitle: 'Feel unstoppable again' },
       { value: 'strength', label: 'Physical strength & presence', subtitle: 'Be the strong man others look up to' },
       { value: 'attraction', label: 'Sexual attraction & magnetism', subtitle: 'Rekindle that spark and desire' },
-      { value: 'testosterone', label: 'Just feeling like a MAN again', subtitle: 'Complete masculine transformation' }
+      { value: 'vitality', label: 'Just feeling energized again', subtitle: 'Complete energy transformation' }
     ]
   }
 ];
@@ -240,7 +240,7 @@ export const LIFESTYLE_SLIDERS = [
   {
     id: 'waistCircumference',
     title: 'Honest Waist Measurement',
-    subtitle: 'Every inch over 34 cuts testosterone. Don\'t measure where your belt sits - measure where your gut actually is.',
+    subtitle: 'Waist circumference affects energy and confidence. Measure where your waist is widest for accuracy.',
     min: 28,
     max: 50,
     default: 38,
@@ -251,7 +251,7 @@ export const LIFESTYLE_SLIDERS = [
   {
     id: 'stressLevel',
     title: 'How Overwhelmed Do You Feel?',
-    subtitle: 'Stress hormones are testosterone\'s biggest enemy. If you\'re always "on," your T is always "off."',
+    subtitle: 'Stress hormones drain your energy and vitality. If you\'re always "on," your energy suffers.',
     min: 1,
     max: 10,
     default: 7,
@@ -262,7 +262,7 @@ export const LIFESTYLE_SLIDERS = [
   {
     id: 'dailySteps',
     title: 'Daily Movement Reality Check',
-    subtitle: 'Car to chair to couch? Your body needs movement to produce testosterone. Be brutally honest.',
+    subtitle: 'Car to chair to couch? Your body needs movement to maintain energy. Be brutally honest.',
     min: 1000,
     max: 15000,
     default: 3500,
@@ -276,7 +276,7 @@ export const PERSONALIZATION_TOGGLES = [
   {
     id: 'circadianRhythm',
     title: 'When do you feel strongest?',
-    description: 'Your natural energy patterns matter for testosterone optimization',
+    description: 'Your natural energy patterns matter for vitality optimization',
     leftValue: 'morning',
     leftLabel: 'Morning',
     leftIcon: '🌅',
@@ -309,7 +309,7 @@ export const PERSONALIZATION_TOGGLES = [
   {
     id: 'intensityApproach',
     title: 'Your ideal training style?',
-    description: 'Both build testosterone - choose what you\'ll stick to',
+    description: 'Both build energy and strength - choose what you\'ll stick to',
     leftValue: 'high',
     leftLabel: 'High Intensity',
     leftIcon: '⚡',
@@ -325,7 +325,7 @@ export const SOCIAL_PROOF_TESTIMONIALS = [
     name: "Marcus T.",
     age: 32,
     location: "Detroit, MI",
-    result: "Lost 28 lbs, wife can't keep her hands off me",
+    result: "Lost 28 lbs, confidence transformed",
     quote: "I was 40 pounds overweight, exhausted by 2pm daily, and my wife barely looked at me. 8 weeks later? I feel like a completely different man. My confidence is through the roof, and our marriage is better than our honeymoon.",
     beforeAfter: "🔄",
     timeframe: "8 weeks",
@@ -337,7 +337,7 @@ export const SOCIAL_PROOF_TESTIMONIALS = [
     name: "Jake R.",
     age: 38,
     location: "Phoenix, AZ", 
-    result: "Down 3 pant sizes, testosterone up 47%",
+    result: "Down 3 pant sizes, energy way up",
     quote: "I thought being tired and soft was just 'getting older.' Bullshit. This program showed me I was living at 30% capacity. Now I'm stronger than I was at 25. My kids actually brag about their dad being strong.",
     beforeAfter: "💪",
     timeframe: "12 weeks",
@@ -349,7 +349,7 @@ export const SOCIAL_PROOF_TESTIMONIALS = [
     name: "David K.",
     age: 44,
     location: "Columbus, OH",
-    result: "Lost 35 lbs, sleeping through the night, morning wood is back",
+    result: "Lost 35 lbs, sleeping through the night, energy restored",
     quote: "I was embarrassed to take my shirt off in front of my own wife. Now she can't stop touching my shoulders. But the real win? I respect myself again. I look in the mirror and see a man worth being proud of.",
     beforeAfter: "⚡",
     timeframe: "16 weeks", 
@@ -421,46 +421,52 @@ export function generatePersonalizedInsights(data: Partial<OnboardingData>): {
   // Sleep analysis
   if (data.sleepQuality === '6-7') {
     keyAreas.push('Sleep Optimization');
-    insights.push('Poor sleep is destroying your testosterone. We\'ll fix this first.');
+    insights.push('Poor sleep is draining your energy. We\'ll fix this first.');
     wellnessScore -= 15;
   } else if (data.sleepQuality === '0-1') {
-    insights.push('Your sleep is solid - great foundation for testosterone optimization.');
+    insights.push('Your sleep is solid - great foundation for energy optimization.');
     wellnessScore += 10;
   }
   
   // Exercise analysis
   if (data.exerciseFrequency === '0') {
     keyAreas.push('Strength Building');
-    insights.push('Strength training is the #1 natural testosterone booster. We\'ll start smart.');
+    insights.push('Strength training is an excellent natural energy booster. We\'ll start smart.');
     wellnessScore -= 20;
   } else if (data.exerciseFrequency === '5+') {
-    insights.push('You\'re already active - we\'ll optimize your training for hormone health.');
+    insights.push('You\'re already active - we\'ll optimize your training for energy and vitality.');
     wellnessScore += 15;
   }
   
   // Stress analysis
   if (data.stressLevel && data.stressLevel >= 7) {
     keyAreas.push('Stress Management');
-    insights.push('High stress is your testosterone\'s biggest enemy. We\'ll teach you to manage it.');
+    insights.push('High stress is your energy\'s biggest enemy. We\'ll teach you to manage it.');
     wellnessScore -= 10;
   }
   
   // Waist analysis
   if (data.waistCircumference && data.waistCircumference >= 38) {
     keyAreas.push('Body Composition');
-    insights.push('Belly fat produces estrogen and lowers T. We\'ll target this specifically.');
+    insights.push('Excess belly fat impacts energy and confidence. We\'ll target this specifically.');
     wellnessScore -= 10;
   }
   
   // Goal-specific insights
   if (data.primaryGoal === 'confidence') {
     insights.push('Confidence comes from competence. We\'ll build both systematically.');
-  } else if (data.primaryGoal === 'testosterone') {
-    insights.push('Smart choice. Natural T optimization changes everything - energy, mood, body composition.');
+  } else if (data.primaryGoal === 'vitality') {
+    insights.push('Smart choice. Natural vitality optimization changes everything - energy, mood, body composition.');
+  } else if (data.primaryGoal === 'energy') {
+    insights.push('All-day energy starts with the right habits. We\'ll build your energy foundation.');
+  } else if (data.primaryGoal === 'strength') {
+    insights.push('Physical strength builds mental strength. We\'ll develop both through proven methods.');
+  } else if (data.primaryGoal === 'attraction') {
+    insights.push('Attraction starts with self-respect and confidence. We\'ll help you become magnetic.');
   }
   
   const program = calculateRecommendedProgram(data);
-  const recommendation = `Based on your profile, we recommend the ${program.charAt(0).toUpperCase() + program.slice(1)} Program to maximize your testosterone and confidence gains.`;
+  const recommendation = `Based on your profile, we recommend the ${program.charAt(0).toUpperCase() + program.slice(1)} Program to maximize your energy and confidence gains.`;
   
   return {
     wellnessScore: Math.max(20, Math.min(95, wellnessScore)),

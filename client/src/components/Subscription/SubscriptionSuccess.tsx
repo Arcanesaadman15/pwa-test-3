@@ -196,11 +196,11 @@ export function SubscriptionSuccess() {
           <ul className="text-left space-y-2 text-gray-300">
             <li className="flex items-center">
               <CheckCircle className="w-4 h-4 text-green-400 mr-3 flex-shrink-0" />
-              Complete 63-day testosterone revival program
+              Complete 63-day vitality and energy program
             </li>
             <li className="flex items-center">
               <CheckCircle className="w-4 h-4 text-green-400 mr-3 flex-shrink-0" />
-              Daily masculine habits & confidence building
+              Daily wellness habits & confidence building
             </li>
             <li className="flex items-center">
               <CheckCircle className="w-4 h-4 text-green-400 mr-3 flex-shrink-0" />

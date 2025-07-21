@@ -59,8 +59,8 @@ export function SocialProof({ onComplete }: SocialProofProps) {
             <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-3">
               <TrendingUp className="w-6 h-6 text-green-400" />
             </div>
-            <div className="text-2xl font-bold text-green-400 mb-1">+47%</div>
-            <div className="text-sm text-gray-300">T-Boost Avg</div>
+            <div className="text-2xl font-bold text-green-400 mb-1">Better</div>
+            <div className="text-sm text-gray-300">Energy Levels</div>
           </div>
           <div className="text-center">
             <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center mx-auto mb-3">
@@ -79,21 +79,21 @@ export function SocialProof({ onComplete }: SocialProofProps) {
               age: "42",
               image: "/images/marcus.png",
               quote: "Lost 30 lbs and gained my confidence back. My wife says I'm like the man she married again.",
-              result: "↗ 38% T-boost, Lost 30 lbs"
+              result: "Lost 30 lbs, More Energy"
             },
             {
               name: "Jake Thompson", 
               age: "38",
               image: "/images/jake.png",
               quote: "Morning wood returned after 6 weeks. Haven't felt this energetic in years. Game changer.",
-              result: "↗ 52% T-boost, Energy restored"
+              result: "Better Sleep, Energy Restored"
             },
             {
               name: "Carlos Martinez",
               age: "35",
               image: "/images/carlos.png", 
               quote: "Finally sleeping through the night. Lost the dad bod and feel like a warrior again.",
-              result: "↗ 41% T-boost, Better sleep"
+              result: "Lost Dad Bod, Better Sleep"
             }
           ].map((testimonial, index) => (
             <motion.div

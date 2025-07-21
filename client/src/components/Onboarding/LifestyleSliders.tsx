@@ -77,7 +77,7 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
     }
     
     if (slider.id === 'stressLevel') {
-      if (currentValue <= 3) return 'Low stress - great for T levels';
+      if (currentValue <= 3) return 'Low stress - great for energy';
       if (currentValue <= 6) return 'Moderate stress';
       if (currentValue <= 8) return 'High stress - needs attention';
       return 'Very high stress - major concern';

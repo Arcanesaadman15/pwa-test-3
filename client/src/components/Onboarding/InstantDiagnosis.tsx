@@ -35,9 +35,11 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
     else if (data.exerciseFrequency === "rarely") score -= 15;
     
     // Primary goal boost
-    if (data.primaryGoal === "muscle") score += 10;
+    if (data.primaryGoal === "strength") score += 10;
     else if (data.primaryGoal === "energy") score += 5;
     else if (data.primaryGoal === "confidence") score += 8;
+    else if (data.primaryGoal === "attraction") score += 6;
+    else if (data.primaryGoal === "vitality") score += 7;
     
     // Stress level (inverted)
     const stressLevel = data.stressLevel || 5;
@@ -149,7 +151,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
               >
-                Here's the brutal truth about your testosterone - and exactly how to fix it
+                Here's your current wellness assessment and how to improve it
               </motion.p>
             </motion.div>
 
@@ -230,7 +232,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                   transition={{ delay: 1.0, duration: 0.6 }}
                 >
                   <span className="bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
-                    Masculine Power Level
+                    Wellness Potential Score
                   </span>
                 </motion.p>
 
@@ -334,7 +336,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                           transition={{ delay: 2.0, duration: 0.4 }}
                         >
                           <span className="mr-2 mt-0.5 text-sm">💤</span>
-                          Poor sleep is significantly lowering your testosterone
+                          Poor sleep significantly impacts energy and vitality
                         </motion.li>
                       )}
                       {data.sleepQuality === "fair" && (
@@ -345,7 +347,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                           transition={{ delay: 2.0, duration: 0.4 }}
                         >
                           <span className="mr-2 mt-0.5 text-sm">🛌</span>
-                          Improving sleep quality could boost T-levels by 15-20%
+                          Improving sleep quality could significantly boost energy levels
                         </motion.li>
                       )}
                       {data.sleepQuality === "good" && (
@@ -369,7 +371,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                           transition={{ delay: 2.2, duration: 0.4 }}
                         >
                           <Icon name="Dumbbell" size={16} className="mr-2 mt-0.5 text-orange-500" />
-                          Adding regular exercise could increase testosterone by 40%
+                          Adding regular exercise could significantly improve energy and vitality
                         </motion.li>
                       )}
                       {data.exerciseFrequency === "weekly" && (
@@ -380,7 +382,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                           transition={{ delay: 2.2, duration: 0.4 }}
                         >
                           <span className="mr-2 mt-0.5 text-sm">🏋️</span>
-                          Your exercise routine is helping - more frequency = more gains
+                          Your exercise routine is helping - more frequency = more energy
                         </motion.li>
                       )}
                       
@@ -393,7 +395,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                           transition={{ delay: 2.4, duration: 0.4 }}
                         >
                           <Icon name="Zap" size={16} className="mr-2 mt-0.5 text-yellow-500" />
-                          High stress is blocking testosterone production
+                          High stress is impacting your energy and well-being
                         </motion.li>
                       )}
                       {(data.stressLevel || 5) > 5 && (data.stressLevel || 5) <= 7 && (
@@ -404,7 +406,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                           transition={{ delay: 2.4, duration: 0.4 }}
                         >
                           <Icon name="Heart" size={16} className="mr-2 mt-0.5 text-blue-500" />
-                          Managing stress better will unlock significant T-gains
+                          Managing stress better will unlock significant energy gains
                         </motion.li>
                       )}
                       
@@ -417,7 +419,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                           transition={{ delay: 2.6, duration: 0.4 }}
                         >
                           <span className="mr-2 mt-0.5 text-sm">📏</span>
-                          Reducing waist size will dramatically boost hormone levels
+                          Improving body composition will significantly boost energy levels
                         </motion.li>
                       )}
                       {(data.waistCircumference || 32) > 36 && (data.waistCircumference || 32) <= 40 && (
@@ -428,7 +430,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                           transition={{ delay: 2.6, duration: 0.4 }}
                         >
                           <Icon name="Target" size={16} className="mr-2 mt-0.5 text-red-500" />
-                          Body composition improvements will enhance testosterone
+                          Body composition improvements will enhance energy and confidence
                         </motion.li>
                       )}
                       

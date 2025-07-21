@@ -147,7 +147,7 @@ export function PricingPlans({ onPlanSelect }: PricingPlansProps) {
             </div>
             <div className="flex items-center">
               <Check className="w-5 h-5 text-green-400 mr-3 flex-shrink-0" />
-              <span>Daily habits proven to boost natural T-levels</span>
+              <span>Daily habits that support natural energy and vitality</span>
             </div>
             <div className="flex items-center">
               <Check className="w-5 h-5 text-green-400 mr-3 flex-shrink-0" />

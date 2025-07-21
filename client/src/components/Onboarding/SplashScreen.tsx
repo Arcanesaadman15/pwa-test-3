@@ -86,8 +86,8 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
           >
-            Your testosterone has been declining every year since you turned 25. 
-            <span className="text-orange-400 font-semibold"> Time to take it back.</span>
+            Build natural habits that support masculine vitality and energy. 
+            <span className="text-orange-400 font-semibold"> Your transformation starts here.</span>
           </motion.p>
         </motion.div>
 
