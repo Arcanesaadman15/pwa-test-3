@@ -193,7 +193,12 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             {currentStep === 'diagnosis' && (
               <InstantDiagnosis 
                 data={onboardingData}
-                onComplete={goToNextStep}
+                onComplete={(dataWithProgram) => {
+                  if (dataWithProgram) {
+                    updateOnboardingData(dataWithProgram);
+                  }
+                  goToNextStep();
+                }}
               />
             )}
             

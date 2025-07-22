@@ -2,15 +2,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle, AlertTriangle, TrendingUp, Zap, Target, Heart } from "lucide-react";
-import { OnboardingData } from "@/data/onboardingData";
+import { OnboardingData, calculateRecommendedProgram } from "@/data/onboardingData";
 import { Icon } from "@/lib/iconUtils";
 
 interface InstantDiagnosisProps {
   data: Partial<OnboardingData>;
-  onComplete: () => void;
+  onComplete: (dataWithProgram?: Partial<OnboardingData>) => void;
 }
 
 export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
+  // Calculate and set the recommended program
+  const recommendedProgram = calculateRecommendedProgram(data);
+  const dataWithProgram = { ...data, recommendedProgram };
 
   const calculateTestosteroneScore = () => {
     let score = 50; // Base score
@@ -441,7 +444,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                         transition={{ delay: 2.8, duration: 0.4 }}
                       >
                         <Icon name="Rocket" size={16} className="mr-2 mt-0.5 text-purple-500" />
-                        Your {(data.recommendedProgram || 'beginner')} program is perfectly tailored for you
+                        Your {recommendedProgram} program is perfectly tailored for you
                       </motion.li>
                     </ul>
                   </motion.div>
@@ -489,7 +492,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 3.4, duration: 0.5 }}
                     >
-                      {(data.recommendedProgram || 'beginner').charAt(0).toUpperCase() + (data.recommendedProgram || 'beginner').slice(1)} Track
+                      {recommendedProgram.charAt(0).toUpperCase() + recommendedProgram.slice(1)} Track
                     </motion.p>
                     <motion.p 
                       className="text-xs md:text-sm text-gray-300 mt-1 relative z-10"
@@ -516,7 +519,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
                 transition={{ type: "spring", stiffness: 300, damping: 25 }}
               >
                 <Button
-                  onClick={onComplete}
+                  onClick={() => onComplete(dataWithProgram)}
                   size="lg"
                   className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 md:py-4 text-base md:text-lg rounded-xl shadow-xl hover:shadow-2xl 
                            transform transition-all duration-300 hover:scale-105 relative overflow-hidden min-h-[56px] touch-manipulation"

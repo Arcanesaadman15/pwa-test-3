@@ -378,33 +378,44 @@ export const SUCCESS_STATS = {
   satisfactionScore: "4.8/5"
 };
 
-// Program recommendation logic
+// Enhanced program recommendation logic - considers more factors and is less conservative
 export function calculateRecommendedProgram(data: Partial<OnboardingData>): 'beginner' | 'intermediate' | 'advanced' {
   let score = 0;
   
   // Exercise frequency contributes most to program level
   if (data.exerciseFrequency === '0') score += 0;
-  else if (data.exerciseFrequency === '1-2') score += 1;
-  else if (data.exerciseFrequency === '3-4') score += 2;
-  else if (data.exerciseFrequency === '5+') score += 3;
+  else if (data.exerciseFrequency === '1-2') score += 2; // Increased from 1
+  else if (data.exerciseFrequency === '3-4') score += 3; // Increased from 2
+  else if (data.exerciseFrequency === '5+') score += 4; // Increased from 3
   
-  // Age affects starting intensity
+  // Age affects starting intensity (less punitive for older users)
   if (data.ageRange === '18-24' || data.ageRange === '25-34') score += 1;
   else if (data.ageRange === '35-44') score += 0;
-  else score -= 1;
+  else if (data.ageRange === '45-54') score += 0; // Changed from -1
+  else score += 0; // Changed from -1 (55+ can still be intermediate/advanced)
   
   // Sleep quality affects readiness for intensity
   if (data.sleepQuality === '0-1') score += 1;
+  else if (data.sleepQuality === '2-3') score += 0; // Added middle option
   else if (data.sleepQuality === '6-7') score -= 1;
   
-  // Intensity preference
-  if (data.intensityApproach === 'high') score += 1;
-  else if (data.intensityApproach === 'gentle') score -= 1;
+  // Intensity preference (more weight given)
+  if (data.intensityApproach === 'high') score += 2; // Increased from 1
+  else if (data.intensityApproach === 'gentle') score += 0; // Changed from -1 (less punitive)
   
-  // Determine program based on score
-  if (score <= 0) return 'beginner';
-  else if (score <= 2) return 'intermediate';
-  else return 'advanced';
+  // Consider primary goals for motivation level
+  if (data.primaryGoal === 'strength') score += 1;
+  else if (data.primaryGoal === 'vitality' || data.primaryGoal === 'energy') score += 1;
+  
+  // Consider lifestyle factors
+  if (data.dailySteps && data.dailySteps >= 8000) score += 1;
+  if (data.stressLevel && data.stressLevel <= 4) score += 1; // Low stress = can handle more
+  if (data.waistCircumference && data.waistCircumference <= 34) score += 1; // Good shape = can handle more
+  
+  // More balanced thresholds
+  if (score <= 1) return 'beginner';      // Very low activity/readiness
+  else if (score <= 4) return 'intermediate'; // Most users with some activity
+  else return 'advanced';                 // High activity + good indicators
 }
 
 // Generate personalized insights for Instant Diagnosis
