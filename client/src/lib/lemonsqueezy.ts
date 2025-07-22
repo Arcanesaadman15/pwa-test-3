@@ -43,9 +43,9 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     id: 'pro',
     name: 'Pro',
     description: 'Premium wellness program with all features unlocked',
-    price: 1599, // $15.99 in cents
+    price: 499, // $4.99 in cents
     interval: 'month',
-    variantId: '821326', // Your actual LemonSqueezy variant ID
+    variantId: '585431', // $4.99/month Pro plan variant ID
     popular: true,
     features: [
       'Complete wellness program access',

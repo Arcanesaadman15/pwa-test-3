@@ -135,7 +135,7 @@ export function PricingPlans({ onPlanSelect }: PricingPlansProps) {
         <div className="bg-gray-900 border border-gray-700 rounded-2xl p-8 mb-8">
           <div className="mb-6">
             <div className="text-orange-500 text-sm font-medium mb-2">LIMITED TIME</div>
-            <div className="text-5xl font-bold mb-2">$15<span className="text-2xl text-gray-400">/mo</span></div>
+            <div className="text-5xl font-bold mb-2">$4.99<span className="text-2xl text-gray-400">/mo</span></div>
             <div className="text-gray-400">Get started today, cancel anytime</div>
           </div>
 
