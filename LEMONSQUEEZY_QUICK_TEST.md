@@ -1,6 +1,6 @@
-# 🧪 LemonSqueezy Quick Test Guide
+# 🧪 LemonSqueezy Production Test Guide
 
-Your payment integration should now work! Here's how to test it:
+Your payment integration is now live with real payments! Here's how to test it:
 
 ## 🔍 Step 1: Test Configuration
 
@@ -19,7 +19,7 @@ https://peakforge.club/api/lemonsqueezy/test
     "hasApiKey": true,
     "hasStoreId": true,
     "hasWebhookSecret": true,
-    "storeId": "YOUR_STORE_ID",
+    "storeId": "YOUR_ACTUAL_STORE_ID",
     "apiKeyPrefix": "lemon_12...",
     "webhookSecretPrefix": "whsec_ab..."
   },
@@ -47,16 +47,20 @@ https://peakforge.club/api/lemonsqueezy/test
 
 ### Problem: Invalid Store/API Key
 
-**Get Your Credentials:**
+**Get Your Production Credentials:**
 1. Go to [LemonSqueezy Dashboard](https://app.lemonsqueezy.com)
-2. **Store ID:** Settings → Store → Store ID (6-digit number)
-3. **API Key:** Settings → API → Create new API key
+2. **Important:** Ensure you're in LIVE mode (not test mode)
+3. **Store ID:** Settings → Store → Store ID 
+4. **API Key:** Settings → API → Create new production API key
 
-## ✅ Step 2: Test Payment Flow
+## ✅ Step 2: Test Payment Flow (REAL PAYMENTS)
+
+⚠️ **WARNING: This will process real payments at $4.99/month**
 
 1. **Go through onboarding** in your app
-2. **Click "Subscribe" on pricing page**
+2. **Click "Subscribe" on pricing page** 
 3. **Should redirect to LemonSqueezy checkout**
+4. **Use a real payment method** - this is now live!
 
 ## 🧪 Step 3: Mock Mode (If LemonSqueezy Not Ready)
 
