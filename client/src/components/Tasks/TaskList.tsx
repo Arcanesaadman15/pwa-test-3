@@ -360,7 +360,7 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
     try {
       // CRITICAL FIX: Always sync to active day when loading tasks
       // This ensures day counter and task content stay in sync when switching tabs
-      taskEngine.syncToActiveDay();
+      await taskEngine.syncToActiveDay();
       
       const currentDayTasks = await taskEngine.getCurrentDayTasks();
       const dayInfo = {

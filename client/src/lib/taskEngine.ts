@@ -24,6 +24,9 @@ export class TaskEngine {
       if (this.user) {
         this.currentProgram = this.user.program;
         
+        // CRITICAL FIX: Repair user data if it's incomplete
+        await this.repairUserDataIfNeeded();
+        
         // CRITICAL FIX: Always sync viewing day to current active day during initialization
         // This ensures we never show stale day content when switching tabs
         const calculatedActiveDay = this.getCurrentActiveDay();
@@ -39,9 +42,60 @@ export class TaskEngine {
     }
   }
 
+  // CRITICAL FIX: Repair user data if it's incomplete or inconsistent
+  private async repairUserDataIfNeeded(): Promise<void> {
+    if (!this.user) return;
+    
+    let needsUpdate = false;
+    const calculatedActiveDay = this.getCurrentActiveDay();
+    
+    // Fix missing or incorrect currentDay
+    if (!this.user.currentDay || this.user.currentDay < 1) {
+      console.log(`TaskEngine: Repairing user.currentDay from ${this.user.currentDay} to ${calculatedActiveDay}`);
+      this.user.currentDay = calculatedActiveDay;
+      needsUpdate = true;
+    }
+    
+    // Fix other missing fields
+    if (this.user.completedDays === undefined) {
+      const completedDays = Math.max(0, calculatedActiveDay - 1);
+      console.log(`TaskEngine: Setting missing user.completedDays to ${completedDays}`);
+      this.user.completedDays = completedDays;
+      needsUpdate = true;
+    }
+    
+    if (this.user.currentStreak === undefined) {
+      console.log('TaskEngine: Setting missing user.currentStreak to 0');
+      this.user.currentStreak = 0;
+      needsUpdate = true;
+    }
+    
+    if (this.user.longestStreak === undefined) {
+      console.log('TaskEngine: Setting missing user.longestStreak to 0');
+      this.user.longestStreak = 0;
+      needsUpdate = true;
+    }
+    
+    if (needsUpdate) {
+      console.log('TaskEngine: Saving repaired user data to localStorage');
+      await storage.saveUser(this.user);
+    }
+  }
+
   // Calculate the current active day based on PRD logic
   private getCurrentActiveDay(): number {
-    if (!this.user) return 1;
+    if (!this.user) {
+      console.log('TaskEngine: getCurrentActiveDay() - no user, returning 1');
+      return 1;
+    }
+    
+    // CRITICAL FIX: Handle case where user.currentDay is undefined
+    // This can happen if localStorage or Supabase data is incomplete
+    if (this.user.currentDay && this.user.currentDay > 1) {
+      // If user has a currentDay set and it's valid, use it as a starting point
+      // but still validate against task completions for safety
+      console.log(`TaskEngine: getCurrentActiveDay() - user.currentDay is ${this.user.currentDay}, validating against completions`);
+    }
     
     // Find the furthest day that can be unlocked based on sequential completion
     let activeDay = 1;
@@ -61,6 +115,13 @@ export class TaskEngine {
     }
     
     console.log(`TaskEngine: getCurrentActiveDay() calculated ${activeDay} (user.currentDay: ${this.user?.currentDay}, taskCompletions: ${this.taskCompletions.length})`);
+    
+    // CRITICAL FIX: If there's a mismatch between user.currentDay and calculated activeDay,
+    // trust the task completions (more reliable) but log the discrepancy
+    if (this.user.currentDay && this.user.currentDay !== activeDay) {
+      console.warn(`TaskEngine: Mismatch detected - user.currentDay: ${this.user.currentDay}, calculated activeDay: ${activeDay}. Using calculated value.`);
+    }
+    
     return activeDay;
   }
 
@@ -108,9 +169,12 @@ export class TaskEngine {
   }
 
   // CRITICAL FIX: Add method to force sync viewing day with active day
-  syncToActiveDay(): void {
+  async syncToActiveDay(): Promise<void> {
+    // CRITICAL: Always initialize before syncing to ensure we have current data
+    await this.initialize();
+    
     const activeDay = this.getCurrentActiveDay();
-    console.log(`TaskEngine: syncToActiveDay() - viewingDay: ${this.viewingDay} -> ${activeDay}, manualNavigation: ${this.manualNavigation}`);
+    console.log(`TaskEngine: syncToActiveDay() - viewingDay: ${this.viewingDay} -> ${activeDay}, manualNavigation: ${this.manualNavigation}, user: ${this.user ? 'exists' : 'null'}, taskCompletions: ${this.taskCompletions.length}`);
     this.viewingDay = activeDay;
     this.manualNavigation = false;
   }
