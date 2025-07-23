@@ -66,10 +66,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: any, session: any) => {
+      console.log('🔐 Auth state change:', event, session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       
       if (session?.user) {
+        // Give a moment for the session to fully establish, especially for new signups
+        if (event === 'SIGNED_UP' || event === 'SIGNED_IN') {
+          await new Promise(resolve => setTimeout(resolve, 800));
+        }
         await fetchUserProfile(session.user.id, session.user.email);
       } else {
         setUserProfile(null);
@@ -90,14 +95,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const fetchUserProfile = async (supabaseUserId: string, userEmail?: string) => {
+  const fetchUserProfile = async (supabaseUserId: string, userEmail?: string, retryCount = 0) => {
     if (!isSupabaseConfigured) return;
     
     try {
+      // Wait a bit for new users to ensure session is established
+      if (retryCount === 0) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
       
-      // Simple, fast profile fetch with 3-second timeout
+      // Simple, fast profile fetch with 5-second timeout
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Profile fetch timeout')), 3000);
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 5000);
       });
       
       const fetchPromise = supabase
@@ -115,12 +124,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         error = result.error;
       } catch (timeoutError) {
         console.warn('Profile fetch timed out');
+        
+        // Retry once for new users
+        if (retryCount < 1) {
+          console.log('Retrying profile fetch...');
+          return fetchUserProfile(supabaseUserId, userEmail, retryCount + 1);
+        }
+        
         setLoading(false);
         return;
       }
 
       if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
         console.error('Error fetching user profile:', error);
+        
+        // Retry once for 406 errors (auth timing issues)
+        if ((error.code === '406' || error.code === 'PGRST301') && retryCount < 1) {
+          console.log('Retrying profile fetch due to auth timing...');
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          return fetchUserProfile(supabaseUserId, userEmail, retryCount + 1);
+        }
+        
         setLoading(false);
         return;
       }
