@@ -3,12 +3,28 @@ import { Button } from "@/components/ui/button";
 import { Star, Quote, Users, Target, TrendingUp } from "lucide-react";
 import { SOCIAL_PROOF_TESTIMONIALS, SUCCESS_STATS } from "@/data/onboardingData";
 import { Icon } from '@/lib/iconUtils';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface SocialProofProps {
   onComplete: () => void;
 }
 
 export function SocialProof({ onComplete }: SocialProofProps) {
+  const { updateProfile } = useAuth();
+
+  const handleContinue = async () => {
+    try {
+      console.log('🎯 SocialProof: Marking onboarding as complete before proceeding to paywall');
+      // Mark onboarding as complete before going to paywall
+      await updateProfile({ onboarding_complete: true });
+      onComplete();
+    } catch (error) {
+      console.error('❌ Failed to update profile in SocialProof:', error);
+      // Still proceed even if profile update fails
+      onComplete();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="max-w-2xl mx-auto px-4 pt-8 pb-24">
@@ -156,7 +172,7 @@ export function SocialProof({ onComplete }: SocialProofProps) {
           className="text-center"
         >
           <Button
-            onClick={onComplete}
+            onClick={handleContinue}
             className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 text-lg rounded-xl transition-all duration-200 hover:scale-105 max-w-md mx-auto min-h-[60px] active:scale-95"
           >
             I'm Ready to Reclaim My Power →

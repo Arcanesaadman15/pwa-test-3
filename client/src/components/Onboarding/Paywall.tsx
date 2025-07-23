@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle, Clock, Users, Zap, ArrowLeft, Star, Shield, Award, Flame, Target } from "lucide-react";
 import { AuthForm } from "@/components/Auth/AuthForm";
@@ -14,7 +14,22 @@ interface PaywallProps {
 export function Paywall({ onComplete, onboardingData }: PaywallProps) {
   const [showAuthForm, setShowAuthForm] = useState(false);
   const [showPricing, setShowPricing] = useState(false);
-  const { user } = useAuth();
+  const { user, subscription, updateProfile } = useAuth();
+
+  // If user already has an active subscription, skip paywall and complete onboarding
+  useEffect(() => {
+    if (user && subscription.isSubscribed) {
+      console.log('🎯 Paywall: User already has active subscription, completing onboarding');
+      // Mark onboarding as complete and finish
+      updateProfile({ onboarding_complete: true }).then(() => {
+        onComplete();
+      }).catch((error) => {
+        console.error('❌ Failed to update profile in Paywall:', error);
+        // Still complete even if profile update fails
+        onComplete();
+      });
+    }
+  }, [user, subscription.isSubscribed, updateProfile, onComplete]);
 
   const personalizedFeatures = [
     `Custom ${onboardingData.recommendedProgram} program for your ${onboardingData.ageRange} age group`,
@@ -42,8 +57,17 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
     setShowPricing(true);
   };
 
-  const handlePricingSuccess = () => {
-    onComplete();
+  const handlePricingSuccess = async () => {
+    try {
+      console.log('🎯 Paywall: Payment successful, marking onboarding as complete');
+      // Mark onboarding as complete after successful payment
+      await updateProfile({ onboarding_complete: true });
+      onComplete();
+    } catch (error) {
+      console.error('❌ Failed to update profile after payment:', error);
+      // Still complete even if profile update fails
+      onComplete();
+    }
   };
 
   // Show authentication form if user needs to sign up/in

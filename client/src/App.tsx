@@ -154,47 +154,50 @@ function AuthenticatedApp() {
     );
   }
 
-  // STEP 3: User is authenticated, check if onboarding is complete
-  // For existing users logging in: userProfile.onboarding_complete should be true -> skip onboarding
-  // For new users signing up: userProfile.onboarding_complete should be false -> show onboarding
-  if (!userProfile?.onboarding_complete || isInOnboarding) {
-    // Mark that we're entering onboarding to prevent interruption
-    if (!isInOnboarding && !userProfile?.onboarding_complete) {
-      console.log('🎯 Entering onboarding flow');
-      setIsInOnboarding(true);
-    }
-    
+  // STEP 3: Handle users currently in onboarding flow
+  if (isInOnboarding) {
     return <Onboarding onComplete={async (data) => {
       console.log('🎯 Onboarding completed, marking as not in onboarding');
       setIsInOnboarding(false);
-      // The onboarding component already handles updating the profile with onboarding_complete: true
-      // React will re-render this component when userProfile updates
     }} />;
   }
 
-  // STEP 4: User is authenticated and onboarded, check subscription status
-  // Only redirect to pricing if they completed onboarding AND aren't on subscription-related pages
-  // AND they're not currently in the onboarding flow
-  if (!subscription.isSubscribed && !isSubscriptionPath && !isInOnboarding) {
-    console.log('🚨 Redirecting to pricing page - user completed onboarding but no subscription');
-    return (
-      <div>
-        <PricingPage />
-        {/* Debug: Add logout option */}
-        <div className="fixed top-4 right-4 z-50">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={async () => {
-              await signOut();
-            }}
-            className="bg-white/10 text-white border-white/20 hover:bg-white/20"
-          >
-            Sign Out
-          </Button>
+  // STEP 4: User is authenticated, check subscription status and onboarding
+  // If user has completed onboarding but has no subscription, show pricing page
+  // If user hasn't completed onboarding and has no subscription, they should be in onboarding flow
+  if (!subscription.isSubscribed && !isSubscriptionPath) {
+    // If user has completed onboarding, send them to pricing page
+    if (userProfile?.onboarding_complete && !isInOnboarding) {
+      console.log('🚨 User completed onboarding but no subscription - redirecting to pricing page');
+      return (
+        <div>
+          <PricingPage />
+          {/* Debug: Add logout option */}
+          <div className="fixed top-4 right-4 z-50">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={async () => {
+                await signOut();
+              }}
+              className="bg-white/10 text-white border-white/20 hover:bg-white/20"
+            >
+              Sign Out
+            </Button>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
+    
+    // If user hasn't completed onboarding and isn't already in onboarding, start onboarding
+    if (!userProfile?.onboarding_complete && !isInOnboarding) {
+      console.log('🎯 User needs onboarding and subscription - starting onboarding flow');
+      setIsInOnboarding(true);
+      return <Onboarding onComplete={async (data) => {
+        console.log('🎯 Onboarding completed, marking as not in onboarding');
+        setIsInOnboarding(false);
+      }} />;
+    }
   }
 
   // STEP 5: User is authenticated, onboarded, and has active subscription - show main app
