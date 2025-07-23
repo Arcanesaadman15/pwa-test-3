@@ -93,8 +93,19 @@ export default function Home() {
     }
     
     try {
+      const previousDay = user!.current_day;
       const previousStreak = user?.current_streak || 0;
       const result = await completeTask(taskId);
+      
+      const freshLocalUser = await storage.getUser();
+      if (freshLocalUser && freshLocalUser.currentDay !== previousDay) {
+        await updateUserProgress({
+          currentDay: freshLocalUser.currentDay,
+          completedDays: freshLocalUser.completedDays,
+          currentStreak: freshLocalUser.currentStreak,
+          longestStreak: freshLocalUser.longestStreak
+        });
+      }
       
       await loadUserData();
       
@@ -149,7 +160,19 @@ export default function Home() {
 
   const handleTaskSkip = async (taskId: string) => {
     try {
+      const previousDay = user!.current_day;
       await skipTask(taskId);
+      
+      const freshLocalUser = await storage.getUser();
+      if (freshLocalUser && freshLocalUser.currentDay !== previousDay) {
+        await updateUserProgress({
+          currentDay: freshLocalUser.currentDay,
+          completedDays: freshLocalUser.completedDays,
+          currentStreak: freshLocalUser.currentStreak,
+          longestStreak: freshLocalUser.longestStreak
+        });
+      }
+      
       await loadUserData();
     } catch (error) {
       // Task skip failed - could show user-friendly error message

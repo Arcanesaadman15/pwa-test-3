@@ -358,9 +358,9 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
     if (!taskEngine) return;
     
     try {
-      if (!taskEngine.isManualNavigation()) {
-        taskEngine.syncToActiveDay();
-      }
+      // CRITICAL FIX: Always sync to active day when loading tasks
+      // This ensures day counter and task content stay in sync when switching tabs
+      taskEngine.syncToActiveDay();
       
       const currentDayTasks = await taskEngine.getCurrentDayTasks();
       const dayInfo = {
@@ -407,11 +407,6 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
       
       await loadTasks();
       triggerRefresh();
-      
-      if (taskEngine && !taskEngine.isManualNavigation()) {
-        taskEngine.syncToActiveDay();
-        await loadTasks();
-      }
     } catch (error) {
       console.error('Failed to complete task:', error);
       toast({
@@ -443,11 +438,6 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
       
       await loadTasks();
       triggerRefresh();
-      
-      if (taskEngine && !taskEngine.isManualNavigation()) {
-        taskEngine.syncToActiveDay();
-        await loadTasks();
-      }
     } catch (error) {
       console.error('Failed to skip task:', error);
       toast({
