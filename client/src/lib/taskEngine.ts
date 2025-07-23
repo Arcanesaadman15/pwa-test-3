@@ -23,9 +23,15 @@ export class TaskEngine {
       
       if (this.user) {
         this.currentProgram = this.user.program;
-        // Only set viewing day on first initialization, not every time
-        if (this.viewingDay === 1) {
-          this.viewingDay = this.getCurrentActiveDay();
+        
+        // CRITICAL FIX: Always sync viewing day to current active day during initialization
+        // This ensures we never show stale day content when switching tabs
+        const calculatedActiveDay = this.getCurrentActiveDay();
+        
+        // Only update viewingDay if we're not in manual navigation mode
+        if (!this.manualNavigation) {
+          console.log(`TaskEngine: Syncing viewingDay from ${this.viewingDay} to ${calculatedActiveDay}`);
+          this.viewingDay = calculatedActiveDay;
         }
       }
     } catch (error) {
@@ -54,6 +60,7 @@ export class TaskEngine {
       }
     }
     
+    console.log(`TaskEngine: getCurrentActiveDay() calculated ${activeDay} (user.currentDay: ${this.user?.currentDay}, taskCompletions: ${this.taskCompletions.length})`);
     return activeDay;
   }
 
@@ -103,6 +110,7 @@ export class TaskEngine {
   // CRITICAL FIX: Add method to force sync viewing day with active day
   syncToActiveDay(): void {
     const activeDay = this.getCurrentActiveDay();
+    console.log(`TaskEngine: syncToActiveDay() - viewingDay: ${this.viewingDay} -> ${activeDay}, manualNavigation: ${this.manualNavigation}`);
     this.viewingDay = activeDay;
     this.manualNavigation = false;
   }
