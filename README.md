@@ -1,13 +1,19 @@
 # PeakForge PWA
 
-A progressive web app for wellness and fitness tracking with Supabase authentication.
+A progressive web app designed to help men naturally support their energy and vitality through personalized daily habits, skill-building exercises, and comprehensive wellness programs.
+
+## Latest Updates
+
+**Production Ready** - Supabase authentication and RLS policies have been optimized for production use.
 
 ## Features
 
-- **Authentication**: User sign-up and sign-in with Supabase
-- **Subscription Management**: Track user subscriptions and plans
-- **Local Data**: Tasks, skills, and progress stored locally on device
-- **PWA Features**: Offline support, install prompts, service worker
+- Progressive Web App (PWA) capabilities
+- Personalized onboarding flow
+- Skill tree progression system
+- Daily habit tracking
+- Subscription management via LemonSqueezy
+- Real-time progress tracking
 
 ## Supabase Setup
 
