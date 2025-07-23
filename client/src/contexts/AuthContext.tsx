@@ -95,110 +95,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const fetchUserProfile = async (supabaseUserId: string, userEmail?: string, retryCount = 0) => {
+  const fetchUserProfile = async (supabaseUserId: string, userEmail?: string) => {
     if (!isSupabaseConfigured) return;
     
-    console.log(`📥 PROFILE FETCH START (attempt ${retryCount + 1}):`, { userId: supabaseUserId, email: userEmail });
+    console.log(`🚀 FAST PROFILE FETCH:`, { userId: supabaseUserId, email: userEmail });
     
     try {
-      // Wait a bit for new users to ensure session is established
-      if (retryCount === 0) {
-        console.log('📥 Waiting for session to establish...');
-        await new Promise(resolve => setTimeout(resolve, 1500)); // Increased for mobile
+      // 1. IMMEDIATE: Try to restore from localStorage for instant UX
+      const cachedProfile = localStorage.getItem('peakforge-user');
+      if (cachedProfile) {
+        try {
+          const parsed = JSON.parse(cachedProfile);
+          if (parsed.id === supabaseUserId) {
+            console.log('⚡ Profile restored from cache:', parsed);
+            setUserProfile(parsed);
+            // Continue with fresh fetch in background but don't block UI
+            fetchProfileAndSubscriptionInBackground(supabaseUserId);
+            setLoading(false);
+            return;
+          }
+        } catch (e) {
+          console.warn('🗑️ Invalid cached profile, clearing');
+          localStorage.removeItem('peakforge-user');
+        }
       }
       
-      // Give more time for profile fetch and better error handling
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Profile fetch timeout')), 10000); // Increased timeout
-      });
+      // 2. FAST: Parallel fetch profile + subscription data with short timeout
+      console.log('📥 Fetching fresh profile + subscription data...');
       
-      console.log('📥 Executing profile query...');
-      const fetchPromise = supabase
+      const profilePromise = supabase
         .from('users')
         .select('*')
         .eq('id', supabaseUserId)
         .single();
       
-      let profile = null;
-      let error = null;
-      
-      try {
-        const result = await Promise.race([fetchPromise, timeoutPromise]) as any;
-        profile = result.data;
-        error = result.error;
-        console.log('📥 Profile query result:', { 
-          hasProfile: !!profile, 
-          hasError: !!error, 
-          errorCode: error?.code 
-        });
-      } catch (timeoutError) {
-        console.warn('⏰ Profile fetch timed out');
-        
-        // Retry twice for new users
-        if (retryCount < 2) {
-          console.log('🔄 Retrying profile fetch...');
-          return fetchUserProfile(supabaseUserId, userEmail, retryCount + 1);
-        }
-        
-        console.error('🚨 Profile fetch failed after retries');
-        setLoading(false);
-        return;
-      }
-
-      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
-        console.error('🚨 Error fetching user profile:', error);
-        console.error('🚨 Profile error details:', { 
-          code: error.code, 
-          message: error.message, 
-          details: error.details 
-        });
-        
-        // Retry twice for 406 errors (auth timing issues)
-        if ((error.code === '406' || error.code === 'PGRST301') && retryCount < 2) {
-          console.log('🔄 Retrying profile fetch due to auth timing...');
-          await new Promise(resolve => setTimeout(resolve, 1500));
-          return fetchUserProfile(supabaseUserId, userEmail, retryCount + 1);
-        }
-        
-        console.error('🚨 Profile fetch failed permanently');
-        setLoading(false);
-        return;
-      }
-
-      if (profile) {
-        console.log('✅ Profile loaded successfully:', { 
-          userId: profile.id, 
-          onboardingComplete: profile.onboarding_complete,
-          program: profile.program 
-        });
-        setUserProfile(profile);
-        // Save user to localStorage for faster restoration
-        localStorage.setItem('peakforge-user', JSON.stringify(profile));
-        console.log('📥 Starting subscription status fetch...');
-        await fetchSubscriptionStatus(profile.id);
-      } else {
-        console.warn('⚠️ No profile found for user');
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error('Error in fetchUserProfile:', error);
-      setLoading(false);
-    }
-  };
-
-  const fetchSubscriptionStatus = async (userId: string) => {
-    if (!isSupabaseConfigured) return;
-    
-    console.log('💳 SUBSCRIPTION FETCH START:', { userId });
-    
-    try {
-      // Create a timeout promise to prevent hanging (increased from 5 to 10 seconds)
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Subscription fetch timeout')), 10000);
-      });
-      
-      console.log('💳 Executing subscription query...');
-      const fetchPromise = supabase
+      const subscriptionPromise = supabase
         .from('user_subscriptions')
         .select(`
           *,
@@ -208,44 +139,77 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             interval
           )
         `)
-        .eq('user_id', userId)
+        .eq('user_id', supabaseUserId)
         .eq('status', 'active')
         .single();
       
-      const { data: subscription, error } = await Promise.race([fetchPromise, timeoutPromise]) as any;
-
-      console.log('💳 Subscription query result:', { 
-        hasSubscription: !!subscription, 
-        hasError: !!error, 
-        errorCode: error?.code 
-      });
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('🚨 Error fetching subscription:', error);
-        console.error('🚨 Subscription error details:', { 
-          code: error.code, 
-          message: error.message, 
-          details: error.details 
-        });
-        return;
-      }
-
-      if (subscription) {
-        console.log('✅ Active subscription found:', { 
-          plan: subscription.subscription_plans?.name, 
-          price: subscription.subscription_plans?.price,
-          status: subscription.status,
-          periodEnd: subscription.current_period_end 
-        });
-        setSubscription({
-          isSubscribed: true,
-          plan: subscription.subscription_plans?.name || null,
-          status: subscription.status,
-          currentPeriodEnd: subscription.current_period_end,
-          cancelAtPeriodEnd: subscription.cancel_at_period_end
-        });
+      // Use Promise.allSettled to get both results even if one fails
+      const results = await Promise.allSettled([
+        Promise.race([profilePromise, new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Profile timeout')), 3000)
+        )]),
+        Promise.race([subscriptionPromise, new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Subscription timeout')), 3000)
+        )])
+      ]);
+      
+      const profileResult = results[0];
+      const subscriptionResult = results[1];
+      
+      // Handle profile result
+      if (profileResult.status === 'fulfilled') {
+        const { data: profile, error: profileError } = profileResult.value as any;
+        
+        if (profile && !profileError) {
+          console.log('✅ Profile loaded successfully:', { 
+            userId: profile.id, 
+            onboardingComplete: profile.onboarding_complete,
+            program: profile.program 
+          });
+          setUserProfile(profile);
+          localStorage.setItem('peakforge-user', JSON.stringify(profile));
+        } else if (profileError?.code === 'PGRST116') {
+          console.log('👤 New user - no profile found');
+          setUserProfile(null);
+        } else {
+          console.error('❌ Profile fetch error:', profileError);
+          setUserProfile(null);
+        }
       } else {
-        console.log('⚠️ No active subscription found for user');
+        console.warn('⏰ Profile fetch timed out, treating as new user');
+        setUserProfile(null);
+      }
+      
+      // Handle subscription result
+      if (subscriptionResult.status === 'fulfilled') {
+        const { data: subscription, error: subError } = subscriptionResult.value as any;
+        
+        if (subscription && !subError) {
+          console.log('✅ Active subscription found:', { 
+            plan: subscription.subscription_plans?.name, 
+            price: subscription.subscription_plans?.price,
+            status: subscription.status,
+            periodEnd: subscription.current_period_end 
+          });
+          setSubscription({
+            isSubscribed: true,
+            plan: subscription.subscription_plans?.name || null,
+            status: subscription.status,
+            currentPeriodEnd: subscription.current_period_end,
+            cancelAtPeriodEnd: subscription.cancel_at_period_end
+          });
+        } else {
+          console.log('💳 No active subscription found');
+          setSubscription({
+            isSubscribed: false,
+            plan: null,
+            status: null,
+            currentPeriodEnd: null,
+            cancelAtPeriodEnd: false
+          });
+        }
+      } else {
+        console.warn('⏰ Subscription fetch timed out');
         setSubscription({
           isSubscribed: false,
           plan: null,
@@ -254,10 +218,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           cancelAtPeriodEnd: false
         });
       }
+      
+      setLoading(false);
+      
     } catch (error) {
-      console.error('🚨 Error in fetchSubscriptionStatus:', error);
-      console.error('🚨 Exception details:', error instanceof Error ? error.stack : 'No stack trace');
-      // Set default subscription state on error
+      console.error('🚨 Critical error in profile fetch:', error);
+      setUserProfile(null);
       setSubscription({
         isSubscribed: false,
         plan: null,
@@ -265,8 +231,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         currentPeriodEnd: null,
         cancelAtPeriodEnd: false
       });
+      setLoading(false);
     }
   };
+  
+  // Background refresh function for cache updates
+  const fetchProfileAndSubscriptionInBackground = async (supabaseUserId: string) => {
+    try {
+      console.log('🔄 Background refresh of profile + subscription...');
+      
+      const [profileResult, subscriptionResult] = await Promise.allSettled([
+        supabase.from('users').select('*').eq('id', supabaseUserId).single(),
+        supabase.from('user_subscriptions')
+          .select('*, subscription_plans(name, price, interval)')
+          .eq('user_id', supabaseUserId)
+          .eq('status', 'active')
+          .single()
+      ]);
+      
+      if (profileResult.status === 'fulfilled' && profileResult.value.data) {
+        const profile = profileResult.value.data;
+        setUserProfile(profile);
+        localStorage.setItem('peakforge-user', JSON.stringify(profile));
+      }
+      
+      if (subscriptionResult.status === 'fulfilled' && subscriptionResult.value.data) {
+        const subscription = subscriptionResult.value.data;
+        setSubscription({
+          isSubscribed: true,
+          plan: subscription.subscription_plans?.name || null,
+          status: subscription.status,
+          currentPeriodEnd: subscription.current_period_end,
+          cancelAtPeriodEnd: subscription.cancel_at_period_end
+        });
+      }
+      
+    } catch (error) {
+      console.warn('🔄 Background refresh failed:', error);
+    }
+  };
+
+
 
   const signUp = async (email: string, password: string, userData: { name: string; program: 'beginner' | 'intermediate' | 'advanced' }) => {
     console.log('🔐 SIGNUP FLOW START:', { email, name: userData.name, program: userData.program });
@@ -481,7 +486,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!user) return;
 
     try {
-      await fetchSubscriptionStatus(user.id);
+      await fetchProfileAndSubscriptionInBackground(user.id);
     } catch (error) {
       console.error('Error in refreshSubscription:', error);
     }

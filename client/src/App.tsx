@@ -71,13 +71,13 @@ function AuthenticatedApp() {
     });
   }, [user, userProfile?.onboarding_complete, subscription.isSubscribed, isInOnboarding, currentPath, isSubscriptionPath]);
 
-  // Extended loading to prevent flashing between states
+  // Minimal loading delay since we now use localStorage caching
   useEffect(() => {
     if (!loading) {
-      // Add a small delay after auth loading completes to ensure smooth transition
+      // Very short delay for smooth transition, cache makes this fast
       const timer = setTimeout(() => {
         setInitialLoadComplete(true);
-      }, 500);
+      }, 100);
       return () => clearTimeout(timer);
     }
   }, [loading]);
