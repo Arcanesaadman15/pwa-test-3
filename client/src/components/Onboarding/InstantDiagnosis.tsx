@@ -80,7 +80,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
   const StatusIcon = status.icon;
 
   return (
-    <div className="min-h-screen bg-[var(--ios-background)] text-black">
+    <div className="min-h-screen bg-black text-white">
       {/* Enhanced background effects */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
@@ -162,7 +162,7 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
-              className={`bg-gray-900 border border-gray-700 rounded-2xl md:rounded-3xl p-6 md:p-8 mb-6 md:mb-8 relative overflow-hidden shadow-2xl`}
+              className="bg-gray-900 border border-gray-700 rounded-2xl md:rounded-3xl p-6 md:p-8 mb-6 md:mb-8 relative overflow-hidden shadow-2xl"
             >
               {/* Enhanced background shimmer */}
               <motion.div
