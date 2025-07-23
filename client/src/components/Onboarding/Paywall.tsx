@@ -115,7 +115,7 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--ios-background)] text-black overflow-y-auto ios-safe-areas">
+    <div className="min-h-screen bg-black text-white overflow-y-auto ios-safe-areas">
       <div className="max-w-2xl mx-auto px-4 py-16">
         
         {/* Hero Section */}

@@ -10,7 +10,7 @@ interface SocialProofProps {
 
 export function SocialProof({ onComplete }: SocialProofProps) {
   return (
-    <div className="min-h-screen bg-[var(--ios-background)] text-black">
+    <div className="min-h-screen bg-black text-white">
       <div className="max-w-2xl mx-auto px-4 pt-8 pb-24">
         
         {/* Hero Section */}
