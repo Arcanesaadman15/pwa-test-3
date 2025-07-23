@@ -43,6 +43,7 @@ function Router() {
 function AuthenticatedApp() {
   const { user, userProfile, subscription, loading, signOut } = useAuth();
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+  const [isInOnboarding, setIsInOnboarding] = useState(false);
   const { 
     isInstallable, 
     promptInstall, 
@@ -57,6 +58,18 @@ function AuthenticatedApp() {
   // Check if current path is subscription-related (allow access even without active subscription)
   const currentPath = window.location.pathname;
   const isSubscriptionPath = currentPath.startsWith('/subscription');
+
+  // Debug logging for the skipping issue
+  useEffect(() => {
+    console.log('🔄 App state changed:', {
+      hasUser: !!user,
+      onboardingComplete: userProfile?.onboarding_complete,
+      isSubscribed: subscription.isSubscribed,
+      isInOnboarding,
+      currentPath,
+      isSubscriptionPath
+    });
+  }, [user, userProfile?.onboarding_complete, subscription.isSubscribed, isInOnboarding, currentPath, isSubscriptionPath]);
 
   // Extended loading to prevent flashing between states
   useEffect(() => {
@@ -144,16 +157,26 @@ function AuthenticatedApp() {
   // STEP 3: User is authenticated, check if onboarding is complete
   // For existing users logging in: userProfile.onboarding_complete should be true -> skip onboarding
   // For new users signing up: userProfile.onboarding_complete should be false -> show onboarding
-  if (!userProfile?.onboarding_complete) {
+  if (!userProfile?.onboarding_complete || isInOnboarding) {
+    // Mark that we're entering onboarding to prevent interruption
+    if (!isInOnboarding && !userProfile?.onboarding_complete) {
+      console.log('🎯 Entering onboarding flow');
+      setIsInOnboarding(true);
+    }
+    
     return <Onboarding onComplete={async (data) => {
+      console.log('🎯 Onboarding completed, marking as not in onboarding');
+      setIsInOnboarding(false);
       // The onboarding component already handles updating the profile with onboarding_complete: true
       // React will re-render this component when userProfile updates
     }} />;
   }
 
   // STEP 4: User is authenticated and onboarded, check subscription status
-  // Allow access to subscription pages even without active subscription (for success/cancel/manage pages)
-  if (!subscription.isSubscribed) {
+  // Only redirect to pricing if they completed onboarding AND aren't on subscription-related pages
+  // AND they're not currently in the onboarding flow
+  if (!subscription.isSubscribed && !isSubscriptionPath && !isInOnboarding) {
+    console.log('🚨 Redirecting to pricing page - user completed onboarding but no subscription');
     return (
       <div>
         <PricingPage />
