@@ -45,7 +45,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     description: 'Premium wellness program with all features unlocked',
     price: 499, // $4.99 in cents
     interval: 'month',
-    variantId: '585431', // $4.99/month Pro plan variant ID
+    variantId: '913683', // $4.99/month Pro plan variant ID (LIVE)
     popular: true,
     features: [
       'Complete wellness program access',

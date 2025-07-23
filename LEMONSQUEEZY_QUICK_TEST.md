@@ -77,7 +77,7 @@ If you want to test the UI flow without LemonSqueezy:
 
 Your app is currently set up with:
 - **Store ID:** Uses your `VITE_LEMONSQUEEZY_STORE_ID`
-- **Variant ID:** `585431` (Pro plan at $4.99/month)
+- **Variant ID:** `913683` (Pro plan at $4.99/month) - LIVE
 - **Test Mode:** Automatically enabled in development
 
 ## 🔧 Troubleshooting
@@ -91,7 +91,7 @@ Your app is currently set up with:
 - Generate new API key in LemonSqueezy dashboard
 
 ### Error: "Invalid variant ID"
-- Variant `585431` doesn't exist in your store
+- Variant `913683` doesn't exist in your store
 - Create a product in LemonSqueezy and update the variant ID
 
 ### Payment button does nothing

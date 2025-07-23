@@ -104,12 +104,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Wait a bit for new users to ensure session is established
       if (retryCount === 0) {
         console.log('📥 Waiting for session to establish...');
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1500)); // Increased for mobile
       }
       
       // Give more time for profile fetch and better error handling
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Profile fetch timeout')), 8000);
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 10000); // Increased timeout
       });
       
       console.log('📥 Executing profile query...');
@@ -134,8 +134,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (timeoutError) {
         console.warn('⏰ Profile fetch timed out');
         
-        // Retry once for new users
-        if (retryCount < 1) {
+        // Retry twice for new users
+        if (retryCount < 2) {
           console.log('🔄 Retrying profile fetch...');
           return fetchUserProfile(supabaseUserId, userEmail, retryCount + 1);
         }
@@ -153,10 +153,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           details: error.details 
         });
         
-        // Retry once for 406 errors (auth timing issues)
-        if ((error.code === '406' || error.code === 'PGRST301') && retryCount < 1) {
+        // Retry twice for 406 errors (auth timing issues)
+        if ((error.code === '406' || error.code === 'PGRST301') && retryCount < 2) {
           console.log('🔄 Retrying profile fetch due to auth timing...');
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 1500));
           return fetchUserProfile(supabaseUserId, userEmail, retryCount + 1);
         }
         

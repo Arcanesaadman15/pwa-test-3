@@ -321,7 +321,7 @@ async function handleSubscriptionCreated(data) {
     // Map variant ID to plan name
     let planName = 'Basic'; // Default fallback
     
-          if (variantId === '585431') { // $4.99/month Pro plan variant ID
+          if (variantId === '913683') { // $4.99/month Pro plan variant ID (LIVE)
       planName = 'Pro';
     }
 
