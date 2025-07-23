@@ -101,12 +101,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       // Wait a bit for new users to ensure session is established
       if (retryCount === 0) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
       
-      // Simple, fast profile fetch with 5-second timeout
+      // Give more time for profile fetch and better error handling
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Profile fetch timeout')), 5000);
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 8000);
       });
       
       const fetchPromise = supabase

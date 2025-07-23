@@ -101,11 +101,11 @@ export class LemonSqueezyService {
   }
 
   static async createCheckout(options: CheckoutOptions): Promise<{ checkoutUrl?: string; error?: string }> {
-    // Mock mode for testing (remove this when LemonSqueezy is fully configured)
-    const MOCK_MODE = import.meta.env.VITE_LEMONSQUEEZY_MOCK_MODE === 'true' || !this.isConfigured();
+    // Check if we're in explicit mock mode only (disable auto-mock for production)
+    const MOCK_MODE = import.meta.env.VITE_LEMONSQUEEZY_MOCK_MODE === 'true';
     
     if (MOCK_MODE) {
-      // Simulate checkout URL - opens a test page
+      console.log('🧪 Running in mock mode - checkout will redirect to success page');
       return { 
         checkoutUrl: `${APP_URL}/subscription/success?mock=true&plan=${options.variantId}`,
         error: undefined 

@@ -36,7 +36,11 @@ export default async function handler(req, res) {
     console.log('  Variant ID:', variantId);
     console.log('  User ID:', userId);
     console.log('  User Email:', userEmail);
+    console.log('  User Name:', userName);
     console.log('  Store ID for checkout:', LEMONSQUEEZY_STORE_ID);
+    console.log('  Success URL:', successUrl);
+    console.log('  Cancel URL:', cancelUrl);
+    console.log('  Request body keys:', Object.keys(req.body));
 
     if (!variantId || !userId || !userEmail) {
       console.error('❌ Missing required fields:', { variantId: !!variantId, userId: !!userId, userEmail: !!userEmail });
