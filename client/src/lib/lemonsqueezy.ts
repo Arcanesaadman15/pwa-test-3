@@ -101,6 +101,14 @@ export class LemonSqueezyService {
   }
 
   static async createCheckout(options: CheckoutOptions): Promise<{ checkoutUrl?: string; error?: string }> {
+    console.log('🛒 CHECKOUT CREATION START:', { 
+      variantId: options.variantId, 
+      userId: options.userId, 
+      userEmail: options.userEmail,
+      userName: options.userName,
+      isConfigured: this.isConfigured()
+    });
+
     // Check if we're in explicit mock mode only (disable auto-mock for production)
     const MOCK_MODE = import.meta.env.VITE_LEMONSQUEEZY_MOCK_MODE === 'true';
     
@@ -113,34 +121,55 @@ export class LemonSqueezyService {
     }
 
     if (!this.isConfigured()) {
+      console.error('🚨 LemonSqueezy not configured:', {
+        hasApiKey: !!LEMONSQUEEZY_API_KEY,
+        hasStoreId: !!LEMONSQUEEZY_STORE_ID,
+        apiKeyPrefix: LEMONSQUEEZY_API_KEY ? LEMONSQUEEZY_API_KEY.substring(0, 10) + '...' : 'none',
+        storeId: LEMONSQUEEZY_STORE_ID
+      });
       return { error: 'LemonSqueezy is not configured' };
     }
 
     try {
+      const checkoutData = {
+        variantId: options.variantId,
+        userId: options.userId,
+        userEmail: options.userEmail,
+        userName: options.userName,
+        successUrl: options.successUrl || `${APP_URL}/subscription/success`,
+        cancelUrl: options.cancelUrl || `${APP_URL}/subscription/cancel`,
+      };
+
+      console.log('🛒 Sending checkout request:', { 
+        url: `${API_BASE_URL}/api/lemonsqueezy/checkout`,
+        data: checkoutData 
+      });
+
       const response = await fetch(`${API_BASE_URL}/api/lemonsqueezy/checkout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          variantId: options.variantId,
-          userId: options.userId,
-          userEmail: options.userEmail,
-          userName: options.userName,
-          successUrl: options.successUrl || `${APP_URL}/subscription/success`,
-          cancelUrl: options.cancelUrl || `${APP_URL}/subscription/cancel`,
-        }),
+        body: JSON.stringify(checkoutData),
       });
+
+      console.log('🛒 Checkout response status:', response.status, response.statusText);
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('🚨 Checkout API error:', errorData);
         throw new Error(errorData.error || 'Failed to create checkout');
       }
 
       const data = await response.json();
+      console.log('✅ Checkout created successfully:', { 
+        checkoutUrl: data.checkoutUrl,
+        checkoutId: data.checkoutId 
+      });
       return { checkoutUrl: data.checkoutUrl };
     } catch (error) {
-      console.error('Checkout creation error:', error);
+      console.error('🚨 Checkout creation error:', error);
+      console.error('🚨 Error details:', error instanceof Error ? error.stack : 'No stack trace');
       return { error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }

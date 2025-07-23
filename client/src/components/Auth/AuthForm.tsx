@@ -67,6 +67,12 @@ export function AuthForm({ onComplete, initialData }: AuthFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('🔐 AUTH FORM SUBMIT:', { 
+      isSignUp, 
+      email: formData.email, 
+      hasName: !!formData.name,
+      program: initialData?.program 
+    });
     
     if (!validateForm()) return;
 
@@ -77,20 +83,25 @@ export function AuthForm({ onComplete, initialData }: AuthFormProps) {
       let result;
       
       if (isSignUp) {
+        console.log('🔐 Starting signup process...');
         result = await signUp(formData.email, formData.password, {
           name: formData.name,
           program: (initialData?.program || 'beginner') as 'beginner' | 'intermediate' | 'advanced'
         });
       } else {
+        console.log('🔐 Starting signin process...');
         result = await signIn(formData.email, formData.password);
       }
 
       if (result.error) {
+        console.error('🚨 Auth failed:', result.error);
         setError(result.error.message || 'An error occurred');
       } else {
+        console.log('✅ Auth completed successfully, calling onComplete...');
         onComplete();
       }
     } catch (err) {
+      console.error('🚨 Auth form exception:', err);
       setError('An unexpected error occurred');
     } finally {
       setLoading(false);

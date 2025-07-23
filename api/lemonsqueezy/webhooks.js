@@ -64,9 +64,9 @@ const verifyWebhookSignature = (req, res, next) => {
 // Webhook handler functions
 async function handleSubscriptionCreated(data, meta) {
   try {
-    console.log('🔍 Processing subscription_created webhook...');
-    console.log('  Data received:', JSON.stringify(data, null, 2));
-    console.log('  Meta received:', JSON.stringify(meta, null, 2));
+    console.log('💳 SUBSCRIPTION CREATION WEBHOOK START');
+    console.log('💳 Data received:', JSON.stringify(data, null, 2));
+    console.log('💳 Meta received:', JSON.stringify(meta, null, 2));
     
     // LemonSqueezy structure: data.attributes contains subscription info
     const attributes = data.attributes;
@@ -295,9 +295,16 @@ async function handleSubscriptionUnpaused(data) {
 
 // Vercel serverless function handler
 export default async function handler(req, res) {
-  console.log('🔔 Webhook request received:', req.method, req.url);
+  console.log('🔔 WEBHOOK REQUEST RECEIVED:', { 
+    method: req.method, 
+    url: req.url,
+    timestamp: new Date().toISOString(),
+    headers: Object.keys(req.headers),
+    hasSignature: !!req.headers['x-signature']
+  });
   
   if (req.method !== 'POST') {
+    console.error('🚨 Invalid webhook method:', req.method);
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
@@ -305,21 +312,32 @@ export default async function handler(req, res) {
     // Parse JSON from raw body
     let payload;
     if (typeof req.body === 'string') {
+      console.log('🔔 Parsing string body...');
       payload = JSON.parse(req.body);
     } else if (Buffer.isBuffer(req.body)) {
+      console.log('🔔 Parsing buffer body...');
       payload = JSON.parse(req.body.toString('utf8'));
     } else {
+      console.log('🔔 Using parsed JSON body...');
       payload = req.body;
     }
     
-    console.log('🔔 Raw webhook payload received:');
-    console.log(JSON.stringify(payload, null, 2));
+    console.log('🔔 WEBHOOK PAYLOAD RECEIVED:');
+    console.log('🔔 Event name:', payload.meta?.event_name);
+    console.log('🔔 Data ID:', payload.data?.id);
+    console.log('🔔 Custom data:', payload.meta?.custom_data);
+    console.log('🔔 Full payload:', JSON.stringify(payload, null, 2));
     
     // LemonSqueezy webhook structure: { meta: { event_name }, data: { ... } }
     const eventName = payload.meta?.event_name;
     const eventData = payload.data;
 
-    console.log('🔔 Extracted event:', eventName, 'data ID:', eventData?.id);
+    console.log('🔔 PROCESSING EVENT:', { 
+      eventName, 
+      dataId: eventData?.id,
+      variantId: eventData?.attributes?.variant_id,
+      customData: payload.meta?.custom_data
+    });
 
     if (!eventName) {
       console.error('❌ No event_name found in webhook payload');

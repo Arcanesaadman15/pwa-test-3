@@ -98,9 +98,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchUserProfile = async (supabaseUserId: string, userEmail?: string, retryCount = 0) => {
     if (!isSupabaseConfigured) return;
     
+    console.log(`📥 PROFILE FETCH START (attempt ${retryCount + 1}):`, { userId: supabaseUserId, email: userEmail });
+    
     try {
       // Wait a bit for new users to ensure session is established
       if (retryCount === 0) {
+        console.log('📥 Waiting for session to establish...');
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
       
@@ -109,6 +112,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setTimeout(() => reject(new Error('Profile fetch timeout')), 8000);
       });
       
+      console.log('📥 Executing profile query...');
       const fetchPromise = supabase
         .from('users')
         .select('*')
@@ -122,39 +126,58 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const result = await Promise.race([fetchPromise, timeoutPromise]) as any;
         profile = result.data;
         error = result.error;
+        console.log('📥 Profile query result:', { 
+          hasProfile: !!profile, 
+          hasError: !!error, 
+          errorCode: error?.code 
+        });
       } catch (timeoutError) {
-        console.warn('Profile fetch timed out');
+        console.warn('⏰ Profile fetch timed out');
         
         // Retry once for new users
         if (retryCount < 1) {
-          console.log('Retrying profile fetch...');
+          console.log('🔄 Retrying profile fetch...');
           return fetchUserProfile(supabaseUserId, userEmail, retryCount + 1);
         }
         
+        console.error('🚨 Profile fetch failed after retries');
         setLoading(false);
         return;
       }
 
       if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
-        console.error('Error fetching user profile:', error);
+        console.error('🚨 Error fetching user profile:', error);
+        console.error('🚨 Profile error details:', { 
+          code: error.code, 
+          message: error.message, 
+          details: error.details 
+        });
         
         // Retry once for 406 errors (auth timing issues)
         if ((error.code === '406' || error.code === 'PGRST301') && retryCount < 1) {
-          console.log('Retrying profile fetch due to auth timing...');
+          console.log('🔄 Retrying profile fetch due to auth timing...');
           await new Promise(resolve => setTimeout(resolve, 1000));
           return fetchUserProfile(supabaseUserId, userEmail, retryCount + 1);
         }
         
+        console.error('🚨 Profile fetch failed permanently');
         setLoading(false);
         return;
       }
 
       if (profile) {
+        console.log('✅ Profile loaded successfully:', { 
+          userId: profile.id, 
+          onboardingComplete: profile.onboarding_complete,
+          program: profile.program 
+        });
         setUserProfile(profile);
         // Save user to localStorage for faster restoration
         localStorage.setItem('peakforge-user', JSON.stringify(profile));
+        console.log('📥 Starting subscription status fetch...');
         await fetchSubscriptionStatus(profile.id);
       } else {
+        console.warn('⚠️ No profile found for user');
         setLoading(false);
       }
     } catch (error) {
@@ -166,13 +189,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchSubscriptionStatus = async (userId: string) => {
     if (!isSupabaseConfigured) return;
     
+    console.log('💳 SUBSCRIPTION FETCH START:', { userId });
+    
     try {
-      
       // Create a timeout promise to prevent hanging (increased from 5 to 10 seconds)
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('Subscription fetch timeout')), 10000);
       });
       
+      console.log('💳 Executing subscription query...');
       const fetchPromise = supabase
         .from('user_subscriptions')
         .select(`
@@ -189,12 +214,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       const { data: subscription, error } = await Promise.race([fetchPromise, timeoutPromise]) as any;
 
+      console.log('💳 Subscription query result:', { 
+        hasSubscription: !!subscription, 
+        hasError: !!error, 
+        errorCode: error?.code 
+      });
+
       if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching subscription:', error);
+        console.error('🚨 Error fetching subscription:', error);
+        console.error('🚨 Subscription error details:', { 
+          code: error.code, 
+          message: error.message, 
+          details: error.details 
+        });
         return;
       }
 
       if (subscription) {
+        console.log('✅ Active subscription found:', { 
+          plan: subscription.subscription_plans?.name, 
+          price: subscription.subscription_plans?.price,
+          status: subscription.status,
+          periodEnd: subscription.current_period_end 
+        });
         setSubscription({
           isSubscribed: true,
           plan: subscription.subscription_plans?.name || null,
@@ -203,6 +245,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           cancelAtPeriodEnd: subscription.cancel_at_period_end
         });
       } else {
+        console.log('⚠️ No active subscription found for user');
         setSubscription({
           isSubscribed: false,
           plan: null,
@@ -212,7 +255,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
       }
     } catch (error) {
-      console.error('Error in fetchSubscriptionStatus:', error);
+      console.error('🚨 Error in fetchSubscriptionStatus:', error);
+      console.error('🚨 Exception details:', error instanceof Error ? error.stack : 'No stack trace');
       // Set default subscription state on error
       setSubscription({
         isSubscribed: false,
@@ -225,9 +269,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signUp = async (email: string, password: string, userData: { name: string; program: 'beginner' | 'intermediate' | 'advanced' }) => {
+    console.log('🔐 SIGNUP FLOW START:', { email, name: userData.name, program: userData.program });
+    
     try {
-      
       // Step 1: Create the auth user with metadata
+      console.log('🔐 Step 1: Creating Supabase auth user...');
       const signUpResult = await supabase.auth.signUp({
         email,
         password,
@@ -242,6 +288,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (signUpResult.error) {
         console.error('🚨 Auth signup failed:', signUpResult.error);
+        console.error('🚨 Error details:', { code: signUpResult.error.code, message: signUpResult.error.message });
         return { error: signUpResult.error };
       }
 
@@ -250,21 +297,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error: new Error('No user returned from signup') };
       }
 
-      
+      console.log('✅ Step 1: Auth user created successfully:', {
+        userId: signUpResult.data.user.id,
+        email: signUpResult.data.user.email,
+        emailConfirmed: signUpResult.data.user.email_confirmed_at,
+        sessionExists: !!signUpResult.data.session
+      });
+
       // Step 2: Create the profile
+      console.log('🔐 Step 2: Creating user profile in database...');
       try {
         await createUserProfile(signUpResult.data.user.id, {
           name: userData.name,
           program: userData.program,
           email
         });
+        console.log('✅ Step 2: User profile created successfully');
       } catch (profileError) {
-        console.warn('⚠️ Profile creation failed, but auth user exists:', profileError);
+        console.error('🚨 Step 2: Profile creation failed:', profileError);
+        console.warn('⚠️ Profile creation failed, but auth user exists - user can retry login');
       }
 
+      console.log('🎉 SIGNUP FLOW COMPLETE: User can now login');
       return { error: null };
     } catch (error) {
       console.error('🚨 Exception in signUp:', error);
+      console.error('🚨 Exception stack:', error instanceof Error ? error.stack : 'No stack trace');
       return { error };
     }
   };
@@ -313,8 +371,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const createUserProfile = async (supabaseUserId: string, userData: { name: string; program: 'beginner' | 'intermediate' | 'advanced'; email: string }) => {
+    console.log('👤 PROFILE CREATION START:', { userId: supabaseUserId, email: userData.email, program: userData.program });
+    
     try {
-      
       // Create profile directly with correct onboarding status
       const profileData = {
         id: supabaseUserId,
@@ -334,6 +393,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         updated_at: new Date().toISOString()
       };
 
+      console.log('👤 Inserting profile data:', { 
+        userId: profileData.id, 
+        program: profileData.program, 
+        onboardingComplete: profileData.onboarding_complete 
+      });
+
       const { data, error } = await supabase
         .from('users')
         .insert(profileData)
@@ -342,8 +407,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) {
         console.error('🚨 Error creating user profile:', error);
+        console.error('🚨 Profile error details:', { 
+          code: error.code, 
+          message: error.message, 
+          details: error.details,
+          hint: error.hint 
+        });
         throw error;
       }
+
+      console.log('✅ Profile created successfully:', { 
+        userId: data.id, 
+        onboardingComplete: data.onboarding_complete,
+        program: data.program 
+      });
 
       
       // CRITICAL CHECK: If onboarding_complete is still true, something is wrong
