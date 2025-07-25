@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { LIFESTYLE_SLIDERS } from '@/data/onboardingData';
 import { Button } from '@/components/ui/button';
+import { Slider } from '@/components/ui/slider';
 
 interface LifestyleSlidersProps {
   onComplete: (data: {
@@ -20,25 +21,22 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
 
   const [currentSlider, setCurrentSlider] = useState(0);
   const [hasInteracted, setHasInteracted] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
 
-  const handleSliderChange = (sliderId: string, value: number) => {
-    setValues(prev => ({ ...prev, [sliderId]: value }));
+  const handleSliderChange = (sliderId: string, value: number[]) => {
+    setValues(prev => ({ ...prev, [sliderId]: value[0] }));
     setHasInteracted(true);
   };
 
   // Auto-advance after user interaction (delayed)
   useEffect(() => {
-    if (hasInteracted && !isDragging) {
+    if (hasInteracted) {
       const timer = setTimeout(() => {
         setHasInteracted(false);
-        // Optional: could auto-advance here
-        // goNext();
       }, 2000);
       
       return () => clearTimeout(timer);
     }
-  }, [hasInteracted, isDragging]);
+  }, [hasInteracted]);
 
   const goNext = () => {
     if (currentSlider < LIFESTYLE_SLIDERS.length - 1) {
@@ -159,7 +157,7 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
       >
         <div className="flex items-center justify-between mb-6">
           <motion.div 
-            className="text-sm text-gray-400 font-medium"
+            className="text-sm text-gray-300 font-medium"
             key={`slider-${currentSlider}`}
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
@@ -168,7 +166,7 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
             {currentSlider + 1} of {LIFESTYLE_SLIDERS.length}
           </motion.div>
           <motion.div 
-            className="text-sm text-gray-400 font-medium"
+            className="text-sm text-gray-300 font-medium"
             animate={{ scale: [1, 1.05, 1] }}
             transition={{ duration: 0.5 }}
           >
@@ -232,7 +230,7 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
           >
             <motion.div 
               className="text-5xl font-bold text-white mb-2"
-              animate={{ scale: isDragging ? 1.1 : 1 }}
+              animate={{ scale: hasInteracted ? 1.05 : 1 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
             >
               {currentValue}
@@ -261,7 +259,7 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
             </motion.div>
           </motion.div>
 
-          {/* Enhanced Slider */}
+          {/* Enhanced Slider using Radix UI */}
           <motion.div 
             className="max-w-lg mx-auto w-full mb-8"
             initial={{ opacity: 0, y: 30 }}
@@ -269,90 +267,23 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
             transition={{ delay: 0.4, duration: 0.6 }}
           >
             <div className="relative px-6">
-              {/* Slider track with enhanced styling */}
-              <div className="w-full h-6 bg-gray-700/60 rounded-full relative overflow-hidden backdrop-blur-sm border border-gray-600/50">
-                {/* Active track with gradient */}
-                <motion.div
-                  className={`h-full bg-gradient-to-r ${getSliderColor()} rounded-full shadow-lg relative`}
-                  style={{ 
-                    width: `${((currentValue - slider.min) / (slider.max - slider.min)) * 100}%` 
-                  }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
-                >
-                  {/* Inner shine effect */}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-                    animate={{ x: [-100, 200] }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 1
-                    }}
-                  />
-                </motion.div>
-              </div>
-              
-              {/* Enhanced Slider thumb - properly constrained */}
-              <motion.div
-                className="absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 cursor-pointer z-20"
-                style={{ 
-                  left: `calc(${((currentValue - slider.min) / (slider.max - slider.min)) * 100}%)`,
-                  width: '40px',
-                  height: '40px'
-                }}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                onMouseDown={() => setIsDragging(true)}
-                onMouseUp={() => setIsDragging(false)}
-                onTouchStart={() => setIsDragging(true)}
-                onTouchEnd={() => setIsDragging(false)}
+              <div 
+                className={`lifestyle-slider ${getSliderColor()}`}
               >
-                <motion.div 
-                  className="w-10 h-10 bg-white rounded-full shadow-xl border-4 border-gray-800 relative overflow-hidden flex items-center justify-center"
-                  animate={{
-                    boxShadow: isDragging 
-                      ? "0 0 0 8px rgba(59, 130, 246, 0.3)" 
-                      : "0 0 0 0px rgba(59, 130, 246, 0.3)"
-                  }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {/* Inner glow */}
-                  <div className={`absolute inset-2 bg-gradient-to-br ${getSliderColor()} rounded-full opacity-20`} />
-                  
-                  {/* Center dot */}
-                  <motion.div
-                    className={`w-3 h-3 bg-gradient-to-r ${getSliderColor()} rounded-full`}
-                    animate={{
-                      scale: isDragging ? [1, 1.5, 1] : 1
-                    }}
-                    transition={{
-                      duration: 0.3,
-                      repeat: isDragging ? Infinity : 0
-                    }}
-                  />
-                </motion.div>
-              </motion.div>
-              
-              {/* Improved range input for better accessibility and interaction */}
-              <input
-                type="range"
-                min={slider.min}
-                max={slider.max}
-                value={currentValue}
-                onChange={(e) => handleSliderChange(slider.id, parseInt(e.target.value))}
-                onMouseDown={() => setIsDragging(true)}
-                onMouseUp={() => setIsDragging(false)}
-                onTouchStart={() => setIsDragging(true)}
-                onTouchEnd={() => setIsDragging(false)}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30"
-                style={{ margin: 0, padding: 0 }}
-              />
+                <Slider
+                  value={[currentValue]}
+                  onValueChange={(value) => handleSliderChange(slider.id, value)}
+                  min={slider.min}
+                  max={slider.max}
+                  step={slider.id === 'dailySteps' ? 100 : 1}
+                  className="w-full lifestyle-slider-component"
+                />
+              </div>
             </div>
             
             {/* Min/Max labels with better styling */}
             <motion.div 
-              className="flex justify-between mt-6 text-sm text-gray-500 px-6"
+              className="flex justify-between mt-6 text-sm text-gray-400 px-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.4 }}
@@ -382,7 +313,7 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
           </motion.div>
         </div>
 
-        {/* Navigation buttons */}
+        {/* Navigation buttons with improved visibility */}
         <motion.div 
           className="flex justify-between items-center mt-12 px-4"
           initial={{ opacity: 0, y: 20 }}
@@ -393,9 +324,9 @@ export function LifestyleSliders({ onComplete }: LifestyleSlidersProps) {
             onClick={goBack}
             disabled={currentSlider === 0}
             variant="outline"
-            className="px-6 py-3 bg-gray-900/60 border-gray-700 hover:bg-gray-800/60 hover:border-gray-600 
+            className="px-6 py-3 bg-gray-800/80 border-gray-600 hover:bg-gray-700/80 hover:border-gray-500 
                      disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300
-                     backdrop-blur-sm shadow-lg hover:shadow-xl"
+                     backdrop-blur-sm shadow-lg hover:shadow-xl text-gray-200 hover:text-white"
           >
             <motion.span
               whileHover={{ x: -2 }}

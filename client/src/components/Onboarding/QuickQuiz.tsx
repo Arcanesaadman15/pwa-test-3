@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QUICK_QUIZ_QUESTIONS } from '@/data/onboardingData';
 import { OptionCard, OptionTitle, OptionSubtitle } from '@/components/ui/option-card';
+import { ChevronLeft } from 'lucide-react';
 
 interface QuickQuizProps {
   onComplete: (data: {
@@ -39,6 +40,14 @@ export function QuickQuiz({ onComplete }: QuickQuizProps) {
         onComplete(newAnswers as any);
       }
     }, 600); // Slightly longer for better visual feedback
+  };
+
+  const handleBack = () => {
+    if (currentQuestion > 0 && !isTransitioning) {
+      setCurrentQuestion(prev => prev - 1);
+      const previousQuestionId = QUICK_QUIZ_QUESTIONS[currentQuestion - 1].id;
+      setSelectedOption(answers[previousQuestionId] || '');
+    }
   };
 
   const progress = ((currentQuestion + 1) / QUICK_QUIZ_QUESTIONS.length) * 100;
@@ -83,23 +92,41 @@ export function QuickQuiz({ onComplete }: QuickQuizProps) {
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <div className="flex items-center justify-between mb-6">
-          <motion.div 
-            className="text-sm text-gray-400 font-medium"
-            key={`question-${currentQuestion}`}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            Question {currentQuestion + 1} of {QUICK_QUIZ_QUESTIONS.length}
-          </motion.div>
-          <motion.div 
-            className="text-sm text-gray-400 font-medium"
-            animate={{ scale: [1, 1.05, 1] }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            key={`progress-${Math.round(progress)}`}
-          >
-            {Math.round(progress)}% complete
-          </motion.div>
+          {currentQuestion > 0 && (
+            <motion.button
+              onClick={handleBack}
+              disabled={isTransitioning}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-800/60 border border-gray-700/50 hover:bg-gray-700/60 hover:border-gray-600/50 transition-all duration-200 backdrop-blur-sm shadow-lg text-gray-200 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              whileHover={{ scale: 1.02, x: -2 }}
+              whileTap={{ scale: 0.98 }}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ChevronLeft className="w-4 h-4" />
+              <span className="text-sm font-medium">Back</span>
+            </motion.button>
+          )}
+          <div className="flex-1 text-center">
+            <motion.div 
+              className="text-sm text-gray-300 font-medium"
+              key={`question-${currentQuestion}`}
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              Question {currentQuestion + 1} of {QUICK_QUIZ_QUESTIONS.length}
+            </motion.div>
+            <motion.div 
+              className="text-xs text-gray-400 mt-1"
+              animate={{ scale: [1, 1.02, 1] }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              key={`progress-${Math.round(progress)}`}
+            >
+              {Math.round(progress)}% complete
+            </motion.div>
+          </div>
+          {currentQuestion === 0 ? <div className="w-16" /> : <div className="w-16" />} {/* Spacer for centering */}
         </div>
         
         {/* Enhanced Progress bar */}

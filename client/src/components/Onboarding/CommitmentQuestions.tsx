@@ -15,12 +15,7 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
 
   // Debug effect to track component state
   useEffect(() => {
-    // Track component state
-    const state = {
-      currentQuestion,
-      totalQuestions: COMMITMENT_QUESTIONS?.length || 0,
-      isValidIndex: currentQuestion >= 0 && currentQuestion < (COMMITMENT_QUESTIONS?.length || 0)
-    };
+    // Track component state for debugging if needed
   }, [currentQuestion]);
 
   useEffect(() => {
@@ -114,19 +109,25 @@ export function CommitmentQuestions({ onComplete }: CommitmentQuestionsProps) {
         <div className="max-w-md mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-4">
             {safeCurrentQuestion > 0 && (
-              <button
+              <motion.button
                 onClick={handleBack}
-                className="p-2 rounded-full bg-gray-900 hover:bg-gray-800 transition-colors"
+                className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-800/60 border border-gray-700/50 hover:bg-gray-700/60 hover:border-gray-600/50 transition-all duration-200 backdrop-blur-sm shadow-lg text-gray-200 hover:text-white"
+                whileHover={{ scale: 1.02, x: -2 }}
+                whileTap={{ scale: 0.98 }}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3 }}
               >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
+                <ChevronLeft className="w-4 h-4" />
+                <span className="text-sm font-medium">Back</span>
+              </motion.button>
             )}
             <div className="flex-1 text-center">
-              <span className="text-sm text-gray-400">
+              <span className="text-sm text-gray-300 font-medium">
                 Question {safeCurrentQuestion + 1} of {COMMITMENT_QUESTIONS.length}
               </span>
             </div>
-            <div className="w-9" /> {/* Spacer for centering */}
+            {safeCurrentQuestion === 0 ? <div className="w-16" /> : <div className="w-16" />} {/* Spacer for centering */}
           </div>
           
           {/* Progress Bar */}

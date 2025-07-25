@@ -169,6 +169,12 @@ export const COMMITMENT_QUESTIONS = [
         label: 'I don\'t know what actually works', 
         subtitle: 'We\'ll give you the exact roadmap',
         scoreModifier: 1
+      },
+      { 
+        value: 'procrastination', 
+        label: 'I know what to do but I keep putting it off', 
+        subtitle: 'We\'ll break the procrastination cycle for good',
+        scoreModifier: 0
       }
     ]
   },
