@@ -351,39 +351,43 @@ function TaskList({ onTaskComplete, onTaskSkip }: TaskListProps = {}) {
   const [lastDayNumber, setLastDayNumber] = useState(1);
 
   useEffect(() => {
-    loadTasks();
+    const init = async () => {
+      if (taskEngine) {
+        await taskEngine.syncToActiveDay();
+      }
+      loadTasks();
+    };
+    init();
   }, [taskEngine]);
 
   const loadTasks = async () => {
     if (!taskEngine) return;
     
-    try {
-      // CRITICAL FIX: Always sync to active day when loading tasks
-      // This ensures day counter and task content stay in sync when switching tabs
+    // CRITICAL FIX: Always sync to active day when loading tasks
+    // This ensures day flow and task content stay in sync when switching tabs.
+    if (!taskEngine.isManualNavigation()) {
       await taskEngine.syncToActiveDay();
-      
-      const currentDayTasks = await taskEngine.getCurrentDayTasks();
-      const dayInfo = {
-        dayNumber: taskEngine.getViewingDay(),
-        isCurrentDay: taskEngine.getViewingDay() === taskEngine.getActiveDay(),
-        isUnlocked: taskEngine.getViewingDay() <= taskEngine.getActiveDay(),
-        canInteract: taskEngine.getViewingDay() === taskEngine.getActiveDay()
-      };
-
-      if (dayInfo.dayNumber !== lastDayNumber) {
-        setActiveTab('active');
-        setLastDayNumber(dayInfo.dayNumber);
-      }
-
-      setTasks({
-        active: currentDayTasks.active,
-        completed: currentDayTasks.completed,
-        skipped: currentDayTasks.skipped,
-        dayInfo
-      });
-    } catch (error) {
-      console.error('Failed to load tasks:', error);
     }
+    
+    const currentDayTasks = await taskEngine.getCurrentDayTasks();
+    const dayInfo = {
+      dayNumber: taskEngine.getViewingDay(),
+      isCurrentDay: taskEngine.getViewingDay() === taskEngine.getActiveDay(),
+      isUnlocked: taskEngine.getViewingDay() <= taskEngine.getActiveDay(),
+      canInteract: taskEngine.getViewingDay() === taskEngine.getActiveDay()
+    };
+
+    if (dayInfo.dayNumber !== lastDayNumber) {
+      setActiveTab('active');
+      setLastDayNumber(dayInfo.dayNumber);
+    }
+
+    setTasks({
+      active: currentDayTasks.active,
+      completed: currentDayTasks.completed,
+      skipped: currentDayTasks.skipped,
+      dayInfo
+    });
   };
 
   const handleComplete = async (taskId: string) => {
