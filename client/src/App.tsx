@@ -19,6 +19,7 @@ import SubscriptionCancelPage from "@/pages/SubscriptionCancelPage";
 import LemonSqueezySetup from "@/pages/LemonSqueezySetup";
 import DebugSubscription from "@/pages/DebugSubscription";
 import Onboarding from "@/pages/Onboarding";
+import ResetPassword from "@/pages/ResetPassword";
 import { useEffect, useState } from "react";
 import { Icon } from "./lib/iconUtils";
 
@@ -31,6 +32,7 @@ function Router() {
       <Route path="/subscription" component={SubscriptionPage} />
       <Route path="/subscription/success" component={SubscriptionSuccessPage} />
       <Route path="/subscription/cancel" component={SubscriptionCancelPage} />
+      <Route path="/reset-password" component={ResetPassword} />
       {process.env.NODE_ENV === 'development' && (
         <Route path="/debug" component={DebugSubscription} />
       )}
@@ -55,9 +57,10 @@ function AuthenticatedApp() {
     installPromptDismissed
   } = usePWA();
   
-  // Check if current path is subscription-related (allow access even without active subscription)
+  // Check if current path is subscription-related or password reset (allow access even without active subscription)
   const currentPath = window.location.pathname;
   const isSubscriptionPath = currentPath.startsWith('/subscription');
+  const isResetPasswordPath = currentPath === '/reset-password';
 
   // Debug logging for the skipping issue
   useEffect(() => {
@@ -67,9 +70,10 @@ function AuthenticatedApp() {
       isSubscribed: subscription.isSubscribed,
       isInOnboarding,
       currentPath,
-      isSubscriptionPath
+      isSubscriptionPath,
+      isResetPasswordPath
     });
-  }, [user, userProfile?.onboarding_complete, subscription.isSubscribed, isInOnboarding, currentPath, isSubscriptionPath]);
+  }, [user, userProfile?.onboarding_complete, subscription.isSubscribed, isInOnboarding, currentPath, isSubscriptionPath, isResetPasswordPath]);
 
   // Minimal loading delay since we now use localStorage caching
   useEffect(() => {
@@ -122,9 +126,9 @@ function AuthenticatedApp() {
     }} />;
   }
 
-  // STEP 2: Allow access to subscription success/cancel pages even without onboarding completion
-  // This handles the case where user completes payment but returns to app
-  if (isSubscriptionPath) {
+  // STEP 2: Allow access to subscription success/cancel pages and password reset even without onboarding completion
+  // This handles the case where user completes payment but returns to app, or needs to reset password
+  if (isSubscriptionPath || isResetPasswordPath) {
     return (
       <div className="min-h-screen" style={{ backgroundColor: '#111827' }}>
         <Router />
@@ -165,7 +169,7 @@ function AuthenticatedApp() {
   // STEP 4: User is authenticated, check subscription status and onboarding
   // If user has completed onboarding but has no subscription, show pricing page
   // If user hasn't completed onboarding and has no subscription, they should be in onboarding flow
-  if (!subscription.isSubscribed && !isSubscriptionPath) {
+  if (!subscription.isSubscribed && !isSubscriptionPath && !isResetPasswordPath) {
     // If user has completed onboarding, send them to pricing page
     if (userProfile?.onboarding_complete && !isInOnboarding) {
       console.log('🚨 User completed onboarding but no subscription - redirecting to pricing page');

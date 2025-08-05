@@ -3,8 +3,9 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, Eye, EyeOff, Mail, Lock, User, Flame } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { AlertCircle, Eye, EyeOff, Mail, Lock, User, Flame, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface AuthFormProps {
@@ -27,7 +28,14 @@ export function AuthForm({ onComplete, initialData }: AuthFormProps) {
     confirmPassword: ''
   });
 
-  const { signUp, signIn } = useAuth();
+  // Password reset modal state
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetError, setResetError] = useState<string | null>(null);
+  const [resetSuccess, setResetSuccess] = useState(false);
+
+  const { signUp, signIn, resetPassword } = useAuth();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -95,7 +103,31 @@ export function AuthForm({ onComplete, initialData }: AuthFormProps) {
 
       if (result.error) {
         console.error('🚨 Auth failed:', result.error);
-        setError(result.error.message || 'An error occurred');
+        
+        // Provide specific error messages for common cases
+        let errorMessage = 'An error occurred';
+        
+        if (result.error.message) {
+          // Handle specific Supabase error codes
+          if (result.error.message.includes('already registered') || 
+              result.error.message.includes('already exists') ||
+              result.error.message.includes('already been registered')) {
+            errorMessage = 'This email is already registered. Please sign in instead.';
+          } else if (result.error.message.includes('Invalid login credentials')) {
+            errorMessage = 'Invalid email or password. Please try again.';
+          } else if (result.error.message.includes('Email not confirmed')) {
+            errorMessage = 'Please check your email and click the confirmation link to continue.';
+          } else if (result.error.message.includes('Password should be at least')) {
+            errorMessage = 'Password must be at least 6 characters long.';
+          } else if (result.error.message.includes('Invalid email')) {
+            errorMessage = 'Please enter a valid email address.';
+          } else {
+            // Use the original error message if it's user-friendly
+            errorMessage = result.error.message;
+          }
+        }
+        
+        setError(errorMessage);
       } else {
         console.log('✅ Auth completed successfully, calling onComplete...');
         onComplete();
@@ -106,6 +138,46 @@ export function AuthForm({ onComplete, initialData }: AuthFormProps) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!resetEmail) {
+      setResetError('Please enter your email address');
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(resetEmail)) {
+      setResetError('Please enter a valid email address');
+      return;
+    }
+
+    setResetLoading(true);
+    setResetError(null);
+
+    try {
+      const result = await resetPassword(resetEmail);
+      
+      if (result.error) {
+        console.error('🚨 Password reset failed:', result.error);
+        setResetError('Failed to send reset email. Please try again.');
+      } else {
+        setResetSuccess(true);
+      }
+    } catch (err) {
+      console.error('🚨 Password reset exception:', err);
+      setResetError('An unexpected error occurred');
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
+  const handleResetModalOpen = () => {
+    setResetEmail(formData.email); // Pre-fill with current email if available
+    setResetError(null);
+    setResetSuccess(false);
+    setShowResetModal(true);
   };
 
   return (
@@ -243,7 +315,14 @@ export function AuthForm({ onComplete, initialData }: AuthFormProps) {
                     className="flex items-center space-x-2 text-red-400 bg-red-900/20 border border-red-500/30 p-3 rounded-lg"
                   >
                     <AlertCircle className="w-4 h-4" />
-                    <span className="text-sm">{error}</span>
+                    <div className="flex-1">
+                      <span className="text-sm">{error}</span>
+                      {error.includes('already registered') && (
+                        <div className="mt-2 text-xs text-red-300">
+                          Click "Already a member? Sign in" below to access your account.
+                        </div>
+                      )}
+                    </div>
                   </motion.div>
                 )}
 
@@ -263,7 +342,7 @@ export function AuthForm({ onComplete, initialData }: AuthFormProps) {
                 </Button>
               </form>
 
-              <div className="mt-6 text-center">
+              <div className="mt-6 text-center space-y-3">
                 <button
                   type="button"
                   onClick={() => {
@@ -271,7 +350,7 @@ export function AuthForm({ onComplete, initialData }: AuthFormProps) {
                     setError(null);
                     setFormData(prev => ({ ...prev, confirmPassword: '' }));
                   }}
-                  className="text-orange-400 hover:text-orange-300 font-medium text-sm transition-colors"
+                  className="text-orange-400 hover:text-orange-300 font-medium text-sm transition-colors block w-full"
                   disabled={loading}
                 >
                   {isSignUp 
@@ -279,6 +358,118 @@ export function AuthForm({ onComplete, initialData }: AuthFormProps) {
                     : "New here? Join the brotherhood"
                   }
                 </button>
+
+                {!isSignUp && (
+                  <Dialog open={showResetModal} onOpenChange={setShowResetModal}>
+                    <DialogTrigger asChild>
+                      <button
+                        type="button"
+                        onClick={handleResetModalOpen}
+                        className="text-gray-400 hover:text-gray-300 text-sm transition-colors"
+                        disabled={loading}
+                      >
+                        Forgot your password?
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-gray-900 border-gray-700 text-white">
+                      <DialogHeader>
+                        <DialogTitle className="text-xl font-bold text-white">
+                          Reset Your Password
+                        </DialogTitle>
+                        <DialogDescription className="text-gray-300">
+                          Enter your email address and we'll send you a link to reset your password.
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      {resetSuccess ? (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="text-center py-6"
+                        >
+                          <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Mail className="w-8 h-8 text-white" />
+                          </div>
+                          <h3 className="text-lg font-semibold text-green-400 mb-2">
+                            Reset Email Sent!
+                          </h3>
+                          <p className="text-gray-300 text-sm mb-4">
+                            We've sent a password reset link to <span className="font-medium">{resetEmail}</span>
+                          </p>
+                          <p className="text-gray-400 text-xs">
+                            Check your email and click the link to reset your password. The link will expire in 1 hour.
+                          </p>
+                          <Button
+                            onClick={() => setShowResetModal(false)}
+                            className="mt-6 bg-orange-500 hover:bg-orange-600"
+                          >
+                            Got it
+                          </Button>
+                        </motion.div>
+                      ) : (
+                        <form onSubmit={handlePasswordReset} className="space-y-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="resetEmail" className="text-sm font-medium text-white">
+                              Email Address
+                            </Label>
+                            <div className="relative">
+                              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                              <Input
+                                id="resetEmail"
+                                type="email"
+                                placeholder="Enter your email"
+                                value={resetEmail}
+                                onChange={(e) => {
+                                  setResetEmail(e.target.value);
+                                  if (resetError) setResetError(null);
+                                }}
+                                className="pl-10 h-12 bg-gray-800 text-white border-gray-600 focus:border-orange-500 focus:ring-orange-500 placeholder:text-gray-400"
+                                disabled={resetLoading}
+                              />
+                            </div>
+                          </div>
+
+                          {resetError && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="flex items-center space-x-2 text-red-400 bg-red-900/20 border border-red-500/30 p-3 rounded-lg"
+                            >
+                              <AlertCircle className="w-4 h-4" />
+                              <span className="text-sm">{resetError}</span>
+                            </motion.div>
+                          )}
+
+                          <div className="flex gap-3 pt-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => setShowResetModal(false)}
+                              className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-800"
+                              disabled={resetLoading}
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              type="submit"
+                              className="flex-1 bg-orange-500 hover:bg-orange-600 text-white"
+                              disabled={resetLoading}
+                            >
+                              {resetLoading ? (
+                                <div className="flex items-center space-x-2">
+                                  <RefreshCw className="w-4 h-4 animate-spin" />
+                                  <span>Sending...</span>
+                                </div>
+                              ) : (
+                                'Send Reset Link'
+                              )}
+                            </Button>
+                          </div>
+                        </form>
+                      )}
+                    </DialogContent>
+                  </Dialog>
+                )}
               </div>
 
               {/* Trust Indicators */}

@@ -19,6 +19,8 @@ interface AuthContextType {
   signUp: (email: string, password: string, userData: { name: string; program: 'beginner' | 'intermediate' | 'advanced' }) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error: any }>;
+  updatePassword: (password: string) => Promise<{ error: any }>;
   updateProfile: (updates: Partial<User>) => Promise<void>;
   createUserProfile: (supabaseUserId: string, userData: { name: string; program: 'beginner' | 'intermediate' | 'advanced'; email: string }) => Promise<void>;
   refreshSubscription: () => Promise<void>;
@@ -314,7 +316,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (signUpResult.error) {
         console.error('🚨 Auth signup failed:', signUpResult.error);
         console.error('🚨 Error details:', { code: signUpResult.error.code, message: signUpResult.error.message });
-        return { error: signUpResult.error };
+        
+        // Enhance error message for better user feedback
+        let enhancedError = { ...signUpResult.error };
+        
+        // Handle specific error codes
+        if (signUpResult.error.code === '23505' || // PostgreSQL unique constraint violation
+            signUpResult.error.message?.includes('already registered') ||
+            signUpResult.error.message?.includes('already exists') ||
+            signUpResult.error.message?.includes('already been registered')) {
+          enhancedError.message = 'This email is already registered. Please sign in instead.';
+        } else if (signUpResult.error.code === 'invalid_email') {
+          enhancedError.message = 'Please enter a valid email address.';
+        } else if (signUpResult.error.code === 'weak_password') {
+          enhancedError.message = 'Password must be at least 6 characters long.';
+        }
+        
+        return { error: enhancedError };
       }
 
       if (!signUpResult.data.user) {
@@ -392,6 +410,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         currentPeriodEnd: null,
         cancelAtPeriodEnd: false
       });
+    }
+  };
+
+  const resetPassword = async (email: string) => {
+    console.log('🔐 PASSWORD RESET REQUEST:', { email });
+    
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        console.error('🚨 Password reset failed:', error);
+        return { error };
+      }
+
+      console.log('✅ Password reset email sent successfully');
+      return { error: null };
+    } catch (error) {
+      console.error('🚨 Exception in resetPassword:', error);
+      return { error };
+    }
+  };
+
+  const updatePassword = async (password: string) => {
+    console.log('🔐 PASSWORD UPDATE REQUEST');
+    
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: password
+      });
+
+      if (error) {
+        console.error('🚨 Password update failed:', error);
+        return { error };
+      }
+
+      console.log('✅ Password updated successfully');
+      return { error: null };
+    } catch (error) {
+      console.error('🚨 Exception in updatePassword:', error);
+      return { error };
     }
   };
 
@@ -521,6 +581,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUp,
     signIn,
     signOut,
+    resetPassword,
+    updatePassword,
     updateProfile,
     createUserProfile,
     refreshSubscription,
