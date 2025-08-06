@@ -497,62 +497,98 @@ html {
   border-top: 0.5px solid rgba(0,0,0,0.15);
 }
 
-/* Lifestyle Slider Custom Styles */
+/* --- Enhanced Lifestyle Slider Styles --- */
 .lifestyle-slider [data-radix-slider-track] {
-  background: rgb(55 65 81 / 0.6) !important;
+  background: linear-gradient(90deg, #232526 0%, #414345 100%) !important;
   height: 24px !important;
   border-radius: 9999px !important;
   backdrop-filter: blur(8px) !important;
   border: 1px solid rgb(75 85 99 / 0.5) !important;
+  position: relative;
+  overflow: visible !important;
 }
 
 .lifestyle-slider [data-radix-slider-range] {
   height: 100% !important;
   border-radius: 9999px !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.08) !important;
+  /* Animated shine overlay */
+  background-size: 200% 100%;
+  animation: slider-gradient-move 3s linear infinite;
 }
 
+@keyframes slider-gradient-move {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+/* Vibrant multi-stop gradients for each slider type */
 .lifestyle-slider.from-green-500.to-red-500 [data-radix-slider-range] {
-  background: linear-gradient(to right, #10b981, #ef4444) !important;
+  background: linear-gradient(90deg, #10b981 0%, #fbbf24 50%, #ef4444 100%) !important;
 }
-
 .lifestyle-slider.from-yellow-500.to-orange-500 [data-radix-slider-range] {
-  background: linear-gradient(to right, #eab308, #f97316) !important;
+  background: linear-gradient(90deg, #fde68a 0%, #f59e42 40%, #f97316 100%) !important;
 }
-
 .lifestyle-slider.from-orange-500.to-red-500 [data-radix-slider-range] {
-  background: linear-gradient(to right, #f97316, #ef4444) !important;
+  background: linear-gradient(90deg, #fbbf24 0%, #f97316 50%, #ef4444 100%) !important;
 }
-
 .lifestyle-slider.from-green-500.to-blue-500 [data-radix-slider-range] {
-  background: linear-gradient(to right, #10b981, #3b82f6) !important;
+  background: linear-gradient(90deg, #10b981 0%, #3b82f6 100%) !important;
 }
-
 .lifestyle-slider.from-yellow-500.to-red-500 [data-radix-slider-range] {
-  background: linear-gradient(to right, #eab308, #ef4444) !important;
+  background: linear-gradient(90deg, #fde68a 0%, #f59e42 40%, #ef4444 100%) !important;
+}
+.lifestyle-slider.from-red-500.to-green-500 [data-radix-slider-range] {
+  background: linear-gradient(90deg, #ef4444 0%, #fbbf24 50%, #10b981 100%) !important;
 }
 
-.lifestyle-slider.from-red-500.to-green-500 [data-radix-slider-range] {
-  background: linear-gradient(to right, #ef4444, #10b981) !important;
+/* Animated shine overlay for the range */
+.lifestyle-slider [data-radix-slider-range]::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  background: linear-gradient(120deg, transparent 60%, rgba(255,255,255,0.18) 80%, transparent 100%);
+  background-size: 200% 100%;
+  animation: slider-shine-move 2.5s linear infinite;
+  border-radius: 9999px;
+  z-index: 2;
+}
+@keyframes slider-shine-move {
+  0% { background-position: -100% 0; }
+  100% { background-position: 200% 0; }
 }
 
 .lifestyle-slider [data-radix-slider-thumb] {
-  width: 40px !important;
-  height: 40px !important;
-  background: white !important;
-  border: 4px solid rgb(31 41 55) !important;
+  width: 44px !important;
+  height: 44px !important;
+  background: linear-gradient(135deg, #fff 60%, #f3f4f6 100%) !important;
+  border: 4px solid #fbbf24 !important;
   border-radius: 50% !important;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 4px 24px 0 rgba(251,191,36,0.25), 0 2px 8px 0 rgba(0,0,0,0.10) !important;
+  transition: box-shadow 0.2s cubic-bezier(0.4,0,0.2,1), border-color 0.2s cubic-bezier(0.4,0,0.2,1);
   cursor: pointer !important;
+  z-index: 10;
+  position: relative;
 }
-
-.lifestyle-slider [data-radix-slider-thumb]:hover {
-  transform: scale(1.1) !important;
-  box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.3) !important;
-}
-
+.lifestyle-slider [data-radix-slider-thumb]:hover,
 .lifestyle-slider [data-radix-slider-thumb]:focus {
+  border-color: #f59e42 !important;
+  box-shadow: 0 0 0 8px rgba(251,191,36,0.18), 0 4px 24px 0 rgba(251,191,36,0.25), 0 2px 8px 0 rgba(0,0,0,0.10) !important;
   outline: none !important;
-  box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.3) !important;
+}
+.lifestyle-slider [data-radix-slider-thumb]::after {
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fbbf24 0%, #f59e42 100%);
+  opacity: 0.18;
+  z-index: 1;
+  pointer-events: none;
+  filter: blur(2px);
 }
