@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { AlertCircle, Eye, EyeOff, Mail, Lock, User, Flame, RefreshCw } from 'lucide-react';
+import { AlertCircle, Eye, EyeOff, Mail, Lock, User, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface AuthFormProps {
@@ -17,7 +17,7 @@ interface AuthFormProps {
 }
 
 export function AuthForm({ onComplete, initialData }: AuthFormProps) {
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -191,8 +191,8 @@ export function AuthForm({ onComplete, initialData }: AuthFormProps) {
           animate={{ opacity: 1, y: 0 }}
         >
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center">
-              <Flame className="w-8 h-8 text-white" />
+            <div className="w-16 h-16 flex items-center justify-center">
+              <img src="/icon-192x192.png" alt="PeakForge Logo" className="w-16 h-16" />
             </div>
           </div>
           <h1 className="text-3xl font-bold mb-2">
