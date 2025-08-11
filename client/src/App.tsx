@@ -167,11 +167,26 @@ function AuthenticatedApp() {
   }
 
   // STEP 4: User is authenticated, check subscription status and onboarding
+  // CRITICAL FIX: Wait for both profile AND subscription data to load to prevent race conditions
+  // This prevents mobile users from being sent to onboarding when they already have active subscriptions
+  if (userProfile === null) {
+    console.log('⏳ Waiting for profile data to load...');
+    // Still loading profile data - show loading state instead of making navigation decisions
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-600 via-orange-500 to-red-600 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white/80">Loading your profile...</p>
+        </div>
+      </div>
+    );
+  }
+
   // If user has completed onboarding but has no subscription, show pricing page
   // If user hasn't completed onboarding and has no subscription, they should be in onboarding flow
   if (!subscription.isSubscribed && !isSubscriptionPath && !isResetPasswordPath) {
     // If user has completed onboarding, send them to pricing page
-    if (userProfile?.onboarding_complete && !isInOnboarding) {
+    if (userProfile.onboarding_complete && !isInOnboarding) {
       console.log('🚨 User completed onboarding but no subscription - redirecting to pricing page');
       return (
         <div>
@@ -194,7 +209,7 @@ function AuthenticatedApp() {
     }
     
     // If user hasn't completed onboarding and isn't already in onboarding, start onboarding
-    if (!userProfile?.onboarding_complete && !isInOnboarding) {
+    if (!userProfile.onboarding_complete && !isInOnboarding) {
       console.log('🎯 User needs onboarding and subscription - starting onboarding flow');
       setIsInOnboarding(true);
       return <Onboarding onComplete={async (data) => {
