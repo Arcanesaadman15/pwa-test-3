@@ -18,6 +18,7 @@ interface AuthContextType {
   loading: boolean;
   signUp: (email: string, password: string, userData: { name: string; program: 'beginner' | 'intermediate' | 'advanced' }) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signInWithGoogle: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: any }>;
   updatePassword: (password: string) => Promise<{ error: any }>;
@@ -76,6 +77,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Give a moment for the session to fully establish, especially for new signups
         if (event === 'SIGNED_UP' || event === 'SIGNED_IN') {
           await new Promise(resolve => setTimeout(resolve, 800));
+        }
+
+        // If the user signed up via OAuth (e.g., Google), ensure a real app user row exists
+        const provider = (session?.user as any)?.app_metadata?.provider as string | undefined;
+        if (event === 'SIGNED_UP' && provider && provider !== 'email') {
+          try {
+            const authUser = session.user;
+            const derivedName = (authUser.user_metadata?.full_name
+              || authUser.user_metadata?.name
+              || (authUser.email?.split('@')[0] ?? 'User')) as string;
+            await createUserProfile(authUser.id, {
+              name: derivedName,
+              program: 'beginner',
+              email: authUser.email as string
+            });
+          } catch (e: any) {
+            // If row already exists or any non-fatal error occurs, continue gracefully
+            console.warn('⚠️ createUserProfile on SIGNED_UP skipped/failed:', e?.message || e);
+          }
         }
         await fetchUserProfile(session.user.id, session.user.email);
       } else {
@@ -378,6 +398,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { error };
   };
 
+  const signInWithGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent'
+        }
+      }
+    });
+    return { error };
+  };
+
   const signOut = async () => {
     try {
       
@@ -580,6 +614,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loading,
     signUp,
     signIn,
+    signInWithGoogle,
     signOut,
     resetPassword,
     updatePassword,

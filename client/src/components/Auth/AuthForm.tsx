@@ -35,7 +35,7 @@ export function AuthForm({ onComplete, initialData }: AuthFormProps) {
   const [resetError, setResetError] = useState<string | null>(null);
   const [resetSuccess, setResetSuccess] = useState(false);
 
-  const { signUp, signIn, resetPassword } = useAuth();
+  const { signUp, signIn, resetPassword, signInWithGoogle } = useAuth();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -213,6 +213,22 @@ export function AuthForm({ onComplete, initialData }: AuthFormProps) {
         >
           <Card className="bg-gray-900 border border-gray-700 shadow-2xl">
             <CardContent className="p-8">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-12 border-gray-600 text-white hover:bg-gray-800 mb-4"
+                onClick={() => { void signInWithGoogle(); }}
+                disabled={loading}
+              >
+                Continue with Google
+              </Button>
+
+              <div className="flex items-center my-4">
+                <div className="flex-1 h-px bg-gray-700" />
+                <span className="px-3 text-xs text-gray-400">or</span>
+                <div className="flex-1 h-px bg-gray-700" />
+              </div>
+
               <form onSubmit={handleSubmit} className="space-y-6">
                 {isSignUp && (
                   <motion.div
