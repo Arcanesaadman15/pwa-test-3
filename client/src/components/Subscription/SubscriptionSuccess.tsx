@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Crown, ArrowRight, Loader2, RefreshCw } from "lucide-react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
+import { analytics } from '@/lib/analytics';
 
 export function SubscriptionSuccess() {
   const [, setLocation] = useLocation();
@@ -51,6 +52,16 @@ export function SubscriptionSuccess() {
       mounted = false;
     };
   }, [user, retryCount, statusChecked, refreshSubscription]);
+
+  // Track conversion on success page
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    analytics.track('purchase_succeeded', {
+      subscribed: subscription.isSubscribed,
+      plan: subscription.plan,
+      mock: params.get('mock') === 'true',
+    });
+  }, [subscription.isSubscribed, subscription.plan]);
 
   // Countdown timer for auto-redirect
   useEffect(() => {

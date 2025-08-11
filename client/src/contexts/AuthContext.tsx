@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured, type User } from '@/lib/supabase';
+import { analytics } from '@/lib/analytics';
 
 interface SubscriptionStatus {
   isSubscribed: boolean;
@@ -98,6 +99,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
         await fetchUserProfile(session.user.id, session.user.email);
+
+        // Identify user for analytics
+        analytics.identify(session.user.id, {
+          email: session.user.email,
+        });
       } else {
         setUserProfile(null);
         setSubscription({
@@ -107,6 +113,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           currentPeriodEnd: null,
           cancelAtPeriodEnd: false
         });
+        analytics.reset();
       }
       setLoading(false);
     });
@@ -233,6 +240,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (profileData) {
         setUserProfile(profileData);
         localStorage.setItem('peakforge-user', JSON.stringify(profileData));
+        // Update analytics person properties
+        analytics.setPerson({
+          name: (profileData as any).name,
+          program: (profileData as any).program,
+          onboarding_complete: !!(profileData as any).onboarding_complete,
+        });
       } else {
         console.log('👤 No profile found after ${maxAttempts} attempts');
         setUserProfile(null);
@@ -247,6 +260,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           currentPeriodEnd: subscriptionData.current_period_end,
           cancelAtPeriodEnd: subscriptionData.cancel_at_period_end
         });
+        analytics.registerSuper({
+          subscribed: true,
+          plan: subscriptionData.subscription_plans?.name || null,
+          subscription_status: subscriptionData.status,
+        });
       } else {
         console.log('💳 No active subscription found after ${maxAttempts} attempts');
         setSubscription({
@@ -255,6 +273,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           status: null,
           currentPeriodEnd: null,
           cancelAtPeriodEnd: false
+        });
+        analytics.registerSuper({
+          subscribed: false,
+          plan: null,
+          subscription_status: null,
         });
       }
       

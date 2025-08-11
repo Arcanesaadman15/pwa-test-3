@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { LemonSqueezyService, SUBSCRIPTION_PLANS } from "@/lib/lemonsqueezy";
 import { Check, AlertTriangle, Flame, Target, Zap } from "lucide-react";
 import { motion } from "framer-motion";
+import { analytics } from '@/lib/analytics';
 
 interface PricingPlansProps {
   onPlanSelect?: (plan: any) => void;
@@ -34,6 +35,8 @@ export function PricingPlans({ onPlanSelect }: PricingPlansProps) {
     setError(null);
 
     try {
+      analytics.track('plan_selected', { planId: proplan.id, variantId: proplan.variantId, price: proplan.price });
+      analytics.track('checkout_started', { variantId: proplan.variantId, userId: user.id });
       const result = await LemonSqueezyService.createCheckout({
         variantId: proplan.variantId,
         userId: user.id,

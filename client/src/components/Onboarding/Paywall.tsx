@@ -5,6 +5,7 @@ import { AuthForm } from "@/components/Auth/AuthForm";
 import { PricingPlans } from "@/components/Subscription/PricingPlans";
 import { useAuth } from "@/contexts/AuthContext";
 import { Icon } from '@/lib/iconUtils';
+import { analytics } from '@/lib/analytics';
 
 interface PaywallProps {
   onComplete: () => void;
@@ -43,17 +44,22 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
   ];
 
   const handleGetStarted = () => {
+    analytics.track('paywall_cta_clicked');
     if (!user) {
       // If not authenticated, show auth form first
+      analytics.track('auth_prompt_shown', { source: 'paywall' });
       setShowAuthForm(true);
     } else {
       // If authenticated, go directly to pricing
+      analytics.track('pricing_viewed', { source: 'paywall' });
       setShowPricing(true);
     }
   };
 
   const handleAuthComplete = () => {
     setShowAuthForm(false);
+    analytics.track('auth_completed', { method: 'email', source: 'paywall' });
+    analytics.track('pricing_viewed', { source: 'paywall' });
     setShowPricing(true);
   };
 

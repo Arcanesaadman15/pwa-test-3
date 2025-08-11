@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { OnboardingData } from '@/data/onboardingData';
 import { storage } from '@/lib/storage';
 import { useAuth } from '@/contexts/AuthContext';
+import { analytics } from '@/lib/analytics';
 
 // Import all onboarding screens
 import { SplashScreen } from '@/components/Onboarding/SplashScreen';
@@ -34,7 +35,7 @@ interface OnboardingProps {
 export default function Onboarding({ onComplete }: OnboardingProps) {
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('splash');
   const [onboardingData, setOnboardingData] = useState<Partial<OnboardingData>>({});
-  const [isLoading, setIsLoading] = useState(false);
+  // Removed unused loading state
   const { updateProfile } = useAuth();
 
   // Auto-advance from splash screen
@@ -44,6 +45,14 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         setCurrentStep('problems');
       }, 2500);
       return () => clearTimeout(timer);
+    }
+  }, [currentStep]);
+
+  // Track step viewed
+  useEffect(() => {
+    analytics.track('onboarding_step_viewed', { step: currentStep, progress: getProgress() });
+    if (currentStep === 'paywall') {
+      analytics.track('paywall_viewed');
     }
   }, [currentStep]);
 
@@ -64,7 +73,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   };
 
   const handleComplete = async () => {
-    setIsLoading(true);
     try {
       // Clean the data to remove any circular references
       const cleanData = {
@@ -88,10 +96,13 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       await updateProfile({ onboarding_complete: true });
       
       onComplete(cleanData);
+      analytics.track('onboarding_completed', {
+        primaryGoal: onboardingData.primaryGoal,
+        recommendedProgram: onboardingData.recommendedProgram,
+      });
     } catch (error) {
       // Handle onboarding completion error
     } finally {
-      setIsLoading(false);
     }
   };
 

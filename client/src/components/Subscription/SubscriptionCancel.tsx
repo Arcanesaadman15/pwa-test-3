@@ -2,9 +2,15 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { XCircle, ArrowLeft, HelpCircle } from "lucide-react";
 import { useLocation } from "wouter";
+import { useEffect } from 'react';
+import { analytics } from '@/lib/analytics';
 
 export function SubscriptionCancel() {
   const [, setLocation] = useLocation();
+
+  useEffect(() => {
+    analytics.track('purchase_cancelled', { path: window.location.pathname });
+  }, []);
 
   const handleRetry = () => {
     setLocation('/pricing');
