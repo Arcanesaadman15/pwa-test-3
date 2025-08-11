@@ -44,10 +44,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Extended timeout to ensure smooth loading experience (2.5 seconds)
+    // Reduced timeout for faster mobile experience (1 second max)
     const loadingTimeout = setTimeout(() => {
       setLoading(false);
-    }, 2500);
+    }, 1000);
 
     // Get current session
     supabase.auth.getSession()
@@ -74,9 +74,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        // Give a moment for the session to fully establish, especially for new signups
+        // Reduced delay for faster mobile experience (200ms for session establishment)
         if (event === 'SIGNED_UP' || event === 'SIGNED_IN') {
-          await new Promise(resolve => setTimeout(resolve, 800));
+          await new Promise(resolve => setTimeout(resolve, 200));
         }
 
         // If the user signed up via OAuth (e.g., Google), ensure a real app user row exists
