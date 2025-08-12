@@ -50,10 +50,43 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   // Track step viewed
   useEffect(() => {
-    analytics.track('onboarding_step_viewed', { step: currentStep, progress: getProgress() });
+    const steps: OnboardingStep[] = [
+      'splash', 'problems', 'quiz', 'sliders', 'commitment', 
+      'diagnosis', 'roadmap', 'social', 'paywall', 'complete'
+    ];
+    const currentIndex = steps.indexOf(currentStep);
+    
+    analytics.track('onboarding_step_viewed', { 
+      step: currentStep, 
+      progress: getProgress(),
+      step_index: currentIndex,
+      total_steps: steps.length - 1 // exclude 'complete'
+    });
+    
     if (currentStep === 'paywall') {
       analytics.track('paywall_viewed');
     }
+  }, [currentStep]);
+
+  // Track onboarding abandonment when component unmounts
+  useEffect(() => {
+    return () => {
+      // Only track abandonment if not completed
+      if (currentStep !== 'complete') {
+        const steps: OnboardingStep[] = [
+          'splash', 'problems', 'quiz', 'sliders', 'commitment', 
+          'diagnosis', 'roadmap', 'social', 'paywall', 'complete'
+        ];
+        const currentIndex = steps.indexOf(currentStep);
+        
+        analytics.track('onboarding_abandoned', { 
+          abandoned_at_step: currentStep,
+          progress: getProgress(),
+          step_index: currentIndex,
+          steps_completed: currentIndex
+        });
+      }
+    };
   }, [currentStep]);
 
   const updateOnboardingData = (newData: Partial<OnboardingData>) => {
@@ -67,6 +100,15 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     ];
     
     const currentIndex = steps.indexOf(currentStep);
+    
+    // Track step completion before advancing
+    analytics.track('onboarding_step_completed', { 
+      step: currentStep, 
+      progress: getProgress(),
+      step_index: currentIndex,
+      next_step: currentIndex < steps.length - 1 ? steps[currentIndex + 1] : 'complete'
+    });
+    
     if (currentIndex < steps.length - 1) {
       setCurrentStep(steps[currentIndex + 1]);
     }
@@ -99,6 +141,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       analytics.track('onboarding_completed', {
         primaryGoal: onboardingData.primaryGoal,
         recommendedProgram: onboardingData.recommendedProgram,
+        total_steps: 9, // excluding splash and complete
+        completion_time_minutes: Math.round((Date.now() - (cleanData.completedAt?.getTime() || Date.now())) / 60000),
+        final_progress: 100
       });
     } catch (error) {
       // Handle onboarding completion error
