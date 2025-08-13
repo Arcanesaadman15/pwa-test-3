@@ -4,6 +4,7 @@ import { BEGINNER_PROGRAM, getBeginnerDayTasks, getPhaseFromDay } from "@/data/b
 import { getIntermediateDayTasks } from "@/data/intermediateProgram";
 import { getAdvancedDayTasks } from "@/data/advancedProgram";
 import { storage } from "./storage";
+import { traitSystem } from "./traitSystem";
 
 export class TaskEngine {
   private viewingDay: number = 1;
@@ -230,6 +231,9 @@ export class TaskEngine {
     this.taskCompletions.push(completion);
     await storage.saveTaskCompletion(completion);
     
+    // Update trait scores from task completion
+    await traitSystem.applyTaskCompletion(taskId, currentActiveDay);
+    
     // Check for day advancement
     const didAdvance = await this.checkDayAdvancement();
     
@@ -312,6 +316,9 @@ export class TaskEngine {
 
     this.taskCompletions.push(completion);
     await storage.saveTaskCompletion(completion);
+    
+    // Update trait scores from task completion
+    await traitSystem.applyTaskCompletion(taskId, targetDay);
     
     // Check for day advancement only if we're on current active day
     if (targetDay === this.getCurrentActiveDay()) {

@@ -3,11 +3,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SKILL_CATEGORIES, SKILL_DEFINITIONS, UnlockedSkill } from "@/data/skillDefinitions";
 import { skillUnlockSystem } from "@/lib/skillUnlockSystem";
 import { SkillConnectionVisualization } from "./SkillConnectionVisualization";
-import { Search, Filter, ArrowUp, Star, Zap, TreePine, Network } from "lucide-react";
+import { TraitsPage } from "./TraitsPage";
+import { Search, Filter, ArrowUp, Star, Zap, TreePine, Network, Flame } from "lucide-react";
 import { Icon, getCategoryIcon } from '@/lib/iconUtils';
 
 // Type definition for view mode
-type ViewMode = 'tree' | 'connections';
+type ViewMode = 'tree' | 'connections' | 'traits';
 
 interface SkillTreeProps {
   onSkillClick?: (skill: UnlockedSkill) => void;
@@ -254,6 +255,11 @@ export function ComprehensiveSkillTree({ onSkillClick }: SkillTreeProps) {
     />;
   }
 
+  // If traits view is selected, render the traits page
+  if (viewMode === 'traits') {
+    return <TraitsPage onTraitClick={(traitId) => console.log('Trait clicked:', traitId)} />;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -326,7 +332,7 @@ export function ComprehensiveSkillTree({ onSkillClick }: SkillTreeProps) {
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            <TreePine size={16} /> <span className="text-sm">Skill Tree</span>
+            <TreePine size={16} /> <span className="text-sm">Skills</span>
           </button>
           <button
             onClick={() => handleViewModeChange('connections')}
@@ -337,6 +343,16 @@ export function ComprehensiveSkillTree({ onSkillClick }: SkillTreeProps) {
             }`}
           >
             <Network size={16} /> <span className="text-sm">Connections</span>
+          </button>
+          <button
+            onClick={() => handleViewModeChange('traits')}
+            className={`flex-1 py-2.5 px-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+              isViewMode(viewMode, 'traits') 
+                ? 'bg-white text-gray-900 shadow-sm' 
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <Flame size={16} /> <span className="text-sm">Traits</span>
           </button>
         </div>
 

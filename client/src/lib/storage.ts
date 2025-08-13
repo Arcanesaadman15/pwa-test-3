@@ -1,4 +1,5 @@
 import { User, TaskCompletion, UserSkills, OnboardingData } from "@/types";
+import { UserTraitScores, TraitWeeklyUsage } from "@/types/traits";
 
 const STORAGE_KEYS = {
   USER: 'peakforge-user',
@@ -7,7 +8,9 @@ const STORAGE_KEYS = {
   ONBOARDING_COMPLETE: 'peakforge-onboarding-complete',
   ONBOARDING_DATA: 'peakforge-onboarding-data',
   CURRENT_DAY: 'peakforge-current-day',
-  ACHIEVEMENTS: 'peakforge-achievements'
+  ACHIEVEMENTS: 'peakforge-achievements',
+  USER_TRAITS: 'peakforge-user-traits',
+  TRAIT_WEEKLY_USAGE: 'peakforge-trait-weekly-usage'
 };
 
 class Storage {
@@ -183,6 +186,8 @@ class Storage {
       localStorage.removeItem(STORAGE_KEYS.CURRENT_DAY);
       localStorage.removeItem(STORAGE_KEYS.USER_SKILLS);
       localStorage.removeItem(STORAGE_KEYS.ACHIEVEMENTS);
+      localStorage.removeItem(STORAGE_KEYS.USER_TRAITS);
+      localStorage.removeItem(STORAGE_KEYS.TRAIT_WEEKLY_USAGE);
       // Keep STORAGE_KEYS.USER and STORAGE_KEYS.ONBOARDING_COMPLETE and STORAGE_KEYS.ONBOARDING_DATA
     } catch (error) {
       console.error('Failed to clear progress data:', error);
@@ -259,6 +264,66 @@ class Storage {
       localStorage.removeItem('peakforge-pending-sync');
     } catch (error) {
       console.error('Failed to clear pending task completions:', error);
+      throw error;
+    }
+  }
+
+  // Trait-related storage methods
+  async getUserTraits(): Promise<UserTraitScores> {
+    try {
+      const traits = localStorage.getItem(STORAGE_KEYS.USER_TRAITS);
+      return traits ? JSON.parse(traits) : {};
+    } catch (error) {
+      console.error('Failed to get user traits:', error);
+      return {};
+    }
+  }
+
+  async saveUserTraits(traits: UserTraitScores): Promise<void> {
+    try {
+      localStorage.setItem(STORAGE_KEYS.USER_TRAITS, JSON.stringify(traits));
+    } catch (error) {
+      console.error('Failed to save user traits:', error);
+      throw error;
+    }
+  }
+
+  async getTraitWeeklyUsage(): Promise<TraitWeeklyUsage> {
+    try {
+      const usage = localStorage.getItem(STORAGE_KEYS.TRAIT_WEEKLY_USAGE);
+      return usage ? JSON.parse(usage) : {};
+    } catch (error) {
+      console.error('Failed to get trait weekly usage:', error);
+      return {};
+    }
+  }
+
+  async saveTraitWeeklyUsage(usage: TraitWeeklyUsage): Promise<void> {
+    try {
+      localStorage.setItem(STORAGE_KEYS.TRAIT_WEEKLY_USAGE, JSON.stringify(usage));
+    } catch (error) {
+      console.error('Failed to save trait weekly usage:', error);
+      throw error;
+    }
+  }
+
+  async getTraitWeeklyPoints(key: string): Promise<number> {
+    try {
+      const usage = await this.getTraitWeeklyUsage();
+      return usage[key] || 0;
+    } catch (error) {
+      console.error('Failed to get trait weekly points:', error);
+      return 0;
+    }
+  }
+
+  async setTraitWeeklyPoints(key: string, points: number): Promise<void> {
+    try {
+      const usage = await this.getTraitWeeklyUsage();
+      usage[key] = points;
+      await this.saveTraitWeeklyUsage(usage);
+    } catch (error) {
+      console.error('Failed to set trait weekly points:', error);
       throw error;
     }
   }

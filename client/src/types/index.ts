@@ -141,3 +141,6 @@ export interface ProgramType {
   targetAudience: string;
   duration: number; // days
 }
+
+// Re-export trait types for convenience
+export type { TraitId, TraitDefinition, UserTraitScores, TraitProjection, TraitWeeklyUsage, TraitProgress } from './traits';

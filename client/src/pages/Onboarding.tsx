@@ -4,6 +4,7 @@ import { OnboardingData } from '@/data/onboardingData';
 import { storage } from '@/lib/storage';
 import { useAuth } from '@/contexts/AuthContext';
 import { analytics } from '@/lib/analytics';
+import { traitsFromOnboarding } from '@/lib/traitInitializer';
 
 // Import all onboarding screens
 import { SplashScreen } from '@/components/Onboarding/SplashScreen';
@@ -133,6 +134,14 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       // Save to localStorage for backup
       await storage.saveOnboardingData(cleanData);
       await storage.setOnboardingComplete();
+      
+      // Initialize trait scores from onboarding responses
+      const existingTraits = await storage.getUserTraits();
+      if (Object.keys(existingTraits).length === 0) {
+        const initialTraits = traitsFromOnboarding(cleanData);
+        await storage.saveUserTraits(initialTraits);
+        console.log('Initialized traits from onboarding data:', initialTraits);
+      }
       
       // Most importantly: Update the user profile to mark onboarding as complete
       await updateProfile({ onboarding_complete: true });

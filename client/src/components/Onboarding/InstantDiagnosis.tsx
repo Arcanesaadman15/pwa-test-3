@@ -1,9 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, AlertTriangle, TrendingUp, Zap, Target, Heart } from "lucide-react";
+import { CheckCircle, AlertTriangle, TrendingUp, Zap, Target, Heart, Flame } from "lucide-react";
 import { OnboardingData, calculateRecommendedProgram } from "@/data/onboardingData";
 import { Icon } from "@/lib/iconUtils";
+import { traitsFromOnboarding, calculateTraitProjections, getTraitCategoryOverview } from "@/lib/traitInitializer";
 
 interface InstantDiagnosisProps {
   data: Partial<OnboardingData>;
@@ -507,10 +508,137 @@ export function InstantDiagnosis({ data, onComplete }: InstantDiagnosisProps) {
               </AnimatePresence>
             </motion.div>
 
+            {/* Trait Projections Section */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 3.8, duration: 0.6 }}
+              transition={{ delay: 3.2, duration: 0.6 }}
+              className="mb-6"
+            >
+              <motion.div 
+                className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-4 md:p-6 border border-gray-700 relative overflow-hidden"
+                whileHover={{ scale: 1.01 }}
+                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              >
+                {/* Background effects */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-orange-500/5 via-purple-500/5 to-blue-500/5"
+                  animate={{ opacity: [0.3, 0.6, 0.3] }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
+
+                <motion.h3 
+                  className="font-bold mb-4 flex items-center relative z-10 text-lg text-white"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 3.4, duration: 0.5 }}
+                >
+                  <Flame className="mr-2 text-orange-500" size={24} />
+                  Your Testosterone Trait Potential
+                </motion.h3>
+
+                <motion.p 
+                  className="text-sm text-gray-300 mb-4 relative z-10"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 3.6, duration: 0.5 }}
+                >
+                  See how your core masculine traits could improve with the {recommendedProgram} program:
+                </motion.p>
+
+                {(() => {
+                  const currentTraits = traitsFromOnboarding(data);
+                  const projections = calculateTraitProjections(currentTraits, recommendedProgram, 8);
+                  const topTraits = ['SleepConsistency', 'StrengthTraining', 'MovementVolume', 'StressResilience', 'ConfidenceDrive'];
+                  
+                  return (
+                    <div className="space-y-3 relative z-10">
+                      {topTraits.map((traitId, index) => {
+                        const projection = projections[traitId];
+                        if (!projection) return null;
+                        
+                        const traitNames: Record<string, string> = {
+                          'SleepConsistency': 'Sleep Quality',
+                          'StrengthTraining': 'Strength Training',
+                          'MovementVolume': 'Daily Movement',
+                          'StressResilience': 'Stress Control',
+                          'ConfidenceDrive': 'Confidence'
+                        };
+
+                        const improvementPercent = Math.round(((projection.projected - projection.current) / projection.current) * 100);
+                        
+                        return (
+                          <motion.div
+                            key={traitId}
+                            className="bg-gray-700/50 rounded-lg p-3 backdrop-blur-sm"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 3.8 + (index * 0.1), duration: 0.4 }}
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-sm font-medium text-gray-200">
+                                {traitNames[traitId]}
+                              </span>
+                              <div className="flex items-center text-xs">
+                                <span className="text-gray-400 mr-2">
+                                  {projection.current} → {projection.projected}
+                                </span>
+                                {improvementPercent > 0 && (
+                                  <span className="text-green-400 flex items-center">
+                                    <TrendingUp size={12} className="mr-1" />
+                                    +{improvementPercent}%
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex space-x-2">
+                              <div className="flex-1">
+                                <div className="h-2 bg-gray-600 rounded-full overflow-hidden">
+                                  <motion.div
+                                    className="h-full bg-orange-500 rounded-full"
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${projection.current}%` }}
+                                    transition={{ delay: 4.0 + (index * 0.1), duration: 0.8 }}
+                                  />
+                                </div>
+                              </div>
+                              <div className="flex-1">
+                                <div className="h-2 bg-gray-600 rounded-full overflow-hidden">
+                                  <motion.div
+                                    className="h-full bg-green-500 rounded-full"
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${projection.projected}%` }}
+                                    transition={{ delay: 4.2 + (index * 0.1), duration: 0.8 }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
+
+                <motion.p 
+                  className="text-xs text-gray-400 mt-4 text-center relative z-10"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 4.8, duration: 0.5 }}
+                >
+                  Projections based on 8-week program completion
+                </motion.p>
+              </motion.div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 5.0, duration: 0.6 }}
               className="mb-8 md:mb-12"
             >
               <motion.div
