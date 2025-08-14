@@ -2,13 +2,12 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SKILL_CATEGORIES, SKILL_DEFINITIONS, UnlockedSkill } from "@/data/skillDefinitions";
 import { skillUnlockSystem } from "@/lib/skillUnlockSystem";
-import { SkillConnectionVisualization } from "./SkillConnectionVisualization";
 import { TraitsPage } from "./TraitsPage";
-import { Search, Filter, ArrowUp, Star, Zap, TreePine, Network, Flame } from "lucide-react";
+import { Search, Filter, ArrowUp, Star, Zap, TreePine, Flame } from "lucide-react";
 import { Icon, getCategoryIcon } from '@/lib/iconUtils';
 
 // Type definition for view mode
-type ViewMode = 'tree' | 'connections' | 'traits';
+type ViewMode = 'tree' | 'traits';
 
 interface SkillTreeProps {
   onSkillClick?: (skill: UnlockedSkill) => void;
@@ -247,14 +246,6 @@ export function ComprehensiveSkillTree({ onSkillClick }: SkillTreeProps) {
     skills: getSkillsToDisplay().filter(skill => skill.level === level)
   }));
 
-  // If connection view is selected, render the connection visualization
-  if (viewMode === 'connections') {
-    return <SkillConnectionVisualization 
-      onSkillClick={onSkillClick} 
-      onBackToTree={() => setViewMode('tree')}
-    />;
-  }
-
   // If traits view is selected, render the traits page
   if (viewMode === 'traits') {
     return <TraitsPage onTraitClick={(traitId) => console.log('Trait clicked:', traitId)} />;
@@ -333,16 +324,6 @@ export function ComprehensiveSkillTree({ onSkillClick }: SkillTreeProps) {
             }`}
           >
             <TreePine size={16} /> <span className="text-sm">Skills</span>
-          </button>
-          <button
-            onClick={() => handleViewModeChange('connections')}
-            className={`flex-1 py-2.5 px-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
-              isViewMode(viewMode, 'connections') 
-                ? 'bg-white text-gray-900 shadow-sm' 
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            <Network size={16} /> <span className="text-sm">Connections</span>
           </button>
           <button
             onClick={() => handleViewModeChange('traits')}
