@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Flame } from 'lucide-react';
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -54,7 +53,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
           className="mb-8"
         >
           <motion.div 
-            className="w-20 h-20 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-6"
+            className="w-20 h-20 flex items-center justify-center mx-auto mb-6"
             animate={{ 
               boxShadow: [
                 "0 0 0 0 rgba(249, 115, 22, 0.3)",
@@ -68,7 +67,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
               ease: "easeInOut"
             }}
           >
-            <Flame className="w-10 h-10 text-white" />
+            <img src="/icon-192x192.png" alt="PeakForge Logo" className="w-20 h-20" />
           </motion.div>
           
           <motion.h1 

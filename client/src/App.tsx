@@ -97,8 +97,8 @@ function AuthenticatedApp() {
           </div>
           
           <div className="relative z-10">
-            <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-6 backdrop-blur-sm">
-              <Icon name="Mountain" size={36} className="text-white" />
+            <div className="w-20 h-20 flex items-center justify-center mx-auto mb-6">
+              <img src="/icon-192x192.png" alt="PeakForge Logo" className="w-20 h-20" />
             </div>
             
             {/* Clean loading spinner */}
