@@ -53,7 +53,7 @@ export function AuthForm({ onComplete }: AuthFormProps) {
             </div>
           </div>
           <h1 className="text-3xl font-bold mb-2">
-            Join the Brotherhood
+            Commit to Yourself
           </h1>
           <p className="text-gray-300">
             Start your transformation journey today
