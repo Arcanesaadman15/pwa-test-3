@@ -89,11 +89,11 @@ function AuthenticatedApp() {
   // Show loading screen until both auth loading and initial transition are complete
   if (loading || !initialLoadComplete) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-600 via-orange-500 to-red-600 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center relative">
           {/* Subtle background glow */}
           <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-orange-300/10 rounded-full blur-2xl"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
           </div>
           
           <div className="relative z-10">
@@ -173,7 +173,7 @@ function AuthenticatedApp() {
     console.log('⏳ Waiting for profile data to load...');
     // Still loading profile data - show loading state instead of making navigation decisions
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-600 via-orange-500 to-red-600 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-white/80">Loading your profile...</p>
