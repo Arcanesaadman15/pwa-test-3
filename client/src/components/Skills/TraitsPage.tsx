@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { TRAIT_DEFINITIONS, getTraitsByCategory } from '@/data/traitDefinitions';
+import { TRAIT_DEFINITIONS } from '@/data/traitDefinitions';
 import { traitSystem } from '@/lib/traitSystem';
 import { UserTraitScores, TraitProgress } from '@/types/traits';
 import { storage } from '@/lib/storage';
-import { getTraitCategoryOverview } from '@/lib/traitInitializer';
 import { Icon } from '@/lib/iconUtils';
-import { Flame, Trophy, Star, TrendingUp, Zap, Target, Brain, Apple, Moon, Dumbbell } from 'lucide-react';
+import { Flame, Star, TrendingUp, Zap, Target, Brain, Apple, Moon, Dumbbell } from 'lucide-react';
 
 interface TraitsPageProps {
   onTraitClick?: (traitId: string) => void;
@@ -89,7 +88,7 @@ function CompactTraitCard({ trait, progress, onClick, index }: CompactTraitCardP
           {/* Icon and Score */}
           <div className="flex items-center justify-between mb-2">
             <div className="w-8 h-8 rounded-lg bg-white/80 flex items-center justify-center">
-              <Icon name={getIconName(trait.id)} size={16} className={theme.text} />
+              <Icon name={getIconName(trait.id) as any} size={16} className={theme.text} />
             </div>
             <div className={`text-lg font-black ${theme.text}`}>
               {progress.currentScore}
@@ -190,7 +189,6 @@ function CategoryCard({ category, data, index }: { category: string; data: any; 
   };
 
   const theme = getCategoryTheme(category);
-  const IconComponent = theme.icon;
   
   // Calculate potential score (current + 20% improvement)
   const currentAvg = data.current || 0;
@@ -309,6 +307,7 @@ function CategoryCard({ category, data, index }: { category: string; data: any; 
 export function TraitsPage({ onTraitClick }: TraitsPageProps) {
   const [traitScores, setTraitScores] = useState<UserTraitScores>({});
   const [traitProgress, setTraitProgress] = useState<TraitProgress[]>([]);
+  const [categoryOverview, setCategoryOverview] = useState<any>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -318,11 +317,15 @@ export function TraitsPage({ onTraitClick }: TraitsPageProps) {
   const loadTraitData = async () => {
     try {
       setLoading(true);
-      const scores = await storage.getUserTraits();
-      const progress = await traitSystem.getAllTraitProgress();
+      const [scores, progress, overview] = await Promise.all([
+        storage.getUserTraits(),
+        traitSystem.getAllTraitProgress(),
+        traitSystem.getCategoryOverview()
+      ]);
 
       setTraitScores(scores);
       setTraitProgress(progress);
+      setCategoryOverview(overview);
     } catch (error) {
       console.error('Error loading trait data:', error);
     } finally {
@@ -353,8 +356,6 @@ export function TraitsPage({ onTraitClick }: TraitsPageProps) {
       </div>
     );
   }
-
-  const categoryOverview = getTraitCategoryOverview(traitScores);
 
   return (
     <div className="h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-4 flex flex-col overflow-hidden">

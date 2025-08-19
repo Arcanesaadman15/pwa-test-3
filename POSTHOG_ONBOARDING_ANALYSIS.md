@@ -140,3 +140,5 @@ Create a dashboard with:
 5. **Average Completion Time** (single stat)
 
 This gives you a complete view of onboarding performance at a glance!
+
+

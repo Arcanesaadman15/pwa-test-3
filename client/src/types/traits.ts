@@ -44,9 +44,14 @@ export interface TraitWeeklyUsage {
 }
 
 export interface TraitProgress {
-  traitId: TraitId;
+  id: TraitId;
+  traitId?: TraitId; // for backward compatibility
+  title: string;
+  description: string;
+  category: 'Physical' | 'Nutrition' | 'Sleep' | 'Mental' | 'Recovery';
+  icon: string;
   currentScore: number;
   weeklyGain: number;
   projectedScore: number;
-  lastUpdated: Date;
+  lastUpdated?: Date;
 }

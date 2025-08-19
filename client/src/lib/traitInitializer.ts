@@ -148,7 +148,8 @@ export function calculateTraitProjections(
  * Get trait categories with average scores for overview
  */
 export function getTraitCategoryOverview(traits: UserTraitScores): Record<string, {
-  average: number;
+  current: number;
+  total: number;
   traits: Array<{ id: string; title: string; score: number }>;
 }> {
   const categories: Record<string, any> = {};
@@ -158,7 +159,7 @@ export function getTraitCategoryOverview(traits: UserTraitScores): Record<string
     if (!categories[category]) {
       categories[category] = {
         traits: [],
-        total: 0,
+        totalScore: 0,
         count: 0
       };
     }
@@ -169,16 +170,17 @@ export function getTraitCategoryOverview(traits: UserTraitScores): Record<string
       title: trait.title,
       score
     });
-    categories[category].total += score;
+    categories[category].totalScore += score;
     categories[category].count++;
   });
 
-  // Calculate averages
+  // Calculate averages and set totals
   Object.keys(categories).forEach(category => {
-    categories[category].average = Math.round(
-      categories[category].total / categories[category].count
+    categories[category].current = Math.round(
+      categories[category].totalScore / categories[category].count
     );
-    delete categories[category].total;
+    categories[category].total = categories[category].count;
+    delete categories[category].totalScore;
     delete categories[category].count;
   });
 

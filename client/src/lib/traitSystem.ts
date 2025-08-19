@@ -143,7 +143,12 @@ export class TraitSystem {
       const projectedScore = Math.min(100, currentScore + (potentialWeeklyGain * 4));
       
       progress.push({
-        traitId: trait.id as TraitId,
+        id: trait.id as TraitId,
+        traitId: trait.id as TraitId, // for backward compatibility
+        title: trait.title,
+        description: trait.description,
+        category: trait.category,
+        icon: trait.icon,
         currentScore,
         weeklyGain,
         projectedScore,
@@ -152,6 +157,53 @@ export class TraitSystem {
     }
     
     return progress;
+  }
+
+  /**
+   * Alias for getTraitProgress for backward compatibility
+   */
+  async getAllTraitProgress(): Promise<TraitProgress[]> {
+    return this.getTraitProgress();
+  }
+
+  /**
+   * Get category overview with current and potential scores
+   */
+  async getCategoryOverview(): Promise<Record<string, { current: number; total: number; traits: any[] }>> {
+    const traits = await storage.getUserTraits();
+    const categories: Record<string, any> = {};
+
+    TRAIT_DEFINITIONS.forEach(trait => {
+      const category = trait.category;
+      if (!categories[category]) {
+        categories[category] = {
+          traits: [],
+          totalScore: 0,
+          count: 0
+        };
+      }
+
+      const score = traits[trait.id] || 0;
+      categories[category].traits.push({
+        id: trait.id,
+        title: trait.title,
+        score
+      });
+      categories[category].totalScore += score;
+      categories[category].count++;
+    });
+
+    // Calculate averages and set totals
+    Object.keys(categories).forEach(category => {
+      categories[category].current = Math.round(
+        categories[category].totalScore / categories[category].count
+      );
+      categories[category].total = categories[category].count;
+      delete categories[category].totalScore;
+      delete categories[category].count;
+    });
+
+    return categories;
   }
 
   /**

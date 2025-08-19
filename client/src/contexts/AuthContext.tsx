@@ -17,12 +17,8 @@ interface AuthContextType {
   subscription: SubscriptionStatus;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, userData: { name: string; program: 'beginner' | 'intermediate' | 'advanced' }) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
   signInWithGoogle: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
-  resetPassword: (email: string) => Promise<{ error: any }>;
-  updatePassword: (password: string) => Promise<{ error: any }>;
   updateProfile: (updates: Partial<User>) => Promise<void>;
   createUserProfile: (supabaseUserId: string, userData: { name: string; program: 'beginner' | 'intermediate' | 'advanced'; email: string }) => Promise<void>;
   refreshSubscription: () => Promise<void>;
@@ -338,88 +334,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
 
-  const signUp = async (email: string, password: string, userData: { name: string; program: 'beginner' | 'intermediate' | 'advanced' }) => {
-    console.log('🔐 SIGNUP FLOW START:', { email, name: userData.name, program: userData.program });
-    
-    try {
-      // Step 1: Create the auth user with metadata
-      console.log('🔐 Step 1: Creating Supabase auth user...');
-      const signUpResult = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name: userData.name,
-            program: userData.program,
-            onboarding_complete: false // New users need onboarding
-          }
-        }
-      });
 
-      if (signUpResult.error) {
-        console.error('🚨 Auth signup failed:', signUpResult.error);
-        console.error('🚨 Error details:', { code: signUpResult.error.code, message: signUpResult.error.message });
-        
-        // Enhance error message for better user feedback
-        let enhancedError = { ...signUpResult.error };
-        
-        // Handle specific error codes
-        if (signUpResult.error.code === '23505' || // PostgreSQL unique constraint violation
-            signUpResult.error.message?.includes('already registered') ||
-            signUpResult.error.message?.includes('already exists') ||
-            signUpResult.error.message?.includes('already been registered')) {
-          enhancedError.message = 'This email is already registered. Please sign in instead.';
-        } else if (signUpResult.error.code === 'invalid_email') {
-          enhancedError.message = 'Please enter a valid email address.';
-        } else if (signUpResult.error.code === 'weak_password') {
-          enhancedError.message = 'Password must be at least 6 characters long.';
-        }
-        
-        return { error: enhancedError };
-      }
-
-      if (!signUpResult.data.user) {
-        console.error('🚨 No user returned from signup');
-        return { error: new Error('No user returned from signup') };
-      }
-
-      console.log('✅ Step 1: Auth user created successfully:', {
-        userId: signUpResult.data.user.id,
-        email: signUpResult.data.user.email,
-        emailConfirmed: signUpResult.data.user.email_confirmed_at,
-        sessionExists: !!signUpResult.data.session
-      });
-
-      // Step 2: Create the profile
-      console.log('🔐 Step 2: Creating user profile in database...');
-      try {
-        await createUserProfile(signUpResult.data.user.id, {
-          name: userData.name,
-          program: userData.program,
-          email
-        });
-        console.log('✅ Step 2: User profile created successfully');
-      } catch (profileError) {
-        console.error('🚨 Step 2: Profile creation failed:', profileError);
-        console.warn('⚠️ Profile creation failed, but auth user exists - user can retry login');
-      }
-
-      console.log('🎉 SIGNUP FLOW COMPLETE: User can now login');
-      return { error: null };
-    } catch (error) {
-      console.error('🚨 Exception in signUp:', error);
-      console.error('🚨 Exception stack:', error instanceof Error ? error.stack : 'No stack trace');
-      return { error };
-    }
-  };
-
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { error };
-  };
 
   const signInWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
@@ -470,47 +385,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const resetPassword = async (email: string) => {
-    console.log('🔐 PASSWORD RESET REQUEST:', { email });
-    
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `https://peakforge.club/reset-password`,
-      });
 
-      if (error) {
-        console.error('🚨 Password reset failed:', error);
-        return { error };
-      }
-
-      console.log('✅ Password reset email sent successfully');
-      return { error: null };
-    } catch (error) {
-      console.error('🚨 Exception in resetPassword:', error);
-      return { error };
-    }
-  };
-
-  const updatePassword = async (password: string) => {
-    console.log('🔐 PASSWORD UPDATE REQUEST');
-    
-    try {
-      const { error } = await supabase.auth.updateUser({
-        password: password
-      });
-
-      if (error) {
-        console.error('🚨 Password update failed:', error);
-        return { error };
-      }
-
-      console.log('✅ Password updated successfully');
-      return { error: null };
-    } catch (error) {
-      console.error('🚨 Exception in updatePassword:', error);
-      return { error };
-    }
-  };
 
   const createUserProfile = async (supabaseUserId: string, userData: { name: string; program: 'beginner' | 'intermediate' | 'advanced'; email: string }) => {
     console.log('👤 PROFILE CREATION START:', { userId: supabaseUserId, email: userData.email, program: userData.program });
@@ -635,12 +510,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     subscription,
     session,
     loading,
-    signUp,
-    signIn,
     signInWithGoogle,
     signOut,
-    resetPassword,
-    updatePassword,
     updateProfile,
     createUserProfile,
     refreshSubscription,
