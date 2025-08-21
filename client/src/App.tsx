@@ -108,7 +108,22 @@ function AuthenticatedApp() {
             
             <h2 className="text-2xl font-bold text-white mb-2">PeakForge</h2>
             <p className="text-white/80 text-lg mb-1">Loading your wellness journey...</p>
-            <p className="text-white/60 text-sm">Preparing your transformation</p>
+            <p className="text-white/60 text-sm">Setting up your account</p>
+            
+            {/* Add fallback after extended loading */}
+            {loading && (
+              <div className="mt-8">
+                <p className="text-white/40 text-xs mb-4">Taking longer than expected?</p>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => window.location.reload()}
+                  className="bg-white/10 text-white border-white/20 hover:bg-white/20"
+                >
+                  Refresh Page
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -176,7 +191,30 @@ function AuthenticatedApp() {
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white/80">Loading your profile...</p>
+          <p className="text-white/80 mb-6">Loading your profile...</p>
+          
+          {/* Fallback option after extended loading */}
+          <div className="mt-8">
+            <p className="text-white/40 text-xs mb-4">Profile taking a while to load?</p>
+            <div className="space-x-3">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => window.location.reload()}
+                className="bg-white/10 text-white border-white/20 hover:bg-white/20"
+              >
+                Refresh
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={async () => await signOut()}
+                className="bg-white/10 text-white border-white/20 hover:bg-white/20"
+              >
+                Sign Out
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     );

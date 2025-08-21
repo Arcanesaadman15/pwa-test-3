@@ -41,10 +41,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Reduced timeout for faster mobile experience (1 second max)
+    // Aggressive timeout for faster mobile experience (3 seconds max for new users)
     const loadingTimeout = setTimeout(() => {
+      console.warn('⚠️ Loading timeout reached - forcing load completion to prevent infinite loading');
       setLoading(false);
-    }, 1000);
+    }, 3000);
 
     // Get current session
     supabase.auth.getSession()
@@ -80,18 +81,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const provider = (session?.user as any)?.app_metadata?.provider as string | undefined;
         if (event === 'SIGNED_UP' && provider && provider !== 'email') {
           try {
+            console.log('🔐 New OAuth user detected, creating profile...', { provider, userId: session.user.id });
             const authUser = session.user;
             const derivedName = (authUser.user_metadata?.full_name
               || authUser.user_metadata?.name
               || (authUser.email?.split('@')[0] ?? 'User')) as string;
-            await createUserProfile(authUser.id, {
-              name: derivedName,
-              program: 'beginner',
-              email: authUser.email as string
-            });
+            
+            // Add timeout to profile creation to prevent hanging
+            await Promise.race([
+              createUserProfile(authUser.id, {
+                name: derivedName,
+                program: 'beginner',
+                email: authUser.email as string
+              }),
+              new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Profile creation timeout')), 10000)
+              )
+            ]);
+            console.log('✅ Profile created successfully for new OAuth user');
           } catch (e: any) {
-            // If row already exists or any non-fatal error occurs, continue gracefully
-            console.warn('⚠️ createUserProfile on SIGNED_UP skipped/failed:', e?.message || e);
+            console.error('❌ createUserProfile failed for OAuth user:', e?.message || e);
+            // Even if profile creation fails, continue to try fetching in case it exists
           }
         }
         await fetchUserProfile(session.user.id, session.user.email);
@@ -195,13 +205,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           if (profile && !profileError) {
             profileData = profile;
-            console.log('✅ Profile loaded successfully on attempt ${attempts}:', { 
+            console.log(`✅ Profile loaded successfully on attempt ${attempts}:`, { 
               userId: profile.id, 
               onboardingComplete: profile.onboarding_complete,
               program: profile.program 
             });
           } else if (profileError?.code !== 'PGRST116') {
-            console.error('❌ Profile fetch error on attempt ${attempts}:', profileError);
+            console.error(`❌ Profile fetch error on attempt ${attempts}:`, profileError);
           }
         } else {
           console.warn(`⏰ Profile fetch timed out on attempt ${attempts}`);
@@ -213,7 +223,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           if (sub && !subError) {
             subscriptionData = sub;
-            console.log('✅ Active subscription found on attempt ${attempts}:', { 
+            console.log(`✅ Active subscription found on attempt ${attempts}:`, { 
               plan: sub.subscription_plans?.name
             });
           }
@@ -243,8 +253,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           onboarding_complete: !!(profileData as any).onboarding_complete,
         });
       } else {
-        console.log('👤 No profile found after ${maxAttempts} attempts');
-        setUserProfile(null);
+        console.log(`👤 No profile found after ${maxAttempts} attempts`);
+        console.log(`🔄 Attempting to create fallback profile for user: ${supabaseUserId}`);
+        
+        // For OAuth users, try creating a fallback profile if none exists
+        try {
+          const fallbackProfile = {
+            name: userEmail?.split('@')[0] || 'User',
+            program: 'beginner' as const,
+            email: userEmail || ''
+          };
+          
+          await createUserProfile(supabaseUserId, fallbackProfile);
+          console.log('✅ Fallback profile created successfully');
+          
+          // Try to fetch the newly created profile
+          const { data: newProfile } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', supabaseUserId)
+            .single();
+            
+          if (newProfile) {
+            setUserProfile(newProfile);
+            localStorage.setItem('peakforge-user', JSON.stringify(newProfile));
+          }
+        } catch (fallbackError) {
+          console.error('❌ Fallback profile creation failed:', fallbackError);
+          setUserProfile(null);
+        }
       }
       
       // Set subscription if found
@@ -262,7 +299,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           subscription_status: subscriptionData.status,
         });
       } else {
-        console.log('💳 No active subscription found after ${maxAttempts} attempts');
+        console.log(`💳 No active subscription found after ${maxAttempts} attempts`);
         setSubscription({
           isSubscribed: false,
           plan: null,
