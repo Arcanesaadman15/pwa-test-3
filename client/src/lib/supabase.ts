@@ -32,6 +32,19 @@ export const supabase = (!supabaseUrl || !supabaseAnonKey)
         persistSession: true,
         detectSessionInUrl: true,
         flowType: 'pkce'
+      },
+      global: {
+        headers: {
+          'x-client-info': 'supabase-js-web'
+        }
+      },
+      db: {
+        schema: 'public'
+      },
+      realtime: {
+        params: {
+          eventsPerSecond: 10
+        }
       }
     });
 
