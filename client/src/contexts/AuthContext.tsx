@@ -90,34 +90,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               userId: session.user.id 
             });
             
-            // Quick check if profile exists before creating
-            const { data: existingProfile } = await supabase
-              .from('users')
-              .select('id')
-              .eq('id', session.user.id)
-              .single();
+            // Quick check if profile exists before creating (with timeout)
+            const profileCheck = Promise.race([
+              supabase
+                .from('users')
+                .select('id')
+                .eq('id', session.user.id)
+                .single(),
+              new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Profile check timeout')), 3000)
+              )
+            ]);
             
-            if (!existingProfile) {
-              console.log('🔐 No profile found, creating new profile for OAuth user');
-              const authUser = session.user;
-              const derivedName = (authUser.user_metadata?.full_name
-                || authUser.user_metadata?.name
-                || (authUser.email?.split('@')[0] ?? 'User')) as string;
-              
-              // Add timeout to profile creation to prevent hanging
-              await Promise.race([
-                createUserProfile(authUser.id, {
-                  name: derivedName,
-                  program: 'beginner',
-                  email: authUser.email as string
-                }),
-                new Promise((_, reject) => 
-                  setTimeout(() => reject(new Error('Profile creation timeout')), 10000)
-                )
-              ]);
-              console.log('✅ Profile created successfully for OAuth user');
-            } else {
-              console.log('✅ Profile already exists for OAuth user');
+            try {
+              const { data: existingProfile } = await profileCheck as any;
+              if (!existingProfile) {
+                console.log('🔐 No profile found, creating new profile for OAuth user');
+                const authUser = session.user;
+                const derivedName = (authUser.user_metadata?.full_name
+                  || authUser.user_metadata?.name
+                  || (authUser.email?.split('@')[0] ?? 'User')) as string;
+                
+                // Add timeout to profile creation to prevent hanging
+                await Promise.race([
+                  createUserProfile(authUser.id, {
+                    name: derivedName,
+                    program: 'beginner',
+                    email: authUser.email as string
+                  }),
+                  new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Profile creation timeout')), 10000)
+                  )
+                ]);
+                console.log('✅ Profile created successfully for OAuth user');
+              } else {
+                console.log('✅ Profile already exists for OAuth user');
+              }
+            } catch (checkError: any) {
+              console.warn('⚠️ Profile check failed, will rely on fallback creation:', checkError?.message);
+              // Don't attempt creation here - let the fallback logic handle it
             }
           } catch (e: any) {
             console.error('❌ OAuth user profile check/creation failed:', e?.message || e);
