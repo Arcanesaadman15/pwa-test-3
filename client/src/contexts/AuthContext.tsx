@@ -57,17 +57,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     supabase.auth.getSession()
       .then(({ data: { session } }: any) => {
         clearTimeout(loadingTimeout);
+        console.log('🔐 Initial session check:', { hasSession: !!session, hasUser: !!session?.user, email: session?.user?.email });
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
           fetchUserProfile(session.user.id, session.user.email);
         } else {
+          console.log('🔐 No initial session found, waiting for auth state changes...');
           setLoading(false);
         }
       })
       .catch((error: any) => {
         clearTimeout(loadingTimeout);
-        console.error('Error getting auth session:', error);
+        console.error('Error getting initial auth session:', error);
         setLoading(false);
       });
 
@@ -142,20 +144,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('🔐 Waiting for auth session...');
       let sessionReady = false;
       for (let i = 0; i < 6; i++) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.access_token) {
-          console.log('✅ Auth session ready');
-          sessionReady = true;
-          break;
+        try {
+          const { data: { session }, error } = await supabase.auth.getSession();
+          console.log(`🔐 Session check attempt ${i + 1}/6:`, { 
+            hasSession: !!session, 
+            hasAccessToken: !!session?.access_token,
+            hasUser: !!session?.user,
+            error: error?.message 
+          });
+          
+          if (session?.access_token && session?.user) {
+            console.log('✅ Auth session ready with user:', session.user.email);
+            sessionReady = true;
+            break;
+          }
+          
+          if (error) {
+            console.error('❌ Session check error:', error);
+          }
+        } catch (sessionError) {
+          console.error('❌ Session check exception:', sessionError);
         }
-        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        if (i < 5) { // Don't wait after the last attempt
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
       }
       
       if (!sessionReady) {
-        console.error('❌ Auth session not ready after 3 seconds');
-        setProfileError('Authentication session failed to establish. Please try signing in again.');
-        setLoading(false);
-        return;
+        console.warn('⚠️ Auth session not ready after 3 seconds - but user is authenticated, proceeding anyway');
+        // Don't return here - let's try to proceed since we know user is authenticated from auth state change
       }
       
       // 3. Try to fetch existing profile with retries
@@ -164,25 +182,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       let profileError = null;
       
       for (let attempt = 1; attempt <= 3; attempt++) {
-        console.log(`📥 Profile fetch attempt ${attempt}/3`);
+        console.log(`📥 Profile fetch attempt ${attempt}/3 for user: ${supabaseUserId}`);
         
-        const result = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', supabaseUserId)
-          .single();
-        
-        profile = result.data;
-        profileError = result.error;
-        
-        if (profile && !profileError) {
-          console.log('✅ Profile found on attempt', attempt);
-          break;
-        }
-        
-        if (profileError?.code === 'PGRST116') {
-          console.log('ℹ️ No profile exists (PGRST116)');
-          break;
+        try {
+          const result = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', supabaseUserId)
+            .single();
+          
+          profile = result.data;
+          profileError = result.error;
+          
+          console.log(`📥 Attempt ${attempt} result:`, { 
+            hasProfile: !!profile, 
+            errorCode: profileError?.code,
+            errorMessage: profileError?.message 
+          });
+          
+          if (profile && !profileError) {
+            console.log('✅ Profile found on attempt', attempt, ':', profile.name);
+            break;
+          }
+          
+          if (profileError?.code === 'PGRST116') {
+            console.log('ℹ️ No profile exists (PGRST116) - will create new profile');
+            break;
+          }
+          
+          console.error(`❌ Profile fetch attempt ${attempt} failed:`, profileError);
+          
+        } catch (fetchException) {
+          console.error(`❌ Profile fetch attempt ${attempt} exception:`, fetchException);
+          profileError = { message: fetchException instanceof Error ? fetchException.message : 'Unknown error', code: 'EXCEPTION' };
         }
         
         if (attempt < 3) {
