@@ -43,7 +43,7 @@ function Router() {
 }
 
 function AuthenticatedApp() {
-  const { user, userProfile, subscription, loading, signOut } = useAuth();
+  const { user, userProfile, subscription, loading, profileError, signOut, retryProfileCreation } = useAuth();
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const [isInOnboarding, setIsInOnboarding] = useState(false);
   const { 
@@ -181,40 +181,65 @@ function AuthenticatedApp() {
     }} />;
   }
 
-  // STEP 4: User is authenticated, check subscription status and onboarding
-  // CRITICAL FIX: Wait for both profile AND subscription data to load to prevent race conditions
-  // This prevents mobile users from being sent to onboarding when they already have active subscriptions
-  if (userProfile === null) {
+  // STEP 4: Handle profile error state
+  if (profileError && !loading) {
+    console.log('❌ Profile error state:', profileError);
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-6">
+          <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 19c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          
+          <h2 className="text-xl font-semibold text-white mb-4">Profile Setup Failed</h2>
+          <p className="text-white/70 mb-6 text-sm leading-relaxed">{profileError}</p>
+          
+          <div className="space-y-3">
+            <Button 
+              onClick={retryProfileCreation}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
+                  Retrying...
+                </>
+              ) : (
+                'Try Again'
+              )}
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              onClick={async () => await signOut()}
+              className="w-full bg-white/10 text-white border-white/20 hover:bg-white/20"
+              disabled={loading}
+            >
+              Sign Out & Try Different Account
+            </Button>
+          </div>
+          
+          <p className="text-white/40 text-xs mt-6">
+            If this issue persists, please contact support
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // STEP 5: User is authenticated, check subscription status and onboarding
+  // Wait for profile data to load to prevent race conditions
+  if (userProfile === null && loading) {
     console.log('⏳ Waiting for profile data to load...');
-    // Still loading profile data - show loading state instead of making navigation decisions
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white/80 mb-6">Loading your profile...</p>
-          
-          {/* Fallback option after extended loading */}
-          <div className="mt-8">
-            <p className="text-white/40 text-xs mb-4">Profile taking a while to load?</p>
-            <div className="space-x-3">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => window.location.reload()}
-                className="bg-white/10 text-white border-white/20 hover:bg-white/20"
-              >
-                Refresh
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={async () => await signOut()}
-                className="bg-white/10 text-white border-white/20 hover:bg-white/20"
-              >
-                Sign Out
-              </Button>
-            </div>
-          </div>
+          <p className="text-white/80 mb-6">Setting up your profile...</p>
+          <p className="text-white/50 text-sm">This should only take a moment</p>
         </div>
       </div>
     );
