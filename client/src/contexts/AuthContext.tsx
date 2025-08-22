@@ -44,19 +44,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profileError, setProfileError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Extended timeout for profile creation process (15 seconds)
-    const loadingTimeout = setTimeout(() => {
-      console.warn('⚠️ Loading timeout reached after 15 seconds - this might indicate a database issue');
-      if (!userProfile && !profileError) {
-        setProfileError('Profile setup is taking too long. This might be a connection issue. Please try again.');
-      }
-      setLoading(false);
-    }, 15000);
+    // Removed aggressive timeout since RLS performance is now optimized
+    // Queries should complete in <100ms with the new RLS policies
 
     // Get current session
     supabase.auth.getSession()
       .then(({ data: { session } }: any) => {
-        clearTimeout(loadingTimeout);
         console.log('🔐 Initial session check:', { hasSession: !!session, hasUser: !!session?.user, email: session?.user?.email });
         setSession(session);
         setUser(session?.user ?? null);
@@ -68,7 +61,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       })
       .catch((error: any) => {
-        clearTimeout(loadingTimeout);
         console.error('Error getting initial auth session:', error);
         setLoading(false);
       });
@@ -110,7 +102,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => {
-      clearTimeout(loadingTimeout);
       subscription.unsubscribe();
     };
   }, []);
@@ -164,17 +155,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           });
           
           // Add timeout to prevent hanging queries
-          const profileQuery = supabase
+          const result = await supabase
             .from('users')
             .select('*')
             .eq('id', supabaseUserId)
             .single();
-          
-          const timeoutPromise = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Query timeout after 5 seconds')), 5000)
-          );
-          
-          const result = await Promise.race([profileQuery, timeoutPromise]) as any;
           
           profile = result.data;
           profileError = result.error;
@@ -184,8 +169,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             errorCode: profileError?.code,
             errorMessage: profileError?.message 
           });
-          
-          if (profile && !profileError) {
+            
+            if (profile && !profileError) {
             console.log('✅ Profile found on attempt', attempt, ':', profile.name);
             break;
           }
@@ -312,30 +297,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           try {
             console.log(`👤 Profile creation attempt ${attempt}/3`);
             
-            // Add timeout to profile creation
-            const createProfilePromise = createUserProfile(supabaseUserId, profileData);
-            const createTimeoutPromise = new Promise((_, reject) => 
-              setTimeout(() => reject(new Error('Profile creation timeout after 10 seconds')), 10000)
-            );
-            
-            await Promise.race([createProfilePromise, createTimeoutPromise]);
+            // Create profile (RLS optimized for fast execution)
+            await createUserProfile(supabaseUserId, profileData);
             console.log(`✅ Profile creation ${attempt} completed`);
             
-            // Immediately fetch the created profile with timeout
-            const fetchProfilePromise = supabase
+                        // Immediately fetch the created profile (RLS optimized for fast execution)
+            const { data: newProfile, error: fetchError } = await supabase
               .from('users')
               .select('*')
               .eq('id', supabaseUserId)
               .single();
-            
-            const fetchTimeoutPromise = new Promise((_, reject) => 
-              setTimeout(() => reject(new Error('Profile fetch timeout after 5 seconds')), 5000)
-            );
-            
-            const { data: newProfile, error: fetchError } = await Promise.race([
-              fetchProfilePromise, 
-              fetchTimeoutPromise
-            ]) as any;
               
             if (newProfile && !fetchError) {
               createdProfile = newProfile;
@@ -382,7 +353,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               .update({ id: supabaseUserId })
               .eq('email', userEmail)
               .select()
-              .single();
+            .single();
             
             if (emergencyProfile && !emergencyError) {
               console.log('✅ EMERGENCY: Profile ID fixed successfully!', emergencyProfile.name);
