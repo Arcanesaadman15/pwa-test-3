@@ -183,3 +183,18 @@ CREATE INDEX idx_user_subscriptions_plan_id ON user_subscriptions(plan_id);
 ```
 
 **Performance Impact**: Queries now execute in <100ms instead of 15+ seconds!
+
+## 🔒 RLS Policy Fix (Latest - January 2025)
+
+**Issue**: Profile creation failing silently due to missing RLS policy check  
+**Root Cause**: `Users can insert own profile` policy lacked a `WITH CHECK` clause to verify user ID  
+**Solution**: Added proper `WITH CHECK` clause to ensure users can only create their own profiles
+
+**Database Migration Applied**:
+```sql
+CREATE POLICY "Users can insert own profile" ON users
+  FOR INSERT 
+  WITH CHECK (id = (select auth.uid()));
+```
+
+**Impact**: Google sign-up flow now works correctly with proper profile creation!
