@@ -154,6 +154,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log(`📥 Profile fetch attempt ${attempt}/3 for user: ${supabaseUserId}`);
         
         try {
+          // Debug: Check current session before query
+          const { data: { session: currentSession } } = await supabase.auth.getSession();
+          console.log(`📥 Current session before query:`, { 
+            hasSession: !!currentSession, 
+            hasAccessToken: !!currentSession?.access_token,
+            userId: currentSession?.user?.id,
+            userEmail: currentSession?.user?.email
+          });
+          
           // Add timeout to prevent hanging queries
           const profileQuery = supabase
             .from('users')
