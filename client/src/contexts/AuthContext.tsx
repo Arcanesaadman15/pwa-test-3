@@ -44,11 +44,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profileError, setProfileError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Aggressive timeout for faster mobile experience (3 seconds max for new users)
+    // Extended timeout for profile creation process (15 seconds)
     const loadingTimeout = setTimeout(() => {
-      console.warn('⚠️ Loading timeout reached - forcing load completion to prevent infinite loading');
+      console.warn('⚠️ Loading timeout reached after 15 seconds - this might indicate a database issue');
+      if (!userProfile && !profileError) {
+        setProfileError('Profile setup is taking too long. This might be a connection issue. Please try again.');
+      }
       setLoading(false);
-    }, 3000);
+    }, 15000);
 
     // Get current session
     supabase.auth.getSession()
@@ -79,6 +82,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (event === 'SIGNED_UP' || event === 'SIGNED_IN') {
           await new Promise(resolve => setTimeout(resolve, 200));
         }
+
+        // Clear any previous errors
+        setProfileError(null);
 
         // Fetch user profile (with built-in creation fallback)
         await fetchUserProfile(session.user.id, session.user.email);
@@ -132,10 +138,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
       
-      // 2. Wait for auth session to be established
+      // 2. Wait for auth session to be established (shorter wait, faster failure)
       console.log('🔐 Waiting for auth session...');
       let sessionReady = false;
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 6; i++) {
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.access_token) {
           console.log('✅ Auth session ready');
@@ -146,7 +152,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       
       if (!sessionReady) {
-        console.error('❌ Auth session not ready after 5 seconds');
+        console.error('❌ Auth session not ready after 3 seconds');
         setProfileError('Authentication session failed to establish. Please try signing in again.');
         setLoading(false);
         return;

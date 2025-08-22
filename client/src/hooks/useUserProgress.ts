@@ -13,7 +13,7 @@ export function useUserProgress() {
   const loadUserData = async () => {
     try {
       if (userProfile) {
-        setIsOnboardingComplete(userProfile.onboarding_complete);
+        setIsOnboardingComplete(userProfile.onboarding_complete || false);
       } else {
         // Check local storage for onboarding status if no user profile
         const onboardingComplete = await storage.getOnboardingStatus();
@@ -21,6 +21,7 @@ export function useUserProgress() {
       }
     } catch (error) {
       console.error('Failed to load user data:', error);
+      setIsOnboardingComplete(false); // Safe default
     }
   };
 

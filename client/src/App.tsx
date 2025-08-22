@@ -247,7 +247,7 @@ function AuthenticatedApp() {
 
   // If user has completed onboarding but has no subscription, show pricing page
   // If user hasn't completed onboarding and has no subscription, they should be in onboarding flow
-  if (!subscription.isSubscribed && !isSubscriptionPath && !isResetPasswordPath) {
+  if (!subscription.isSubscribed && !isSubscriptionPath && !isResetPasswordPath && userProfile) {
     // If user has completed onboarding, send them to pricing page
     if (userProfile.onboarding_complete && !isInOnboarding) {
       console.log('🚨 User completed onboarding but no subscription - redirecting to pricing page');
