@@ -276,8 +276,15 @@ function AuthenticatedApp() {
       console.log('🎯 User needs onboarding and subscription - starting onboarding flow');
       setIsInOnboarding(true);
       return <Onboarding onComplete={async (data) => {
-        console.log('🎯 Onboarding completed, marking as not in onboarding');
+        console.log('🎯 Onboarding completed:', { 
+          hasData: !!data, 
+          userProfileBefore: userProfile?.onboarding_complete 
+        });
         setIsInOnboarding(false);
+        
+        // The Onboarding component already calls updateProfile({ onboarding_complete: true })
+        // So we just need to ensure the UI updates properly
+        console.log('🎯 Onboarding flow complete, user should proceed to main app');
       }} />;
     }
   }
