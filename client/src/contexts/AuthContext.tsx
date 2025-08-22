@@ -226,8 +226,59 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
       
-      // 4. No profile exists - create one with proper user data
-      if (profileError?.code === 'PGRST116') {
+      // 4. No profile found by ID - check if one exists by email (ID mismatch case)
+      if (profileError?.code === 'PGRST116' || (profileError && profileError.message?.includes('timeout'))) {
+        console.log('👤 No profile found by ID, checking by email for ID mismatch...');
+        
+        try {
+          const { data: emailProfile, error: emailError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', userEmail)
+            .single();
+          
+          if (emailProfile && !emailError) {
+            console.log('🔍 Found existing profile by email with different ID:', {
+              authId: supabaseUserId,
+              profileId: emailProfile.id,
+              email: emailProfile.email
+            });
+            
+            // Update the existing profile to use the current auth ID
+            const { data: updatedProfile, error: updateError } = await supabase
+              .from('users')
+              .update({ id: supabaseUserId })
+              .eq('email', userEmail)
+              .select()
+              .single();
+            
+            if (updatedProfile && !updateError) {
+              console.log('✅ Profile ID updated successfully:', updatedProfile.name);
+              setUserProfile(updatedProfile);
+              setProfileError(null);
+              localStorage.setItem('peakforge-user', JSON.stringify(updatedProfile));
+              
+              // Update analytics
+              analytics.setPerson({
+                name: updatedProfile.name,
+                program: updatedProfile.program,
+                onboarding_complete: !!updatedProfile.onboarding_complete,
+              });
+              
+              fetchSubscriptionInBackground(supabaseUserId);
+              setLoading(false);
+              return;
+            } else {
+              console.error('❌ Failed to update profile ID:', updateError);
+              // Fall through to create new profile
+            }
+          } else if (emailError?.code !== 'PGRST116') {
+            console.error('❌ Error checking profile by email:', emailError);
+          }
+        } catch (emailCheckError) {
+          console.error('❌ Exception checking profile by email:', emailCheckError);
+        }
+        
         console.log('👤 Creating new profile with user data...');
         
         // Get actual user metadata from auth
@@ -313,6 +364,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return;
         } else {
           console.error('❌ Failed to create profile after 3 attempts');
+          console.log('🚨 EMERGENCY: Attempting direct profile fix for ID mismatch...');
+          
+          // Emergency fix: Try to update existing profile with current auth ID
+          try {
+            const { data: emergencyProfile, error: emergencyError } = await supabase
+              .from('users')
+              .update({ id: supabaseUserId })
+              .eq('email', userEmail)
+              .select()
+              .single();
+            
+            if (emergencyProfile && !emergencyError) {
+              console.log('✅ EMERGENCY: Profile ID fixed successfully!', emergencyProfile.name);
+              setUserProfile(emergencyProfile);
+              setProfileError(null);
+              localStorage.setItem('peakforge-user', JSON.stringify(emergencyProfile));
+              
+              // Update analytics
+              analytics.setPerson({
+                name: emergencyProfile.name,
+                program: emergencyProfile.program,
+                onboarding_complete: !!emergencyProfile.onboarding_complete,
+              });
+              
+              fetchSubscriptionInBackground(supabaseUserId);
+              setLoading(false);
+              return;
+            } else {
+              console.error('❌ EMERGENCY: Profile fix failed:', emergencyError);
+            }
+          } catch (emergencyException) {
+            console.error('❌ EMERGENCY: Profile fix exception:', emergencyException);
+          }
+          
           setProfileError('Failed to create your profile. This might be a database permission issue. Please try again or contact support.');
           setUserProfile(null);
           setLoading(false);
@@ -497,9 +582,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         onboardingComplete: profileData.onboarding_complete 
       });
 
+      // Use UPSERT to handle ID mismatches and existing emails
       const { data, error } = await supabase
         .from('users')
-        .insert(profileData)
+        .upsert(profileData, { 
+          onConflict: 'email',
+          ignoreDuplicates: false 
+        })
         .select()
         .single();
 
