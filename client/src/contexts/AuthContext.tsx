@@ -580,7 +580,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         achievements: 0,
         level: 1,
         onboarding_complete: false, // CRITICAL: New users must see onboarding
-        preferences: {},
+        preferences: {}, // CRITICAL: Always use empty object, never null
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
@@ -588,7 +588,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('👤 Inserting profile data:', { 
         userId: profileData.id, 
         program: profileData.program, 
-        onboardingComplete: profileData.onboarding_complete 
+        onboardingComplete: profileData.onboarding_complete,
+        preferences: profileData.preferences // Log to ensure it's always {}
       });
 
       // Use UPSERT to handle ID mismatches and existing emails

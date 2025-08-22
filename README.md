@@ -50,7 +50,7 @@ CREATE TABLE users (
   achievements INTEGER NOT NULL DEFAULT 0,
   level INTEGER NOT NULL DEFAULT 1,
   onboarding_complete BOOLEAN NOT NULL DEFAULT false,
-  preferences JSONB,
+  preferences JSONB DEFAULT '{}',
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
