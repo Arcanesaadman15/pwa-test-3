@@ -140,41 +140,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
       
-      // 2. Wait for auth session to be established (shorter wait, faster failure)
-      console.log('🔐 Waiting for auth session...');
-      let sessionReady = false;
-      for (let i = 0; i < 6; i++) {
-        try {
-          const { data: { session }, error } = await supabase.auth.getSession();
-          console.log(`🔐 Session check attempt ${i + 1}/6:`, { 
-            hasSession: !!session, 
-            hasAccessToken: !!session?.access_token,
-            hasUser: !!session?.user,
-            error: error?.message 
-          });
-          
-          if (session?.access_token && session?.user) {
-            console.log('✅ Auth session ready with user:', session.user.email);
-            sessionReady = true;
-            break;
-          }
-          
-          if (error) {
-            console.error('❌ Session check error:', error);
-          }
-        } catch (sessionError) {
-          console.error('❌ Session check exception:', sessionError);
-        }
-        
-        if (i < 5) { // Don't wait after the last attempt
-          await new Promise(resolve => setTimeout(resolve, 500));
-        }
-      }
-      
-      if (!sessionReady) {
-        console.warn('⚠️ Auth session not ready after 3 seconds - but user is authenticated, proceeding anyway');
-        // Don't return here - let's try to proceed since we know user is authenticated from auth state change
-      }
+      // 2. SKIP WAITING FOR AUTH SESSION HERE (OAuth already authenticated)
+      // We used to wait for supabase.auth.getSession() to stabilize, but with OAuth
+      // this can lag behind the auth state event. Proceed directly to profile fetch/creation.
+      console.log('⏭️ Skipping extra session wait - proceeding to profile fetch');
       
       // 3. Try to fetch existing profile with retries
       console.log('📥 Fetching existing profile...');
