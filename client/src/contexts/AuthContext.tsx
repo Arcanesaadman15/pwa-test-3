@@ -154,11 +154,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log(`📥 Profile fetch attempt ${attempt}/3 for user: ${supabaseUserId}`);
         
         try {
-          const result = await supabase
+          // Add timeout to prevent hanging queries
+          const profileQuery = supabase
             .from('users')
             .select('*')
             .eq('id', supabaseUserId)
             .single();
+          
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Query timeout after 5 seconds')), 5000)
+          );
+          
+          const result = await Promise.race([profileQuery, timeoutPromise]) as any;
           
           profile = result.data;
           profileError = result.error;
@@ -184,6 +191,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch (fetchException) {
           console.error(`❌ Profile fetch attempt ${attempt} exception:`, fetchException);
           profileError = { message: fetchException instanceof Error ? fetchException.message : 'Unknown error', code: 'EXCEPTION' };
+          
+          // If it's a timeout, treat it as no profile found
+          if (fetchException instanceof Error && fetchException.message.includes('timeout')) {
+            console.log('⏰ Query timeout - treating as no profile found');
+            profileError = { code: 'PGRST116', message: 'No rows returned' };
+            break;
+          }
         }
         
         if (attempt < 3) {
@@ -237,21 +251,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         for (let attempt = 1; attempt <= 3; attempt++) {
           try {
             console.log(`👤 Profile creation attempt ${attempt}/3`);
-            await createUserProfile(supabaseUserId, profileData);
             
-            // Immediately fetch the created profile
-            const { data: newProfile, error: fetchError } = await supabase
+            // Add timeout to profile creation
+            const createProfilePromise = createUserProfile(supabaseUserId, profileData);
+            const createTimeoutPromise = new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('Profile creation timeout after 10 seconds')), 10000)
+            );
+            
+            await Promise.race([createProfilePromise, createTimeoutPromise]);
+            console.log(`✅ Profile creation ${attempt} completed`);
+            
+            // Immediately fetch the created profile with timeout
+            const fetchProfilePromise = supabase
               .from('users')
               .select('*')
               .eq('id', supabaseUserId)
               .single();
+            
+            const fetchTimeoutPromise = new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('Profile fetch timeout after 5 seconds')), 5000)
+            );
+            
+            const { data: newProfile, error: fetchError } = await Promise.race([
+              fetchProfilePromise, 
+              fetchTimeoutPromise
+            ]) as any;
               
             if (newProfile && !fetchError) {
               createdProfile = newProfile;
               console.log('✅ Profile created and fetched successfully:', newProfile.name);
               break;
             } else {
-              console.error(`❌ Profile creation attempt ${attempt} failed:`, fetchError);
+              console.error(`❌ Profile fetch after creation attempt ${attempt} failed:`, fetchError);
               if (attempt < 3) {
                 await new Promise(resolve => setTimeout(resolve, attempt * 1000));
               }
