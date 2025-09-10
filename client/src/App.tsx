@@ -20,6 +20,7 @@ import LemonSqueezySetup from "@/pages/LemonSqueezySetup";
 import DebugSubscription from "@/pages/DebugSubscription";
 import Onboarding from "@/pages/Onboarding";
 import ResetPassword from "@/pages/ResetPassword";
+import DebugAuth from "./pages/DebugAuth";
 import { useEffect, useState } from "react";
 import { Icon } from "./lib/iconUtils";
 
@@ -34,7 +35,10 @@ function Router() {
       <Route path="/subscription/cancel" component={SubscriptionCancelPage} />
       <Route path="/reset-password" component={ResetPassword} />
       {process.env.NODE_ENV === 'development' && (
-        <Route path="/debug" component={DebugSubscription} />
+        <>
+          <Route path="/debug" component={DebugSubscription} />
+          <Route path="/debug-auth" component={DebugAuth} />
+        </>
       )}
       <Route path="/lemonsqueezy-setup" component={LemonSqueezySetup} />
       <Route component={NotFound} />
@@ -248,8 +252,11 @@ function AuthenticatedApp() {
   // If user has completed onboarding but has no subscription, show pricing page
   // If user hasn't completed onboarding and has no subscription, they should be in onboarding flow
   if (!subscription.isSubscribed && !isSubscriptionPath && !isResetPasswordPath && userProfile) {
+    // Handle undefined onboarding_complete (treat as false)
+    const hasCompletedOnboarding = userProfile.onboarding_complete === true;
+    
     // If user has completed onboarding, send them to pricing page
-    if (userProfile.onboarding_complete && !isInOnboarding) {
+    if (hasCompletedOnboarding && !isInOnboarding) {
       console.log('🚨 User completed onboarding but no subscription - redirecting to pricing page');
       return (
         <div>
@@ -271,9 +278,12 @@ function AuthenticatedApp() {
       );
     }
     
-    // If user hasn't completed onboarding and isn't already in onboarding, start onboarding
-    if (!userProfile.onboarding_complete && !isInOnboarding) {
-      console.log('🎯 User needs onboarding and subscription - starting onboarding flow');
+    // If user hasn't completed onboarding (including undefined case) and isn't already in onboarding, start onboarding
+    if (!hasCompletedOnboarding && !isInOnboarding) {
+      console.log('🎯 User needs onboarding and subscription - starting onboarding flow', {
+        onboardingComplete: userProfile.onboarding_complete,
+        hasCompletedOnboarding
+      });
       setIsInOnboarding(true);
       return <Onboarding onComplete={async (data) => {
         console.log('🎯 Onboarding completed:', { 
