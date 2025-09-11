@@ -20,7 +20,7 @@ import LemonSqueezySetup from "@/pages/LemonSqueezySetup";
 import DebugSubscription from "@/pages/DebugSubscription";
 import Onboarding from "@/pages/Onboarding";
 import ResetPassword from "@/pages/ResetPassword";
-import DebugAuth from "./pages/DebugAuth";
+import DebugAuth from "@/pages/DebugAuth";
 import { useEffect, useState } from "react";
 import { Icon } from "./lib/iconUtils";
 
