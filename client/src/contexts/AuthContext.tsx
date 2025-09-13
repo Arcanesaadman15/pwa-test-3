@@ -142,29 +142,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   };
 
-  // Update fetchUserProfile to handle creation with feedback
-  const fetchUserProfile = async (supabaseUserId: string, userEmail?: string) => {
-    try {
-      console.log('📋 Fetching user profile for:', supabaseUserId, 'email:', userEmail);
+   // Update fetchUserProfile to handle creation with feedback
+   const fetchUserProfile = async (supabaseUserId: string, userEmail?: string) => {
+     try {
+       console.log('📋 Fetching user profile for:', supabaseUserId, 'email:', userEmail);
+       
+       // Add aggressive 3-second timeout to prevent hanging
+       const profileFetch = Promise.race([
+         supabase
+           .from('users')
+           .select('*')
+           .eq('id', supabaseUserId)
+           .single(),
+         new Promise((_, reject) => 
+           setTimeout(() => reject(new Error('Profile fetch timeout')), 3000)
+         )
+       ]);
+       
+       const { data, error } = await profileFetch as any;
       
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', supabaseUserId)
-        .single();
-      
-      if (error) {
-        if (error.code === 'PGRST116') { // No rows found - new user
-          console.log('🆕 No profile found, creating new one...');
-          setProfileCreating(true); // Show creation-specific loading
-          
-             try {
-               const profileData = createInitialProfileData(supabaseUserId, userEmail);
-                const { data: newProfile, error: insertError } = await supabase
-                  .from('users')
-                  .insert(profileData)
-                  .select()
-                  .single();
+       if (error) {
+         if (error.code === 'PGRST116' || error.message === 'Profile fetch timeout') { 
+           // No rows found or timeout - create new user
+           console.log('🆕 No profile found or fetch timed out, creating new one...');
+           setProfileCreating(true); // Show creation-specific loading
+           
+              try {
+                const profileData = createInitialProfileData(supabaseUserId, userEmail);
+                
+                // Add timeout to profile creation to prevent hanging
+                const profileCreation = Promise.race([
+                  supabase
+                    .from('users')
+                    .insert(profileData)
+                    .select()
+                    .single(),
+                  new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Profile creation timeout')), 5000)
+                  )
+                ]);
+                
+                const { data: newProfile, error: insertError } = await profileCreation as any;
             
             if (insertError) throw insertError;
             
@@ -172,32 +190,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setUserProfile(newProfile);
             await fetchSubscriptionInBackground(supabaseUserId);
             
-          } catch (insertError) {
-            console.error('❌ Profile creation failed:', insertError);
-             // Quick retry once
-             console.log('🔄 Retrying profile creation...');
-              const { data: retryProfile, error: retryError } = await supabase
-                .from('users')
-                .insert(createInitialProfileData(supabaseUserId, userEmail))
-                .select()
-                .single();
-            
-            if (retryError) {
-              console.error('❌ Retry failed:', retryError);
-              setProfileError('Failed to create profile. Please try again.');
-              throw retryError;
-            }
-            
-            setUserProfile(retryProfile);
-            await fetchSubscriptionInBackground(supabaseUserId);
-          } finally {
-            setProfileCreating(false);
-          }
+           } catch (insertError) {
+             console.error('❌ Profile creation failed:', insertError);
+             setProfileError('Failed to create your account. Please check your connection and try again.');
+             setUserProfile(null); // Don't create fallback - force proper account creation
+             throw insertError; // Block the user from proceeding
+           } finally {
+             setProfileCreating(false);
+           }
           
         } else {
           console.error('❌ Profile fetch error:', error);
-          setProfileError('Failed to load profile. Please try again.');
-          throw error;
+          setProfileError('Failed to load your account. Please check your connection and try again.');
+          setUserProfile(null); // Don't create fallback - force proper account loading
+          throw error; // Block the user from proceeding
         }
         } else {
           console.log('✅ Profile loaded:', data.id, 'onboarding_complete:', data.onboarding_complete);
@@ -211,12 +217,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
            setUserProfile(normalizedProfile);
            await fetchSubscriptionInBackground(supabaseUserId);
          }
-     } catch (error) {
-       console.error('❌ Error in fetchUserProfile:', error);
-       setProfileError('An error occurred while loading your profile.');
-     } finally {
-       setLoading(false);
-     }
+      } catch (error) {
+        console.error('❌ Critical error in fetchUserProfile:', error);
+        setProfileError('Unable to load your account. Please check your internet connection and try again.');
+        setUserProfile(null); // Force proper account loading - no shortcuts
+      } finally {
+        setLoading(false);
+      }
   };
   
   // Background refresh function for profile cache updates
@@ -242,24 +249,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Separate function for subscription fetch
-  const fetchSubscriptionInBackground = async (supabaseUserId: string) => {
-    try {
-      console.log('🔄 Background subscription fetch for user:', supabaseUserId);
-      
-      const { data: subscription, error: subError } = await supabase
-        .from('user_subscriptions')
-        .select(`
-          *,
-          subscription_plans (
-            name,
-            price,
-            interval
-          )
-        `)
-        .eq('user_id', supabaseUserId)
-        .eq('status', 'active')
-        .single();
+   // Separate function for subscription fetch
+   const fetchSubscriptionInBackground = async (supabaseUserId: string) => {
+     try {
+       console.log('🔄 Background subscription fetch for user:', supabaseUserId);
+       
+       // Add timeout to subscription fetch to prevent hanging
+       const subscriptionFetch = Promise.race([
+         supabase
+           .from('user_subscriptions')
+           .select(`
+             *,
+             subscription_plans (
+               name,
+               price,
+               interval
+             )
+           `)
+           .eq('user_id', supabaseUserId)
+           .eq('status', 'active')
+           .single(),
+         new Promise((_, reject) => 
+           setTimeout(() => reject(new Error('Subscription fetch timeout')), 3000)
+         )
+       ]);
+       
+       const { data: subscription, error: subError } = await subscriptionFetch as any;
       
       if (subscription && !subError) {
         console.log('🔄 Background subscription updated - ACTIVE SUBSCRIPTION FOUND:', {

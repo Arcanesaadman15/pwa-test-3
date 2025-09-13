@@ -234,6 +234,40 @@ function AuthenticatedApp() {
     );
   }
 
+  // STEP 4: Handle profile errors - block user from proceeding with broken account
+  if (profileError && userProfile === null) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <div className="w-16 h-16 mx-auto mb-6 bg-red-500/20 rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 18.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          
+          <h2 className="text-xl font-bold text-white mb-4">Account Loading Failed</h2>
+          <p className="text-gray-300 mb-6">{profileError}</p>
+          
+          <div className="space-y-3">
+            <Button 
+              onClick={retryProfileCreation}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              Try Again
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={async () => await signOut()}
+              className="w-full bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700"
+            >
+              Sign Out & Try Different Account
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // STEP 5: User is authenticated, check subscription status and onboarding
   // Wait for profile data to load to prevent race conditions
   if (userProfile === null && loading) {
@@ -244,6 +278,42 @@ function AuthenticatedApp() {
           <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-white/80 mb-6">Setting up your profile...</p>
           <p className="text-white/50 text-sm">This should only take a moment</p>
+        </div>
+      </div>
+    );
+  }
+
+  // STEP 6: Loading complete but no profile - database operation failed
+  if (userProfile === null && !loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <div className="w-16 h-16 mx-auto mb-6 bg-yellow-500/20 rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 18.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          
+          <h2 className="text-xl font-bold text-white mb-4">Account Setup Required</h2>
+          <p className="text-gray-300 mb-6">
+            We couldn't set up your account. This might be due to a connection issue or server problem.
+          </p>
+          
+          <div className="space-y-3">
+            <Button 
+              onClick={retryProfileCreation}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              Retry Setup
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={async () => await signOut()}
+              className="w-full bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700"
+            >
+              Sign Out
+            </Button>
+          </div>
         </div>
       </div>
     );
