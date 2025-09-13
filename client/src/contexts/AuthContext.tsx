@@ -145,13 +145,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Update fetchUserProfile to handle creation with feedback
   const fetchUserProfile = async (supabaseUserId: string, userEmail?: string) => {
     try {
-      console.log('📋 Fetching user profile for:', supabaseUserId);
+      console.log('📋 Fetching user profile for:', supabaseUserId, 'email:', userEmail);
       
-       const { data, error } = await supabase
-         .from('users')
-         .select('*')
-         .eq('id', supabaseUserId)
-         .single();
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', supabaseUserId)
+        .single();
       
       if (error) {
         if (error.code === 'PGRST116') { // No rows found - new user
@@ -199,11 +199,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setProfileError('Failed to load profile. Please try again.');
           throw error;
         }
-      } else {
-        console.log('✅ Profile loaded:', data.id);
-        setUserProfile(data);
-        await fetchSubscriptionInBackground(supabaseUserId);
-      }
+        } else {
+          console.log('✅ Profile loaded:', data.id, 'onboarding_complete:', data.onboarding_complete);
+          
+          // Normalize undefined onboarding_complete to false (critical for new users)
+          const normalizedProfile = {
+            ...data,
+            onboarding_complete: data.onboarding_complete === true ? true : false
+          };
+          
+          setUserProfile(normalizedProfile);
+          await fetchSubscriptionInBackground(supabaseUserId);
+        }
     } catch (error) {
       console.error('❌ Error in fetchUserProfile:', error);
       setProfileError('An error occurred while loading your profile.');
@@ -237,7 +244,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Separate function for subscription fetch
   const fetchSubscriptionInBackground = async (supabaseUserId: string) => {
     try {
-      console.log('🔄 Background subscription fetch...');
+      console.log('🔄 Background subscription fetch for user:', supabaseUserId);
       
       const { data: subscription, error: subError } = await supabase
         .from('user_subscriptions')
@@ -254,7 +261,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .single();
       
       if (subscription && !subError) {
-        console.log('🔄 Background subscription updated');
+        console.log('🔄 Background subscription updated - ACTIVE SUBSCRIPTION FOUND:', {
+          status: subscription.status,
+          plan: subscription.subscription_plans?.name,
+          periodEnd: subscription.current_period_end
+        });
         setSubscription({
           isSubscribed: true,
           plan: subscription.subscription_plans?.name || null,
@@ -269,6 +280,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
       } else {
         // No active subscription
+        console.log('🔄 Background subscription - NO ACTIVE SUBSCRIPTION:', {
+          hasData: !!subscription,
+          error: subError?.message,
+          errorCode: subError?.code
+        });
         setSubscription({
           isSubscribed: false,
           plan: null,
