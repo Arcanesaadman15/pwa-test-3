@@ -158,13 +158,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.log('🆕 No profile found, creating new one...');
           setProfileCreating(true); // Show creation-specific loading
           
-          try {
-            const profileData = createInitialProfileData(supabaseUserId, userEmail);
-             const { data: newProfile, error: insertError } = await supabase
-               .from('users')
-               .insert([profileData])
-               .select()
-               .single();
+             try {
+               const profileData = createInitialProfileData(supabaseUserId, userEmail);
+                const { data: newProfile, error: insertError } = await supabase
+                  .from('users')
+                  .insert(profileData)
+                  .select()
+                  .single();
             
             if (insertError) throw insertError;
             
@@ -174,13 +174,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             
           } catch (insertError) {
             console.error('❌ Profile creation failed:', insertError);
-            // Quick retry once
-            console.log('🔄 Retrying profile creation...');
-             const { data: retryProfile, error: retryError } = await supabase
-               .from('users')
-               .insert([createInitialProfileData(supabaseUserId, userEmail)])
-               .select()
-               .single();
+             // Quick retry once
+             console.log('🔄 Retrying profile creation...');
+              const { data: retryProfile, error: retryError } = await supabase
+                .from('users')
+                .insert(createInitialProfileData(supabaseUserId, userEmail))
+                .select()
+                .single();
             
             if (retryError) {
               console.error('❌ Retry failed:', retryError);
@@ -208,14 +208,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             onboarding_complete: data.onboarding_complete === true ? true : false
           };
           
-          setUserProfile(normalizedProfile);
-          await fetchSubscriptionInBackground(supabaseUserId);
-        }
-    } catch (error) {
-      console.error('❌ Error in fetchUserProfile:', error);
-      setProfileError('An error occurred while loading your profile.');
-      setLoading(false);
-    }
+           setUserProfile(normalizedProfile);
+           await fetchSubscriptionInBackground(supabaseUserId);
+         }
+     } catch (error) {
+       console.error('❌ Error in fetchUserProfile:', error);
+       setProfileError('An error occurred while loading your profile.');
+     } finally {
+       setLoading(false);
+     }
   };
   
   // Background refresh function for profile cache updates
@@ -391,15 +392,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         preferences: profileData.preferences // Log to ensure it's always {}
       });
 
-      // Use UPSERT to handle ID mismatches and existing emails
-      const { data, error } = await supabase
-        .from('users')
-        .upsert(profileData, { 
-          onConflict: 'email',
-          ignoreDuplicates: false 
-        })
-        .select()
-        .single();
+       // Use simple INSERT - RLS policies should prevent conflicts
+       const { data, error } = await supabase
+         .from('users')
+         .insert(profileData)
+         .select()
+         .single();
 
       if (error) {
         console.error('🚨 Error creating user profile:', error);
