@@ -25,6 +25,7 @@ interface AuthContextType {
   refreshSubscription: () => Promise<void>;
   retryProfileCreation: () => Promise<void>;
   isLocalMode: boolean;
+  profileCreating: boolean; // New state for creation-specific loading
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -42,6 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [profileError, setProfileError] = useState<string | null>(null);
+  const [profileCreating, setProfileCreating] = useState(false); // New state for creation-specific loading
 
   useEffect(() => {
     // Removed aggressive timeout since RLS performance is now optimized
@@ -88,8 +90,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Clear any previous errors
         setProfileError(null);
 
-        // Fetch user profile (with built-in creation fallback)
-        await fetchUserProfile(session.user.id, session.user.email);
+        // Fetch user profile and subscription in parallel
+        await Promise.all([
+          fetchUserProfile(session.user.id, session.user.email),
+          fetchSubscriptionInBackground(session.user.id)
+        ]);
 
         // Identify user for analytics
         analytics.identify(session.user.id, {
@@ -115,340 +120,94 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const fetchUserProfile = async (supabaseUserId: string, userEmail?: string) => {
-    if (!isSupabaseConfigured) {
-      console.error('🚨 Supabase not configured, cannot fetch profile');
-      setProfileError('Database configuration error. Please check your setup.');
-      setLoading(false);
-      return;
-    }
-    
-    console.log(`🚀 PROPER PROFILE FETCH:`, { userId: supabaseUserId, email: userEmail });
-    
-    // Add timeout to prevent infinite loading with proper cleanup
-    let profileTimeoutCleared = false;
-    const profileTimeout = setTimeout(() => {
-      if (!profileTimeoutCleared) {
-        console.error('⏰ Profile fetch timeout after 15 seconds');
-        setProfileError('Profile loading timed out. Please refresh the page or try again.');
-        setLoading(false);
-        profileTimeoutCleared = true;
-      }
-    }, 15000); // Reduced from 30s to 15s for faster feedback
-    
-    const clearProfileTimeout = () => {
-      if (!profileTimeoutCleared) {
-        clearTimeout(profileTimeout);
-        profileTimeoutCleared = true;
-      }
+  // Helper function to create initial profile data
+  const createInitialProfileData = (supabaseUserId: string, userEmail?: string) => {
+    const realUserName = userEmail?.split('@')[0] || 'User';
+    return {
+      id: supabaseUserId,
+      name: realUserName,
+      email: userEmail || '',
+      program: 'beginner' as const,
+      current_day: 1,
+      current_streak: 0,
+      longest_streak: 0,
+      completed_days: 0,
+      start_date: new Date().toISOString(),
+      achievements: 0,
+      level: 1,
+      onboarding_complete: false,
+      preferences: {},
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     };
-    
+  };
+
+  // Update fetchUserProfile to handle creation with feedback
+  const fetchUserProfile = async (supabaseUserId: string, userEmail?: string) => {
     try {
-      // 1. Try cached profile first for instant UX
-      const cachedProfile = localStorage.getItem('peakforge-user');
-      if (cachedProfile) {
-        try {
-          const parsed = JSON.parse(cachedProfile);
-          if (parsed.id === supabaseUserId) {
-            console.log('⚡ Profile restored from cache:', parsed.name);
-            setUserProfile(parsed);
-            setLoading(false);
-            clearProfileTimeout();
-            // Continue with fresh fetch in background
-            fetchProfileAndSubscriptionInBackground(supabaseUserId);
-            return;
-          }
-        } catch (e) {
-          console.warn('🗑️ Invalid cached profile, clearing');
-          localStorage.removeItem('peakforge-user');
-        }
-      }
+      console.log('📋 Fetching user profile for:', supabaseUserId);
       
-      // 2. Try to fetch existing profile with a single attempt and proper timeout
-      console.log('📥 Fetching existing profile...');
-      let profile = null;
-      let profileError = null;
+       const { data, error } = await supabase
+         .from('users')
+         .select('*')
+         .eq('id', supabaseUserId)
+         .single();
       
-      console.log(`📥 Profile fetch for user: ${supabaseUserId}`);
-      
-      try {
-        // Create a race between the query and a timeout to prevent hanging
-        const queryPromise = supabase
-          .from('users')
-          .select('*')
-          .eq('id', supabaseUserId)
-          .single();
+      if (error) {
+        if (error.code === 'PGRST116') { // No rows found - new user
+          console.log('🆕 No profile found, creating new one...');
+          setProfileCreating(true); // Show creation-specific loading
           
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Query timeout after 10 seconds')), 10000);
-        });
-        
-        const result = await Promise.race([queryPromise, timeoutPromise]) as any;
-        
-        profile = result.data;
-        profileError = result.error;
-        
-        console.log(`📥 Profile fetch result:`, { 
-          hasProfile: !!profile, 
-          errorCode: profileError?.code,
-          errorMessage: profileError?.message 
-        });
-          
-        if (profile && !profileError) {
-          console.log('✅ Profile found:', profile.name);
-        } else if (profileError?.code === 'PGRST116') {
-          console.log('ℹ️ No profile exists (PGRST116) - will create new profile');
-        } else {
-          console.error(`❌ Profile fetch failed:`, profileError);
-        }
-        
-      } catch (fetchException) {
-        console.error(`❌ Profile fetch exception:`, fetchException);
-        profileError = { 
-          message: fetchException instanceof Error ? fetchException.message : 'Unknown error', 
-          code: 'EXCEPTION' 
-        };
-        
-        // Treat any exception as no profile found to proceed with creation
-        if (fetchException instanceof Error && 
-            (fetchException.message.includes('timeout') || fetchException.message.includes('Query timeout'))) {
-          console.log('⏰ Query timeout - treating as no profile found');
-          profileError = { code: 'PGRST116', message: 'No rows returned' };
-        }
-      }
-      
-      if (profile && !profileError) {
-        // Profile exists - normalize undefined onboarding_complete to false
-        const normalizedProfile = {
-          ...profile,
-          onboarding_complete: profile.onboarding_complete === true ? true : false
-        };
-        
-        console.log('✅ Profile loaded successfully:', normalizedProfile.name, {
-          originalOnboarding: profile.onboarding_complete,
-          normalizedOnboarding: normalizedProfile.onboarding_complete
-        });
-        
-        setUserProfile(normalizedProfile);
-        setProfileError(null); // Clear any previous errors
-        localStorage.setItem('peakforge-user', JSON.stringify(normalizedProfile));
-        
-        // Update analytics
-        analytics.setPerson({
-          name: normalizedProfile.name,
-          program: normalizedProfile.program,
-          onboarding_complete: normalizedProfile.onboarding_complete,
-        });
-        
-        // Fetch subscription in background
-        fetchSubscriptionInBackground(supabaseUserId);
-        setLoading(false);
-        clearProfileTimeout();
-        return;
-      }
-      
-      // 4. No profile found by ID - check if one exists by email (ID mismatch case)
-      if (profileError?.code === 'PGRST116' || (profileError && profileError.message?.includes('timeout'))) {
-        console.log('👤 No profile found by ID, checking by email for ID mismatch...');
-        
-        try {
-          const { data: emailProfile, error: emailError } = await supabase
-            .from('users')
-            .select('*')
-            .eq('email', userEmail)
-            .single();
-          
-          if (emailProfile && !emailError) {
-            console.log('🔍 Found existing profile by email with different ID:', {
-              authId: supabaseUserId,
-              profileId: emailProfile.id,
-              email: emailProfile.email
-            });
-            
-            // Update the existing profile to use the current auth ID
-            const { data: updatedProfile, error: updateError } = await supabase
-              .from('users')
-              .update({ id: supabaseUserId })
-              .eq('email', userEmail)
-              .select()
-              .single();
-            
-            if (updatedProfile && !updateError) {
-              console.log('✅ Profile ID updated successfully:', updatedProfile.name);
-              
-              // Normalize undefined onboarding_complete to false
-              const normalizedUpdatedProfile = {
-                ...updatedProfile,
-                onboarding_complete: updatedProfile.onboarding_complete === true ? true : false
-              };
-              
-              setUserProfile(normalizedUpdatedProfile);
-              setProfileError(null);
-              localStorage.setItem('peakforge-user', JSON.stringify(normalizedUpdatedProfile));
-              
-              // Update analytics
-              analytics.setPerson({
-                name: normalizedUpdatedProfile.name,
-                program: normalizedUpdatedProfile.program,
-                onboarding_complete: normalizedUpdatedProfile.onboarding_complete,
-              });
-              
-              fetchSubscriptionInBackground(supabaseUserId);
-              setLoading(false);
-              clearProfileTimeout();
-              return;
-            } else {
-              console.error('❌ Failed to update profile ID:', updateError);
-              // Fall through to create new profile
-            }
-          } else if (emailError?.code !== 'PGRST116') {
-            console.error('❌ Error checking profile by email:', emailError);
-          }
-        } catch (emailCheckError) {
-          console.error('❌ Exception checking profile by email:', emailCheckError);
-        }
-        
-        console.log('👤 Creating new profile with user data...');
-        
-        // Get actual user metadata from auth
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        const realUserName = user?.user_metadata?.full_name 
-          || user?.user_metadata?.name 
-          || userEmail?.split('@')[0] 
-          || 'User';
-        
-        const profileData = {
-          name: realUserName,
-          program: 'beginner' as const,
-          email: userEmail || user?.email || ''
-        };
-        
-        console.log('👤 Creating profile with data:', { name: profileData.name, email: profileData.email });
-        
-        // Retry profile creation up to 3 times
-        let createdProfile = null;
-        for (let attempt = 1; attempt <= 3; attempt++) {
           try {
-            console.log(`👤 Profile creation attempt ${attempt}/3`);
+            const profileData = createInitialProfileData(supabaseUserId, userEmail);
+             const { data: newProfile, error: insertError } = await supabase
+               .from('users')
+               .insert([profileData])
+               .select()
+               .single();
             
-            // Create profile (RLS optimized for fast execution)
-            await createUserProfile(supabaseUserId, profileData);
-            console.log(`✅ Profile creation ${attempt} completed`);
+            if (insertError) throw insertError;
             
-                        // Immediately fetch the created profile (RLS optimized for fast execution)
-            const { data: newProfile, error: fetchError } = await supabase
-              .from('users')
-              .select('*')
-              .eq('id', supabaseUserId)
-              .single();
-              
-            if (newProfile && !fetchError) {
-              createdProfile = newProfile;
-              console.log('✅ Profile created and fetched successfully:', newProfile.name);
-              break;
-            } else {
-              console.error(`❌ Profile fetch after creation attempt ${attempt} failed:`, fetchError);
-              if (attempt < 3) {
-                await new Promise(resolve => setTimeout(resolve, attempt * 1000));
-              }
+            console.log('✅ Profile created successfully:', newProfile.id);
+            setUserProfile(newProfile);
+            await fetchSubscriptionInBackground(supabaseUserId);
+            
+          } catch (insertError) {
+            console.error('❌ Profile creation failed:', insertError);
+            // Quick retry once
+            console.log('🔄 Retrying profile creation...');
+             const { data: retryProfile, error: retryError } = await supabase
+               .from('users')
+               .insert([createInitialProfileData(supabaseUserId, userEmail)])
+               .select()
+               .single();
+            
+            if (retryError) {
+              console.error('❌ Retry failed:', retryError);
+              setProfileError('Failed to create profile. Please try again.');
+              throw retryError;
             }
-          } catch (createError) {
-            console.error(`❌ Profile creation attempt ${attempt} exception:`, createError);
-            if (attempt < 3) {
-              await new Promise(resolve => setTimeout(resolve, attempt * 1000));
-            }
+            
+            setUserProfile(retryProfile);
+            await fetchSubscriptionInBackground(supabaseUserId);
+          } finally {
+            setProfileCreating(false);
           }
-        }
-        
-        if (createdProfile) {
-          // Normalize undefined onboarding_complete to false
-          const normalizedCreatedProfile = {
-            ...createdProfile,
-            onboarding_complete: createdProfile.onboarding_complete === true ? true : false
-          };
           
-          setUserProfile(normalizedCreatedProfile);
-          setProfileError(null); // Clear any previous errors
-          localStorage.setItem('peakforge-user', JSON.stringify(normalizedCreatedProfile));
-          
-          // Update analytics
-          analytics.setPerson({
-            name: normalizedCreatedProfile.name,
-            program: normalizedCreatedProfile.program,
-            onboarding_complete: normalizedCreatedProfile.onboarding_complete,
-          });
-          
-          // Fetch subscription in background
-          fetchSubscriptionInBackground(supabaseUserId);
-          setLoading(false);
-          clearProfileTimeout();
-          return;
         } else {
-          console.error('❌ Failed to create profile after 3 attempts');
-          console.log('🚨 EMERGENCY: Attempting direct profile fix for ID mismatch...');
-          
-          // Emergency fix: Try to update existing profile with current auth ID
-          try {
-            const { data: emergencyProfile, error: emergencyError } = await supabase
-              .from('users')
-              .update({ id: supabaseUserId })
-              .eq('email', userEmail)
-              .select()
-            .single();
-            
-            if (emergencyProfile && !emergencyError) {
-              console.log('✅ EMERGENCY: Profile ID fixed successfully!', emergencyProfile.name);
-              
-              // Normalize undefined onboarding_complete to false
-              const normalizedEmergencyProfile = {
-                ...emergencyProfile,
-                onboarding_complete: emergencyProfile.onboarding_complete === true ? true : false
-              };
-              
-              setUserProfile(normalizedEmergencyProfile);
-              setProfileError(null);
-              localStorage.setItem('peakforge-user', JSON.stringify(normalizedEmergencyProfile));
-              
-              // Update analytics
-              analytics.setPerson({
-                name: normalizedEmergencyProfile.name,
-                program: normalizedEmergencyProfile.program,
-                onboarding_complete: normalizedEmergencyProfile.onboarding_complete,
-              });
-              
-              fetchSubscriptionInBackground(supabaseUserId);
-              setLoading(false);
-              clearProfileTimeout();
-              return;
-            } else {
-              console.error('❌ EMERGENCY: Profile fix failed:', emergencyError);
-            }
-          } catch (emergencyException) {
-            console.error('❌ EMERGENCY: Profile fix exception:', emergencyException);
-          }
-          
-          setProfileError('Failed to create your profile. This might be a database permission issue. Please try again or contact support.');
-          setUserProfile(null);
-          setLoading(false);
-          clearProfileTimeout();
-          return;
+          console.error('❌ Profile fetch error:', error);
+          setProfileError('Failed to load profile. Please try again.');
+          throw error;
         }
+      } else {
+        console.log('✅ Profile loaded:', data.id);
+        setUserProfile(data);
+        await fetchSubscriptionInBackground(supabaseUserId);
       }
-      
-      // 4. Unknown error - don't create fake profile
-      console.error('❌ Profile fetch failed with unknown error:', profileError);
-      setProfileError(`Profile access failed: ${profileError?.message || 'Unknown database error'}`);
-      setUserProfile(null);
-      setLoading(false);
-      clearProfileTimeout();
-      
     } catch (error) {
-      console.error('🚨 Critical error in profile fetch:', error);
-      setProfileError(`Critical error during profile setup: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      setUserProfile(null);
+      console.error('❌ Error in fetchUserProfile:', error);
+      setProfileError('An error occurred while loading your profile.');
       setLoading(false);
-      clearProfileTimeout();
     }
   };
   
@@ -736,7 +495,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     createUserProfile,
     refreshSubscription,
     retryProfileCreation,
-    isLocalMode: false
+    isLocalMode: false,
+    profileCreating,
   };
 
   return (
