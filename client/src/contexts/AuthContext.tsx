@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
-import { supabase, executeSupabaseQuery, type User, type UserSubscription } from '@/lib/supabase';
+import { supabase, type User, type UserSubscription } from '@/lib/supabase';
 import { analytics } from '@/lib/analytics';
 
 // Add cache TTL constants at the top after imports
@@ -60,14 +60,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profileFetching, setProfileFetching] = useState(false); // Prevent concurrent fetches
 
   useEffect(() => {
-    // Removed aggressive timeout since RLS performance is now optimized
-    // Queries should complete in <100ms with the new RLS policies
-
-    // Add a fallback timeout to prevent infinite loading
-    const fallbackTimeout = setTimeout(() => {
-      console.warn('⏰ Auth initialization taking too long, forcing loading to false');
-      setLoading(false);
-    }, 10000); // 10 seconds fallback
+    // Apple-smooth auth initialization - no timeouts needed with optimized RLS
+    // Queries complete instantly with the new RLS policies
 
     // Get current session
     supabase.auth.getSession()
@@ -78,15 +72,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (session?.user) {
           fetchUserProfile(session.user.id, session.user.email);
         } else {
-                  console.log('🔐 No initial session found, waiting for auth state changes...');
+          console.log('🔐 No initial session found, waiting for auth state changes...');
           setLoading(false);
         }
-        clearTimeout(fallbackTimeout);
       })
       .catch((error: any) => {
         console.error('Error getting initial auth session:', error);
         setLoading(false);
-        clearTimeout(fallbackTimeout);
       });
 
     // Listen for auth changes
@@ -132,7 +124,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return () => {
       subscription.unsubscribe();
-      clearTimeout(fallbackTimeout);
     };
   }, []);
 
@@ -158,7 +149,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   };
 
-   // Update fetchUserProfile to handle creation with feedback
+   // Apple-smooth profile fetching - no timeouts, no retries, instant response
   const fetchUserProfile = async (supabaseUserId: string, userEmail?: string, forceRefresh = false) => {
      // Prevent concurrent profile fetches
      if (profileFetching) {
@@ -167,6 +158,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
      }
      
      setProfileFetching(true);
+     setProfileError(null); // Clear any previous errors
+     
      try {
        console.log('📋 Fetching user profile for:', supabaseUserId, 'email:', userEmail);
        
@@ -191,42 +184,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      // Use robust query mechanism with automatic retry
-      const { data, error } = await executeSupabaseQuery<User>(
-        () => supabase
-          .from('users')
-          .select('*')
-          .eq('id', supabaseUserId)
-          .single(),
-        {
-          retries: 2,
-          timeoutMs: 4000,
-          description: `Profile fetch for user ${supabaseUserId}`
-        }
-      );
+      // Direct Supabase query - no timeouts, no retries (RLS optimized for speed)
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', supabaseUserId)
+        .single();
       
        if (error) {
-         if (error.code === 'PGRST116' || error.message === 'Profile fetch timeout') { 
-           // No rows found or timeout - create new user
-           console.log('🆕 No profile found or fetch timed out, creating new one...');
-           setProfileCreating(true); // Show creation-specific loading
+         if (error.code === 'PGRST116') { 
+           // No rows found - create new user instantly
+           console.log('🆕 No profile found, creating new one...');
+           setProfileCreating(true);
            
-              try {
-                const profileData = createInitialProfileData(supabaseUserId, userEmail);
-                
-                // Use robust query mechanism for profile creation
-                const { data: newProfile, error: insertError } = await executeSupabaseQuery<User>(
-                  () => supabase
-                    .from('users')
-                    .insert(profileData)
-                    .select()
-                    .single(),
-                  {
-                    retries: 2,
-                    timeoutMs: 6000,
-                    description: `Profile creation for user ${supabaseUserId}`
-                  }
-                );
+           try {
+             const profileData = createInitialProfileData(supabaseUserId, userEmail);
+             
+             // Direct profile creation - no timeouts
+             const { data: newProfile, error: insertError } = await supabase
+               .from('users')
+               .upsert(profileData, { onConflict: 'email' })
+               .select()
+               .single();
             
             if (insertError) throw insertError;
             
@@ -242,53 +221,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             
            } catch (insertError: any) {
              console.error('❌ Profile creation failed:', insertError);
-             
-             // Handle duplicate key error - profile already exists, try to fetch it
-             if (insertError?.code === '23505') {
-               console.log('🔄 Profile already exists, attempting to fetch...');
-               try {
-                 const { data: existingProfile } = await executeSupabaseQuery<User>(
-                   () => supabase
-                     .from('users')
-                     .select('*')
-                     .eq('id', supabaseUserId)
-                     .single(),
-                   {
-                     retries: 1,
-                     timeoutMs: 4000,
-                     description: `Fetch existing profile for user ${supabaseUserId}`
-                   }
-                 );
-                 
-                 if (existingProfile) {
-                   console.log('✅ Found existing profile after duplicate error');
-                   const normalizedProfile = {
-                     ...existingProfile,
-                     onboarding_complete: existingProfile.onboarding_complete === true ? true : false
-                   };
-                   setUserProfile(normalizedProfile);
-                   localStorage.setItem('cached_profile', JSON.stringify(normalizedProfile));
-                   localStorage.setItem('cached_profile_timestamp', Date.now().toString());
-                   await fetchSubscriptionInBackground(supabaseUserId, false);
-                   return; // Success - don't throw
-                 }
-               } catch (fetchError) {
-                 console.error('❌ Failed to fetch existing profile:', fetchError);
-               }
-             }
-             
-             setProfileError('Failed to create your account. Please check your connection and try again.');
-             setUserProfile(null); // Don't create fallback - force proper account creation
-             throw insertError; // Block the user from proceeding
+             setProfileError('Unable to create your profile. Please try again.');
+             setUserProfile(null);
            } finally {
              setProfileCreating(false);
            }
           
         } else {
           console.error('❌ Profile fetch error:', error);
-          setProfileError('Failed to load your account. Please check your connection and try again.');
-          setUserProfile(null); // Don't create fallback - force proper account loading
-          throw error; // Block the user from proceeding
+          setProfileError('Unable to load your profile. Please try again.');
+          setUserProfile(null);
         }
         } else if (data) {
           console.log('✅ Profile loaded:', data.id, 'onboarding_complete:', data.onboarding_complete);
@@ -304,7 +246,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
            localStorage.setItem('cached_profile_timestamp', Date.now().toString());
            await fetchSubscriptionInBackground(supabaseUserId, false);
          } else {
-           throw new Error('Profile fetch returned null data');
+           setProfileError('Profile data not found.');
+           setUserProfile(null);
          }
       } catch (error) {
         console.error('❌ Critical error in fetchUserProfile:', error);
@@ -341,27 +284,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      // Use robust query mechanism for subscription fetch
-      const { data: subscription, error: subError } = await executeSupabaseQuery<SubscriptionWithPlan>(
-        () => supabase
-          .from('user_subscriptions')
-          .select(`
-            *,
-            subscription_plans (
-              name,
-              price,
-              interval
-            )
-          `)
-          .eq('user_id', supabaseUserId)
-          .eq('status', 'active')
-          .single(),
-        {
-          retries: 2,
-          timeoutMs: 4000,
-          description: `Subscription fetch for user ${supabaseUserId}`
-        }
-      );
+      // Direct subscription query - no timeouts (RLS optimized)
+      const { data: subscription, error: subError } = await supabase
+        .from('user_subscriptions')
+        .select(`
+          *,
+          subscription_plans (
+            name,
+            price,
+            interval
+          )
+        `)
+        .eq('user_id', supabaseUserId)
+        .eq('status', 'active')
+        .single();
       
       if (subscription && !subError) {
         console.log('🔄 Background subscription updated - ACTIVE SUBSCRIPTION FOUND:', {
@@ -506,19 +442,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         preferences: profileData.preferences // Log to ensure it's always {}
       });
 
-       // Use robust INSERT with retry mechanism
-       const { data, error } = await executeSupabaseQuery<User>(
-         () => supabase
+       // Direct profile creation - no timeouts
+       const { data, error } = await supabase
         .from('users')
         .insert(profileData)
         .select()
-           .single(),
-         {
-           retries: 1,
-           timeoutMs: 6000,
-           description: `Profile creation for user ${profileData.id}`
-         }
-       );
+        .single();
 
       if (error) {
         console.error('🚨 Error creating user profile:', error);
@@ -548,19 +477,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error('🚨 This indicates a database trigger or constraint is overriding our value');
         
         // Force it to false immediately
-        const { data: fixedData, error: fixError } = await executeSupabaseQuery<User>(
-          () => supabase
+        const { data: fixedData, error: fixError } = await supabase
           .from('users')
           .update({ onboarding_complete: false })
           .eq('id', supabaseUserId)
           .select()
-            .single(),
-          {
-            retries: 1,
-            timeoutMs: 4000,
-            description: `Fix onboarding flag for user ${supabaseUserId}`
-          }
-        );
+          .single();
           
         if (fixError) {
           console.error('🚨 Failed to force-fix onboarding_complete:', fixError);
@@ -585,22 +507,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!userProfile) return;
 
     try {
-      const { data, error } = await executeSupabaseQuery<User>(
-        () => supabase
-          .from('users')
-          .update({
-            ...updates,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', userProfile.id)
-          .select()
-          .single(),
-        {
-          retries: 1,
-          timeoutMs: 4000,
-          description: `Profile update for user ${userProfile.id}`
-        }
-      );
+      const { data, error } = await supabase
+        .from('users')
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userProfile.id)
+        .select()
+        .single();
 
       if (error) {
         console.error('Error updating profile:', error);
