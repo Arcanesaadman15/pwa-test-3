@@ -91,11 +91,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Clear any previous errors
         setProfileError(null);
 
-        // Fetch user profile and subscription in parallel
-        await Promise.all([
-          fetchUserProfile(session.user.id, session.user.email),
-          fetchSubscriptionInBackground(session.user.id)
-        ]);
+        // Only fetch profile for specific events to avoid duplicate fetches
+        if (event === 'SIGNED_IN' || event === 'SIGNED_UP' || event === 'INITIAL_SESSION') {
+          console.log(`🔐 Triggering profile fetch for event: ${event}`);
+          await fetchUserProfile(session.user.id, session.user.email);
+        } else {
+          console.log(`🔐 Skipping profile fetch for event: ${event} (profile should already exist)`);
+        }
 
         // Identify user for analytics
         analytics.identify(session.user.id, {

@@ -21,7 +21,7 @@ export function PricingPlans({ onPlanSelect }: PricingPlansProps) {
   const proplan = SUBSCRIPTION_PLANS.find(p => p.id === 'pro');
 
   const handleUpgrade = async () => {
-    if (!user || !userProfile) {
+    if (!user) {
       setError('Please sign in first');
       return;
     }
@@ -35,13 +35,17 @@ export function PricingPlans({ onPlanSelect }: PricingPlansProps) {
     setError(null);
 
     try {
+      // Use fallback values if profile is not loaded yet
+      const userEmail = userProfile?.email || user.email || 'user@example.com';
+      const userName = userProfile?.name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
+      
       analytics.track('plan_selected', { planId: proplan.id, variantId: proplan.variantId, price: proplan.price });
       analytics.track('checkout_started', { variantId: proplan.variantId, userId: user.id });
       const result = await LemonSqueezyService.createCheckout({
         variantId: proplan.variantId,
         userId: user.id,
-        userEmail: userProfile.email,
-        userName: userProfile.name,
+        userEmail: userEmail,
+        userName: userName,
       });
 
       if (result.error) {

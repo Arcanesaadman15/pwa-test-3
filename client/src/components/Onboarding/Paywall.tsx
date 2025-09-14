@@ -56,6 +56,14 @@ export function Paywall({ onComplete, onboardingData }: PaywallProps) {
     }
   };
 
+  // Auto-show pricing if user is authenticated (bypass manual button click)
+  useEffect(() => {
+    if (user && !showPricing && !showAuthForm) {
+      console.log('🎯 Paywall: User is authenticated, auto-showing pricing');
+      setShowPricing(true);
+    }
+  }, [user, showPricing, showAuthForm]);
+
   const handleAuthComplete = () => {
     setShowAuthForm(false);
     analytics.track('auth_completed', { method: 'email', source: 'paywall' });
