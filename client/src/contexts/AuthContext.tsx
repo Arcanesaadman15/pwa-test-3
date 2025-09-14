@@ -3,6 +3,10 @@ import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { supabase, executeSupabaseQuery, type User, type UserSubscription } from '@/lib/supabase';
 import { analytics } from '@/lib/analytics';
 
+// Add cache TTL constants at the top after imports
+const PROFILE_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+const SUBSCRIPTION_CACHE_TTL = 60 * 60 * 1000; // 1 hour
+
 // Extended subscription type with joined plan data
 interface SubscriptionWithPlan extends UserSubscription {
   subscription_plans?: {
@@ -103,7 +107,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Only fetch profile for specific events to avoid duplicate fetches
         if (event === 'SIGNED_IN' || event === 'SIGNED_UP' || event === 'INITIAL_SESSION') {
           console.log(`🔐 Triggering profile fetch for event: ${event}`);
-          await fetchUserProfile(session.user.id, session.user.email);
+          await fetchUserProfile(session.user.id, session.user.email, true);
         } else {
           console.log(`🔐 Skipping profile fetch for event: ${event} (profile should already exist)`);
         }
@@ -155,7 +159,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
    // Update fetchUserProfile to handle creation with feedback
-  const fetchUserProfile = async (supabaseUserId: string, userEmail?: string) => {
+  const fetchUserProfile = async (supabaseUserId: string, userEmail?: string, forceRefresh = false) => {
      // Prevent concurrent profile fetches
      if (profileFetching) {
        console.log('🔄 Profile fetch already in progress, skipping...');
@@ -166,6 +170,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
      try {
        console.log('📋 Fetching user profile for:', supabaseUserId, 'email:', userEmail);
        
+      // Check cache first if not forcing refresh
+      if (!forceRefresh) {
+        const cachedProfile = localStorage.getItem('cached_profile');
+        const cachedTimestamp = localStorage.getItem('cached_profile_timestamp');
+        
+        if (cachedProfile && cachedTimestamp) {
+          const age = Date.now() - parseInt(cachedTimestamp, 10);
+          if (age < PROFILE_CACHE_TTL) {
+            console.log('📥 Loading profile from cache (age: ' + age + 'ms)');
+            setUserProfile(JSON.parse(cachedProfile));
+            fetchSubscriptionInBackground(supabaseUserId, false);
+            setProfileFetching(false);
+            return;
+          } else {
+            console.log('🗑️ Profile cache stale (age: ' + age + 'ms), fetching fresh');
+          }
+        } else {
+          console.log('❌ No profile cache found, fetching fresh');
+        }
+      }
+
       // Use robust query mechanism with automatic retry
       const { data, error } = await executeSupabaseQuery<User>(
         () => supabase
@@ -211,7 +236,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             
             console.log('✅ Profile created successfully:', newProfile.id);
             setUserProfile(newProfile);
-            await fetchSubscriptionInBackground(supabaseUserId);
+            localStorage.setItem('cached_profile', JSON.stringify(newProfile));
+            localStorage.setItem('cached_profile_timestamp', Date.now().toString());
+            await fetchSubscriptionInBackground(supabaseUserId, false);
             
            } catch (insertError: any) {
              console.error('❌ Profile creation failed:', insertError);
@@ -240,7 +267,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                      onboarding_complete: existingProfile.onboarding_complete === true ? true : false
                    };
                    setUserProfile(normalizedProfile);
-                   await fetchSubscriptionInBackground(supabaseUserId);
+                   localStorage.setItem('cached_profile', JSON.stringify(normalizedProfile));
+                   localStorage.setItem('cached_profile_timestamp', Date.now().toString());
+                   await fetchSubscriptionInBackground(supabaseUserId, false);
                    return; // Success - don't throw
                  }
                } catch (fetchError) {
@@ -271,7 +300,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           };
           
            setUserProfile(normalizedProfile);
-           await fetchSubscriptionInBackground(supabaseUserId);
+           localStorage.setItem('cached_profile', JSON.stringify(normalizedProfile));
+           localStorage.setItem('cached_profile_timestamp', Date.now().toString());
+           await fetchSubscriptionInBackground(supabaseUserId, false);
          } else {
            throw new Error('Profile fetch returned null data');
          }
@@ -287,10 +318,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   
 
    // Separate function for subscription fetch
-   const fetchSubscriptionInBackground = async (supabaseUserId: string) => {
+   const fetchSubscriptionInBackground = async (supabaseUserId: string, forceRefresh = false) => {
      try {
        console.log('🔄 Background subscription fetch for user:', supabaseUserId);
        
+      // Add cache check for subscription
+      if (!forceRefresh) {
+        const cachedSub = localStorage.getItem('cached_subscription');
+        const cachedTimestamp = localStorage.getItem('cached_subscription_timestamp');
+        
+        if (cachedSub && cachedTimestamp) {
+          const age = Date.now() - parseInt(cachedTimestamp, 10);
+          if (age < SUBSCRIPTION_CACHE_TTL) {
+            console.log('📥 Loading subscription from cache (age: ' + age + 'ms)');
+            setSubscription(JSON.parse(cachedSub));
+            return;
+          } else {
+            console.log('🗑️ Subscription cache stale (age: ' + age + 'ms), fetching fresh');
+          }
+        } else {
+          console.log('❌ No subscription cache found, fetching fresh');
+        }
+      }
+
       // Use robust query mechanism for subscription fetch
       const { data: subscription, error: subError } = await executeSupabaseQuery<SubscriptionWithPlan>(
         () => supabase
@@ -319,13 +369,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           plan: subscription.subscription_plans?.name,
           periodEnd: subscription.current_period_end
         });
-        setSubscription({
+        const subscriptionState = {
           isSubscribed: true,
           plan: subscription.subscription_plans?.name ?? null,
           status: subscription.status,
           currentPeriodEnd: subscription.current_period_end ?? null,
           cancelAtPeriodEnd: subscription.cancel_at_period_end
-        });
+        };
+        setSubscription(subscriptionState);
+        localStorage.setItem('cached_subscription', JSON.stringify(subscriptionState));
+        localStorage.setItem('cached_subscription_timestamp', Date.now().toString());
         analytics.registerSuper({
           subscribed: true,
           plan: subscription.subscription_plans?.name ?? null,
@@ -338,13 +391,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           error: subError?.message,
           errorCode: subError?.code
         });
-        setSubscription({
+        const subscriptionState = {
           isSubscribed: false,
           plan: null,
           status: null,
           currentPeriodEnd: null,
           cancelAtPeriodEnd: false
-        });
+        };
+        setSubscription(subscriptionState);
+        localStorage.setItem('cached_subscription', JSON.stringify(subscriptionState));
+        localStorage.setItem('cached_subscription_timestamp', Date.now().toString());
         analytics.registerSuper({
           subscribed: false,
           plan: null,
@@ -409,6 +465,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         currentPeriodEnd: null,
         cancelAtPeriodEnd: false
       });
+    } finally {
+      // Clear cache on sign out
+      localStorage.removeItem('cached_profile');
+      localStorage.removeItem('cached_profile_timestamp');
+      localStorage.removeItem('cached_subscription');
+      localStorage.removeItem('cached_subscription_timestamp');
     }
   };
 
