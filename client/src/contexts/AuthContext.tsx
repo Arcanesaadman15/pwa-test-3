@@ -44,6 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [profileError, setProfileError] = useState<string | null>(null);
   const [profileCreating, setProfileCreating] = useState(false); // New state for creation-specific loading
+  const [profileFetching, setProfileFetching] = useState(false); // Prevent concurrent fetches
 
   useEffect(() => {
     // Removed aggressive timeout since RLS performance is now optimized
@@ -144,6 +145,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
    // Update fetchUserProfile to handle creation with feedback
    const fetchUserProfile = async (supabaseUserId: string, userEmail?: string) => {
+     // Prevent concurrent profile fetches
+     if (profileFetching) {
+       console.log('🔄 Profile fetch already in progress, skipping...');
+       return;
+     }
+     
+     setProfileFetching(true);
      try {
        console.log('📋 Fetching user profile for:', supabaseUserId, 'email:', userEmail);
        
@@ -192,6 +200,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             
            } catch (insertError) {
              console.error('❌ Profile creation failed:', insertError);
+             
+             // Handle duplicate key error - profile already exists, try to fetch it
+             if (insertError.code === '23505') {
+               console.log('🔄 Profile already exists, attempting to fetch...');
+               try {
+                 const { data: existingProfile } = await supabase
+                   .from('users')
+                   .select('*')
+                   .eq('id', supabaseUserId)
+                   .single();
+                 
+                 if (existingProfile) {
+                   console.log('✅ Found existing profile after duplicate error');
+                   const normalizedProfile = {
+                     ...existingProfile,
+                     onboarding_complete: existingProfile.onboarding_complete === true ? true : false
+                   };
+                   setUserProfile(normalizedProfile);
+                   await fetchSubscriptionInBackground(supabaseUserId);
+                   return; // Success - don't throw
+                 }
+               } catch (fetchError) {
+                 console.error('❌ Failed to fetch existing profile:', fetchError);
+               }
+             }
+             
              setProfileError('Failed to create your account. Please check your connection and try again.');
              setUserProfile(null); // Don't create fallback - force proper account creation
              throw insertError; // Block the user from proceeding
@@ -223,6 +257,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUserProfile(null); // Force proper account loading - no shortcuts
       } finally {
         setLoading(false);
+        setProfileFetching(false);
       }
   };
   

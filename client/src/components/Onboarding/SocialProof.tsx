@@ -14,13 +14,11 @@ export function SocialProof({ onComplete }: SocialProofProps) {
 
   const handleContinue = async () => {
     try {
-      console.log('🎯 SocialProof: Marking onboarding as complete before proceeding to paywall');
-      // Mark onboarding as complete before going to paywall
-      await updateProfile({ onboarding_complete: true });
+      console.log('🎯 SocialProof: Proceeding to paywall (onboarding will be marked complete after payment)');
+      // Don't mark onboarding as complete here - let paywall handle it after payment
       onComplete();
     } catch (error) {
-      console.error('❌ Failed to update profile in SocialProof:', error);
-      // Still proceed even if profile update fails
+      console.error('❌ Error in SocialProof continue:', error);
       onComplete();
     }
   };
