@@ -35,7 +35,9 @@ export const supabase = (!supabaseUrl || !supabaseAnonKey)
       },
       global: {
         headers: {
-          'x-client-info': 'supabase-js-web'
+          'x-client-info': 'supabase-js-web',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
         }
       },
       db: {
@@ -49,6 +51,67 @@ export const supabase = (!supabaseUrl || !supabaseAnonKey)
     });
 
 export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
+
+// Utility for robust Supabase query execution with retry logic
+export async function executeSupabaseQuery<T>(
+  queryFn: () => Promise<{ data: T | null; error: any }>,
+  options: {
+    retries?: number;
+    timeoutMs?: number;
+    description?: string;
+  } = {}
+): Promise<{ data: T | null; error: any }> {
+  const { retries = 2, timeoutMs = 5000, description = 'Supabase query' } = options;
+  
+  for (let attempt = 1; attempt <= retries + 1; attempt++) {
+    try {
+      console.log(`🔄 ${description} - Attempt ${attempt}/${retries + 1}`);
+      
+      // Add timeout to prevent hanging
+      const queryPromise = queryFn();
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error(`${description} timeout after ${timeoutMs}ms`)), timeoutMs)
+      );
+      
+      const result = await Promise.race([queryPromise, timeoutPromise]);
+      
+      // Check for specific errors that indicate we should retry
+      if (result.error) {
+        const shouldRetry = (
+          result.error.code === 'PGRST116' || // No rows found (might be temporary)
+          result.error.message?.includes('timeout') ||
+          result.error.message?.includes('network') ||
+          result.error.message?.includes('502') ||
+          result.error.message?.includes('503') ||
+          result.error.message?.includes('406')
+        );
+        
+        if (shouldRetry && attempt <= retries) {
+          console.log(`⚠️ ${description} failed (${result.error.code || result.error.message}), retrying in ${attempt * 1000}ms...`);
+          await new Promise(resolve => setTimeout(resolve, attempt * 1000)); // Progressive delay
+          continue;
+        }
+      }
+      
+      if (result.data || !result.error) {
+        console.log(`✅ ${description} succeeded on attempt ${attempt}`);
+      }
+      
+      return result;
+    } catch (error: any) {
+      if (attempt <= retries) {
+        console.log(`⚠️ ${description} error: ${error.message}, retrying in ${attempt * 1000}ms...`);
+        await new Promise(resolve => setTimeout(resolve, attempt * 1000));
+        continue;
+      }
+      
+      console.error(`❌ ${description} failed after ${retries + 1} attempts:`, error);
+      return { data: null, error };
+    }
+  }
+  
+  return { data: null, error: new Error(`${description} failed after all retries`) };
+}
 
 // Export types for use in components
 export type { User, SubscriptionPlan, UserSubscription }; 
