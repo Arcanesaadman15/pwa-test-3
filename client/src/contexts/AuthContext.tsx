@@ -159,9 +159,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
      
      setProfileFetching(true);
      setProfileError(null); // Clear any previous errors
+     console.log('🚀 STARTING profile fetch for:', supabaseUserId, 'email:', userEmail);
+     
+     // Emergency backup timeout to prevent infinite loading
+     const emergencyTimeout = setTimeout(() => {
+       console.error('🚨 EMERGENCY: Profile fetch taking too long, forcing completion');
+       setProfileError('Profile loading is taking too long. Please try refreshing the page.');
+       setUserProfile(null);
+       setLoading(false);
+       setProfileFetching(false);
+     }, 15000); // 15 seconds emergency backup
      
      try {
-       console.log('📋 Fetching user profile for:', supabaseUserId, 'email:', userEmail);
        
       // Check cache first if not forcing refresh
       if (!forceRefresh) {
@@ -184,12 +193,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
+      // Small delay to ensure auth session is fully established
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       // Direct Supabase query - no timeouts, no retries (RLS optimized for speed)
+      console.log('🔍 About to query users table for:', supabaseUserId);
       const { data, error } = await supabase
         .from('users')
         .select('*')
         .eq('id', supabaseUserId)
         .single();
+      
+      console.log('🔍 Query result:', { hasData: !!data, hasError: !!error, errorCode: error?.code, errorMessage: error?.message });
       
        if (error) {
          if (error.code === 'PGRST116') { 
@@ -244,7 +259,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
            setUserProfile(normalizedProfile);
            localStorage.setItem('cached_profile', JSON.stringify(normalizedProfile));
            localStorage.setItem('cached_profile_timestamp', Date.now().toString());
+           console.log('🔄 Starting background subscription fetch...');
            await fetchSubscriptionInBackground(supabaseUserId, false);
+           console.log('✅ Background subscription fetch completed');
          } else {
            setProfileError('Profile data not found.');
            setUserProfile(null);
@@ -254,8 +271,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setProfileError('Unable to load your account. Please check your internet connection and try again.');
         setUserProfile(null); // Force proper account loading - no shortcuts
       } finally {
+        clearTimeout(emergencyTimeout);
         setLoading(false);
         setProfileFetching(false);
+        console.log('🏁 Profile fetch finally block completed');
       }
   };
   
@@ -264,6 +283,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
    const fetchSubscriptionInBackground = async (supabaseUserId: string, forceRefresh = false) => {
      try {
        console.log('🔄 Background subscription fetch for user:', supabaseUserId);
+       console.log('🔄 Subscription forceRefresh:', forceRefresh);
        
       // Add cache check for subscription
       if (!forceRefresh) {
@@ -285,6 +305,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Direct subscription query - no timeouts (RLS optimized)
+      console.log('🔍 About to query user_subscriptions for:', supabaseUserId);
       const { data: subscription, error: subError } = await supabase
         .from('user_subscriptions')
         .select(`
@@ -298,6 +319,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq('user_id', supabaseUserId)
         .eq('status', 'active')
         .single();
+      
+      console.log('🔍 Subscription query result:', { hasData: !!subscription, hasError: !!subError, errorCode: subError?.code });
       
       if (subscription && !subError) {
         console.log('🔄 Background subscription updated - ACTIVE SUBSCRIPTION FOUND:', {
@@ -348,6 +371,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (error) {
       console.warn('🔄 Background subscription fetch failed:', error);
+      // Ensure subscription state is set even on error
+      setSubscription({
+        isSubscribed: false,
+        plan: null,
+        status: null,
+        currentPeriodEnd: null,
+        cancelAtPeriodEnd: false
+      });
+    } finally {
+      console.log('🏁 Subscription fetch completed');
     }
   };
 
