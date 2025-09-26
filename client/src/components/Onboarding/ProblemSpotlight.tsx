@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PROBLEM_SPOTLIGHT_SLIDES } from '@/data/onboardingData';
 import { Button } from '@/components/ui/button';
@@ -11,41 +11,73 @@ export function ProblemSpotlight({ onComplete }: ProblemSpotlightProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [slideStartTime, setSlideStartTime] = useState(Date.now());
+  const [canAdvance, setCanAdvance] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const minSwipeDistance = 50;
+  const minSlideDisplayTime = 3000; // 3 seconds minimum per slide
+
+  // Effect to handle minimum display time and enable advancement
+  useEffect(() => {
+    setSlideStartTime(Date.now());
+    setCanAdvance(false);
+    setIsTransitioning(false);
+    
+    const timer = setTimeout(() => {
+      setCanAdvance(true);
+    }, minSlideDisplayTime);
+    
+    return () => clearTimeout(timer);
+  }, [currentSlide]);
 
   const onTouchStart = (e: React.TouchEvent) => {
+    if (isTransitioning) return;
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
   };
 
   const onTouchMove = (e: React.TouchEvent) => {
+    if (isTransitioning) return;
     setTouchEnd(e.targetTouches[0].clientX);
   };
 
   const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
+    if (!touchStart || !touchEnd || isTransitioning || !canAdvance) return;
     
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
 
     if (isLeftSwipe && currentSlide < PROBLEM_SPOTLIGHT_SLIDES.length - 1) {
-      setCurrentSlide(prev => prev + 1);
+      handleSlideChange(currentSlide + 1);
     }
     if (isRightSwipe && currentSlide > 0) {
-      setCurrentSlide(prev => prev - 1);
+      handleSlideChange(currentSlide - 1);
     }
+  };
+
+  const handleSlideChange = (newSlide: number) => {
+    if (isTransitioning || !canAdvance) return;
+    
+    setIsTransitioning(true);
+    setCurrentSlide(newSlide);
+    
+    // Reset transition state after animation completes
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 500);
   };
 
   const goToSlide = (index: number) => {
-    setCurrentSlide(index);
+    if (isTransitioning || !canAdvance) return;
+    handleSlideChange(index);
   };
 
   const goNext = () => {
-    if (currentSlide < PROBLEM_SPOTLIGHT_SLIDES.length - 1) {
-      setCurrentSlide(prev => prev + 1);
+    if (currentSlide < PROBLEM_SPOTLIGHT_SLIDES.length - 1 && canAdvance) {
+      handleSlideChange(currentSlide + 1);
     }
   };
 
@@ -74,14 +106,15 @@ export function ProblemSpotlight({ onComplete }: ProblemSpotlightProps) {
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
-            initial={{ opacity: 0, x: 300 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -300 }}
+            initial={{ opacity: 0, x: 300, scale: 0.95 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -300, scale: 1.05 }}
             transition={{ 
               type: "spring", 
-              stiffness: 300, 
-              damping: 35,
-              opacity: { duration: 0.3 }
+              stiffness: 260, 
+              damping: 30,
+              opacity: { duration: 0.4 },
+              scale: { duration: 0.3 }
             }}
             className="absolute inset-0 flex flex-col px-4 text-center"
           >
