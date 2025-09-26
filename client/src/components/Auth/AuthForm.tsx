@@ -8,7 +8,7 @@ interface AuthFormProps {
   onComplete: () => void;
 }
 
-export function AuthForm({ onComplete }: AuthFormProps) {
+export function AuthForm({ onComplete: _ }: AuthFormProps) {
   const [loading, setLoading] = useState(false);
 
   const { signInWithGoogle } = useAuth();
@@ -22,17 +22,17 @@ export function AuthForm({ onComplete }: AuthFormProps) {
       
       if (result.error) {
         console.error('🚨 Google auth failed:', result.error);
-        // Google auth usually redirects, so errors here are usually technical issues
-        // The user will stay on this page if there's an error
+        // Show user-friendly error message
+        alert('Failed to start Google authentication. Please try again.');
         setLoading(false);
       } else {
         // Google auth initiated successfully and will redirect
-        console.log('✅ Google auth initiated successfully');
-        // Note: onComplete will be called by the auth state change listener
-        // when the user returns from Google and is authenticated
+        console.log('✅ Google auth initiated successfully, redirecting...');
+        // Don't set loading to false here as the page will redirect
       }
     } catch (err) {
       console.error('🚨 Google auth exception:', err);
+      alert('Authentication error. Please check your internet connection and try again.');
       setLoading(false);
     }
   };
@@ -77,7 +77,7 @@ export function AuthForm({ onComplete }: AuthFormProps) {
                 {loading ? (
                   <div className="flex items-center space-x-2">
                     <div className="w-4 h-4 border-2 border-gray-900/30 border-t-gray-900 rounded-full animate-spin" />
-                    <span>Connecting...</span>
+                    <span>Connecting to Google...</span>
                   </div>
                 ) : (
                   <>

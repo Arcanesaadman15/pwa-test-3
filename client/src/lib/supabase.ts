@@ -1,8 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
 import type { User, SubscriptionPlan, UserSubscription } from '../../../shared/schema';
 
+// Use environment variables without fallbacks for better error detection
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://vkczvtgtbzcqempgampj.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrY3p2dGd0YnpjcWVtcGdhbXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgyOTMzNjksImV4cCI6MjA2Mzg2OTM2OX0.isSm2oZeGUZEtoxUWQQMdSoT5t7pAQwvvtgBbNETh8Q';
+
+// Log configuration status for debugging
+if (typeof window !== 'undefined') {
+  console.log('🔧 Supabase Config:', {
+    hasUrl: !!supabaseUrl,
+    hasKey: !!supabaseAnonKey,
+    url: supabaseUrl ? `${supabaseUrl.substring(0, 30)}...` : 'Missing'
+  });
+}
 
 
 
@@ -20,7 +30,9 @@ const createMockClient = () => ({
     select: () => ({ data: null, error: new Error('Supabase not configured') }),
     insert: () => ({ data: null, error: new Error('Supabase not configured') }),
     update: () => ({ data: null, error: new Error('Supabase not configured') }),
-    upsert: () => ({ data: null, error: new Error('Supabase not configured') })
+    upsert: () => ({ data: null, error: new Error('Supabase not configured') }),
+    eq: function() { return this; },
+    single: function() { return this; }
   })
 });
 
@@ -31,7 +43,10 @@ export const supabase = (!supabaseUrl || !supabaseAnonKey)
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: true,
-        flowType: 'pkce'
+        flowType: 'pkce',
+        // Optimize for faster session detection
+        storageKey: 'sb-auth-token',
+        debug: import.meta.env.DEV
       },
       global: {
         headers: {

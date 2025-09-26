@@ -1,20 +1,21 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
-import { supabase, type User, type UserSubscription } from '@/lib/supabase';
+import { supabase, type User } from '@/lib/supabase';
 import { analytics } from '@/lib/analytics';
+import { clearStaleAuthData, optimizeAuthStorage, preWarmAuthSession } from '@/lib/authOptimizer';
 
 // Add cache TTL constants at the top after imports
 const PROFILE_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 const SUBSCRIPTION_CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
 // Extended subscription type with joined plan data
-interface SubscriptionWithPlan extends UserSubscription {
-  subscription_plans?: {
-    name: string;
-    price: number;
-    interval: string;
-  };
-}
+// interface SubscriptionWithPlan extends UserSubscription {
+//   subscription_plans?: {
+//     name: string;
+//     price: number;
+//     interval: string;
+//   };
+// }
 
 interface SubscriptionStatus {
   isSubscribed: boolean;
@@ -60,8 +61,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profileFetching, setProfileFetching] = useState(false); // Prevent concurrent fetches
 
   useEffect(() => {
-    // Apple-smooth auth initialization - no timeouts needed with optimized RLS
-    // Queries complete instantly with the new RLS policies
+    // Optimize auth initialization for faster Google OAuth experience
+    console.log('🚀 Initializing auth with optimizations...');
+    
+    // Pre-warm the auth system
+    preWarmAuthSession();
+    
+    // Clear any stale data that might interfere
+    clearStaleAuthData();
+    optimizeAuthStorage();
 
     // Get current session
     supabase.auth.getSession()
@@ -88,26 +96,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        // Simple delay for session establishment
-        if (event === 'SIGNED_UP' || event === 'SIGNED_IN') {
-          await new Promise(resolve => setTimeout(resolve, 200));
-        }
-
         // Clear any previous errors
         setProfileError(null);
 
-        // Only fetch profile for specific events to avoid duplicate fetches
-        if (event === 'SIGNED_IN' || event === 'SIGNED_UP' || event === 'INITIAL_SESSION') {
-          console.log(`🔐 Triggering profile fetch for event: ${event}`);
-          await fetchUserProfile(session.user.id, session.user.email, true);
+        // Handle profile fetch based on event type
+        if (event === 'SIGNED_IN' || event === 'SIGNED_UP') {
+          console.log(`🔐 User authenticated via ${event}, scheduling profile fetch...`);
+          
+          // Identify user for analytics immediately
+          analytics.identify(session.user.id, {
+            email: session.user.email,
+          });
+          
+          // For faster UI response, set loading to false immediately
+          // and fetch profile in background
+          setLoading(false);
+          
+          // Fetch profile with minimal delay
+          setTimeout(() => {
+            fetchUserProfile(session.user.id, session.user.email, true);
+          }, 100);
+          
+        } else if (event === 'INITIAL_SESSION') {
+          console.log('🔐 Initial session detected, fetching profile...');
+          await fetchUserProfile(session.user.id, session.user.email, false);
+          
+          // Identify user for analytics
+          analytics.identify(session.user.id, {
+            email: session.user.email,
+          });
         } else {
-          console.log(`🔐 Skipping profile fetch for event: ${event} (profile should already exist)`);
+          console.log(`🔐 Skipping profile fetch for event: ${event}`);
         }
-
-        // Identify user for analytics
-        analytics.identify(session.user.id, {
-          email: session.user.email,
-        });
       } else {
         setUserProfile(null);
         setSubscription({
@@ -118,8 +138,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           cancelAtPeriodEnd: false
         });
         analytics.reset();
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => {
@@ -149,7 +169,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   };
 
-   // Apple-smooth profile fetching - no timeouts, no retries, instant response
+  // Optimized profile fetching - fast and reliable
   const fetchUserProfile = async (supabaseUserId: string, userEmail?: string, forceRefresh = false) => {
      // Prevent concurrent profile fetches
      if (profileFetching) {
@@ -161,14 +181,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
      setProfileError(null); // Clear any previous errors
      console.log('🚀 STARTING profile fetch for:', supabaseUserId, 'email:', userEmail);
      
-     // Emergency backup timeout to prevent infinite loading
+     // Reduced emergency timeout for faster failure detection
      const emergencyTimeout = setTimeout(() => {
        console.error('🚨 EMERGENCY: Profile fetch taking too long, forcing completion');
        setProfileError('Profile loading is taking too long. Please try refreshing the page.');
        setUserProfile(null);
        setLoading(false);
        setProfileFetching(false);
-     }, 15000); // 15 seconds emergency backup
+     }, 8000); // Reduced to 8 seconds
      
      try {
        
@@ -193,8 +213,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      // Small delay to ensure auth session is fully established
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Minimal delay to ensure auth session is fully established
+      await new Promise(resolve => setTimeout(resolve, 50));
       
       // Direct Supabase query - no timeouts, no retries (RLS optimized for speed)
       console.log('🔍 About to query users table for:', supabaseUserId);
@@ -215,12 +235,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
            try {
              const profileData = createInitialProfileData(supabaseUserId, userEmail);
              
-             // Direct profile creation - no timeouts
-             const { data: newProfile, error: insertError } = await supabase
-               .from('users')
-               .upsert(profileData, { onConflict: 'email' })
-               .select()
-               .single();
+           // Optimized profile creation with proper conflict handling
+           const { data: newProfile, error: insertError } = await supabase
+            .from('users')
+            .upsert(profileData, { onConflict: 'id', ignoreDuplicates: false })
+            .select()
+            .single();
             
             if (insertError) throw insertError;
             
@@ -392,10 +412,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin,
+        // Use more reliable redirect URL
+        redirectTo: `${window.location.protocol}//${window.location.host}`,
+        scopes: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
         queryParams: {
           access_type: 'offline',
-          prompt: 'consent'
+          prompt: 'select_account' // Changed from 'consent' to allow faster re-auth
         }
       }
     });
